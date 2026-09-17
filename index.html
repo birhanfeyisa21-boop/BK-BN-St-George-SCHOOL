@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BK/B/N ለሰ/ት/ቤቶች መረጃ እና ትምህርት መለዋወጫ</title>
+<style>
+  :root {
+    --bg: #F6F1E3;
+    --card: #FFFFFF;
+    --ink: #2B2420;
+    --muted: #7A7264;
+    --border: #E2D6BA;
+    --maroon: #7A2530;
+    --maroon-dark: #591A22;
+    --gold: #A6791F;
+    --gold-bg: #F3E7C9;
+    --green: #3B6D2E;
+    --green-bg: #E4F0DE;
+    --amber: #9A6A0B;
+    --amber-bg: #FBEFD6;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, "Segoe UI", "Noto Sans Ethiopic", "Nyala", sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .app { max-width: 760px; margin: 0 auto; padding: 16px; }
+  header.top {
+    background: var(--maroon);
+    color: #F7EEDF;
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  header.top h1 {
+    font-family: Georgia, "Noto Serif Ethiopic", serif;
+    font-size: 20px;
+    font-weight: normal;
+    margin: 0 0 4px;
+  }
+  header.top p { margin: 0; font-size: 12px; color: #E5D3B8; }
+  .top-controls {
+    display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; align-items: center;
+  }
+  .top-controls label { font-size: 12px; color: #EFE2C6; display:flex; align-items:center; gap:6px; }
+  select {
+    padding: 5px 8px; border-radius: 6px; border: none; font-size: 13px;
+  }
+  .toggle { display:flex; align-items:center; gap:6px; }
+  nav.tabs {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;
+  }
+  nav.tabs button {
+    background: var(--card); border: 1px solid var(--border); color: var(--ink);
+    padding: 8px 12px; border-radius: 8px; font-size: 13px; cursor: pointer;
+  }
+  nav.tabs button.active { background: var(--maroon); color: #fff; border-color: var(--maroon); }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 14px 16px; margin-bottom: 12px;
+  }
+  .card h2 { font-size: 15px; margin: 0 0 10px; font-family: Georgia, "Noto Serif Ethiopic", serif; }
+  .card h3 { font-size: 13px; margin: 14px 0 8px; color: var(--muted); font-weight: 600; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .field { margin-bottom: 8px; }
+  .field label { display:block; font-size: 12px; color: var(--muted); margin-bottom: 3px; }
+  input[type=text], input[type=number], input[type=date], select, textarea {
+    width: 100%; padding: 7px 8px; border: 1px solid var(--border); border-radius: 6px;
+    font-size: 13px; font-family: inherit; background: #FBF8F0;
+  }
+  textarea { resize: vertical; min-height: 50px; }
+  button.primary {
+    background: var(--maroon); color: #fff; border: none; padding: 8px 14px;
+    border-radius: 7px; font-size: 13px; cursor: pointer;
+  }
+  button.primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  button.ghost {
+    background: transparent; border: 1px solid var(--border); color: var(--ink);
+    padding: 6px 10px; border-radius: 7px; font-size: 12px; cursor: pointer;
+  }
+  .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .stat {
+    background: var(--gold-bg); border-radius: 8px; padding: 10px 12px;
+  }
+  .stat .num { font-size: 22px; font-weight: 600; color: var(--maroon-dark); }
+  .stat .label { font-size: 12px; color: var(--muted); }
+  .row {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--border); padding: 8px 0; gap: 8px;
+  }
+  .row:last-child { border-bottom: none; }
+  .row .meta { font-size: 12px; color: var(--muted); }
+  .badge {
+    font-size: 11px; padding: 3px 9px; border-radius: 20px; white-space: nowrap;
+  }
+  .badge.synced { background: var(--green-bg); color: var(--green); }
+  .badge.pending { background: var(--amber-bg); color: var(--amber); }
+  .badge.role { background: var(--gold-bg); color: var(--gold); }
+  .note {
+    font-size: 12px; color: var(--muted); background: #FBF6E8; border-radius: 8px;
+    padding: 8px 10px; margin-bottom: 12px; border-left: 3px solid var(--gold);
+  }
+  .error { color: #9C2B2B; font-size: 12px; margin-top: 4px; display:none; }
+  .empty { font-size: 13px; color: var(--muted); padding: 10px 0; }
+  .hidden { display: none !important; }
+  .lock-msg { font-size: 12px; color: var(--muted); font-style: italic; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="top">
+    <h1 id="app-title">BK/B/N ለሰ/ት/ቤቶች መረጃ እና ትምህርት መለዋወጫ</h1>
+    <p id="app-subtitle">ናሙና (prototype) — ከየደብሩ ሰ/ት/ቤት እስከ የሰ/ት/ቤቱ ቁጥጥር ክፍል ያለ የመረጃ ፍሰት ያሳያል</p>
+    <div class="field" style="margin-top:8px;">
+      <label id="owner-name-label" style="color:#EFE2C6;">የተመዘገበ ባለቤት (Owner) ስም</label>
+      <input type="text" id="owner-name" placeholder="ስምዎን ያስገቡ" style="background:#FBF8F0;">
+    </div>
+    <div class="top-controls">
+      <label>ሚና፦
+        <select id="role-select">
+          <option value="owner">ባለቤት (የደብሩ ሰ/ት/ቤት ጽ/ቤት)</option>
+          <option value="admin">አስተዳዳሪ (የደብሩ ጽሕፈት ቤት)</option>
+          <option value="collector">ሰብሳቢ (የሰ/ት/ቤቱ ቁጥጥር ክፍል)</option>
+          <option value="viewer">ተመልካች</option>
+        </select>
+      </label>
+      <label class="toggle">
+        <input type="checkbox" id="online-toggle">
+        <span id="online-label">መስመር ላይ</span>
+      </label>
+      <span id="conn-badge" class="badge pending">ከመስመር ውጭ</span>
+      <select id="lang-select" style="margin-left:auto;">
+        <option value="am">አማርኛ</option>
+        <option value="en">English</option>
+        <option value="om">Afaan Oromoo</option>
+        <option value="ti">ትግርኛ</option>
+        <option value="ar">العربية</option>
+        <option value="fr">Français</option>
+        <option value="es">Español</option>
+      </select>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button data-tab="dashboard" class="active">ዳሽቦርድ</button>
+    <button data-tab="dioceses">የደብሩ ጽሕፈት ቤት</button>
+    <button data-tab="parishes">የሰ/ት/ቤቱ ቁጥጥር ክፍል</button>
+    <button data-tab="members">አባላት</button>
+    <button data-tab="students">ተማሪዎች</button>
+    <button data-tab="teachers">መምህራን</button>
+    <button data-tab="documents">ደንብ / ሰነድ</button>
+    <button data-tab="lessons">ትምህርት (ኦዲዮ/ቪዲዮ)</button>
+    <button data-tab="tools">መሳሪያዎች</button>
+    <button data-tab="cert">ማረጋገጫ ሰነድ</button>
+    <button data-tab="io">ውጤት እና ማስመጣት</button>
+    <button data-tab="audit">ኦዲት ትሬል</button>
+    <button data-tab="comms">ግንኙነት / ሪፖርት</button>
+  </nav>
+
+  <div id="tab-dashboard" class="tab"></div>
+  <div id="tab-dioceses" class="tab hidden"></div>
+  <div id="tab-parishes" class="tab hidden"></div>
+  <div id="tab-members" class="tab hidden"></div>
+  <div id="tab-students" class="tab hidden"></div>
+  <div id="tab-teachers" class="tab hidden"></div>
+  <div id="tab-documents" class="tab hidden"></div>
+  <div id="tab-lessons" class="tab hidden"></div>
+  <div id="tab-tools" class="tab hidden"></div>
+  <div id="tab-cert" class="tab hidden"></div>
+  <div id="tab-io" class="tab hidden"></div>
+  <div id="tab-audit" class="tab hidden"></div>
+  <div id="tab-comms" class="tab hidden"></div>
+
+  <footer style="text-align:center;padding:16px 8px;font-size:11px;color:var(--muted);">
+    <p style="margin:0 0 10px;line-height:1.8;">
+      🙏 ይህ ስራ ለሰንዳፋ ውሉደ ብርሀን ሰ/ት/ቤት እንዲሁም ለለገበሪ ቅዱስ ጊዮርጊስ እና በዓታ ለማርያም ቤተክርስቲያን ሰ/ት/ቤት የተወደሰ ይሁን።<br>
+      ሀሳቡን በማመንጨት ወደ ተግባር እንድቀይረው ለረዳችኝ ባለቤቴ BIZUALEM /N/H ይሁንልኝ፣ እንዲሁም ለስራ ባልደረባዬ ቦሶኑ (ሶስና) ይሁንልኝ።
+    </p>
+    © 2026 BK/B/N — ሁሉም መብቶች የተጠበቁ / All Rights Reserved
+  </footer>
+
+</div>
+
+<button id="fb-fab" type="button" style="position:fixed;bottom:18px;right:18px;width:54px;height:54px;border-radius:50%;background:var(--maroon);color:#fff;border:none;font-size:22px;box-shadow:0 3px 10px rgba(0,0,0,0.3);z-index:50;cursor:pointer;">🐛</button>
+
+<div id="fb-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:60;">
+  <div style="max-width:420px;margin:40px auto;background:var(--bg);border-radius:14px;padding:18px;max-height:85vh;overflow-y:auto;">
+    <div id="fb-panel-content"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var STORAGE_KEY = "church_mgmt_state_v1";
+  var state = {
+    ownerName: "",
+    dioceses: [],
+    parishes: [],
+    members: [],
+    students: [],
+    teachers: [],
+    documents: [],
+    lessons: [],
+    circulars: [],
+    reports: [],
+    auditLog: [],
+    smsAdminPhone: "",
+    installId: "",
+    feedback: [],
+    feedback: []
+  };
+  var role = "owner";
+  var online = false;
+  var activeTab = "dashboard";
+  var lang = "am";
+
+  var STRINGS = {
+    appTitle: {
+      am: "BK/B/N ለሰ/ት/ቤቶች መረጃ እና ትምህርት መለዋወጫ",
+      en: "BK/B/N Information & Education Exchange for Sunday Schools",
+      om: "BK/B/N Odeeffannoo fi Barnoota Wal-jijjiirraa Waldaa Barnoota Sanbataa",
+      ti: "BK/B/N ንኡዳታት ትምህርቲ ሰንበት ሓበሬታን ትምህርትን መለዋወጢ",
+      ar: "BK/B/N منصة تبادل المعلومات والتعليم لمدارس الأحد",
+      fr: "BK/B/N Échange d'informations et d'éducation pour les écoles du dimanche",
+      es: "BK/B/N Intercambio de Información y Educación para Escuelas Dominicales"
+    },
+    appSubtitle: {
+      am: "ናሙና (prototype) — ከየደብሩ ሰ/ት/ቤት እስከ የሰ/ት/ቤቱ ቁጥጥር ክፍል ያለ የመረጃ ፍሰት ያሳያል",
+      en: "Prototype — shows data flow from Synod down to Parish",
+      om: "Fakkeenya (prototype) — adeemsa odeeffannoo Sinodosii hanga Waldaatti argisiisa",
+      ti: "ኣብነት (prototype) — ካብ የደብሩ ሰ/ት/ቤት ክሳብ ኣጥቢያ ዘሎ ፍሰት ሓበሬታ ዘርኢ",
+      ar: "نموذج أولي — يوضح تدفق البيانات من السينودس إلى الرعية",
+      fr: "Prototype — montre le flux de données du Synode jusqu'à la paroisse",
+      es: "Prototipo — muestra el flujo de datos desde el Sínodo hasta la parroquia"
+    },
+    ownerLabel: {
+      am: "የተመዘገበ ባለቤት (Owner) ስም", en: "Registered Owner name",
+      om: "Maqaa Abbaa Qabeenyaa (Owner) galmaa'e", ti: "ዝተመዝገበ ሽም ወናኒ (Owner)",
+      ar: "اسم المالك المسجل", fr: "Nom du propriétaire enregistré", es: "Nombre del propietario registrado"
+    },
+    onlineLabel: {
+      am: "መስመር ላይ", en: "Online", om: "Interneetii irra", ti: "ኦንላይን",
+      ar: "متصل بالإنترنت", fr: "En ligne", es: "En línea"
+    },
+    connOffline: {
+      am: "ከመስመር ውጭ", en: "Offline", om: "Interneetii ala", ti: "ኦፍላይን",
+      ar: "غير متصل", fr: "Hors ligne", es: "Sin conexión"
+    },
+    connOnline: {
+      am: "መስመር ላይ", en: "Online", om: "Interneetii irra", ti: "ኦንላይን",
+      ar: "متصل", fr: "En ligne", es: "En línea"
+    },
+    tabs: {
+      dashboard: { am: "ዳሽቦርድ", en: "Dashboard", om: "Gabatee Ijaarsaa", ti: "ዳሽቦርድ", ar: "لوحة التحكم", fr: "Tableau de bord", es: "Panel" },      dioceses:  { am: "የደብሩ ጽሕፈት ቤት", en: "Parish Offices", om: "Waajjira Waldaa", ti: "ቤ/ጽ ኣጥቢያ", ar: "مكاتب الرعايا", fr: "Bureaux paroissiaux", es: "Oficina parroquial" },      parishes:  { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍል", en: "Sunday School Control Sections", om: "Kutaa To'annoo Mana Barnoota Sanbataa", ti: "ክፍሊ ቁጽጽር ት/ቤት ሰንበት", ar: "أقسام مراقبة مدرسة الأحد", fr: "Sections de contrôle de l'école du dimanche", es: "Secciones de Control de la Escuela Dominical" },      members:   { am: "አባላት", en: "Members", om: "Miseensota", ti: "ኣባላት", ar: "الأعضاء", fr: "Membres", es: "Miembros" },      students:  { am: "ተማሪዎች", en: "Students", om: "Barattoota", ti: "ተመሃሮ", ar: "الطلاب", fr: "Élèves", es: "Estudiantes" },      teachers:  { am: "መምህራን", en: "Teachers", om: "Barsiisota", ti: "መምህራን", ar: "المعلمون", fr: "Enseignants", es: "Maestros" },      documents: { am: "ደንብ / ሰነድ", en: "Bylaws / Docs", om: "Seera / Ragaa", ti: "ሕጊ / ሰነድ", ar: "اللوائح / الوثائق", fr: "Règlements / Documents", es: "Estatutos / Documentos" },      lessons:   { am: "ትምህርት (ኦዲዮ/ቪዲዮ)", en: "Lessons (Audio/Video)", om: "Barnoota (Sagalee/Viidiyoo)", ti: "ትምህርቲ (ድምጺ/ቪድዮ)", ar: "الدروس (صوت/فيديو)", fr: "Leçons (Audio/Vidéo)", es: "Lecciones (Audio/Video)" },      tools:     { am: "መሳሪያዎች", en: "Tools", om: "Meeshaalee", ti: "መሳርሒታት", ar: "الأدوات", fr: "Outils", es: "Herramientas" },      cert:      { am: "ማረጋገጫ ሰነድ", en: "Certificates", om: "Ragaalee Mirkaneessaa", ti: "ምስክር ወረቐት", ar: "الشهادات", fr: "Certificats", es: "Certificados" },      io:        { am: "ውጤት እና ማስመጣት", en: "Export & Import", om: "Baasuu fi Galchuu", ti: "ምውጻእን ምእታውን", ar: "التصدير والاستيراد", fr: "Exporter et importer", es: "Exportar e importar" },      audit:     { am: "ኦዲትና ኢንስፔክሽን ክፍል", en: "Audit & Inspection Dept.", om: "Kutaa Ilaalchaa fi Sakatta'aa", ti: "ክፍሊ ኦዲትን ኢንስፐክሽንን", ar: "قسم التدقيق والتفتيش", fr: "Département d'audit et d'inspection", es: "Departamento de Auditoría e Inspección" },      comms:     { am: "ህዝብ ግንኙነት / ሪፖርት", en: "Public Relations / Reports", om: "Hawaasa Waliin Hidhata / Gabaasa", ti: "ህዝባዊ ርክብ / ጸብጻብ", ar: "العلاقات العامة / التقارير", fr: "Relations publiques / Rapports", es: "Relaciones Públicas / Informes" }    },
+    roleOptions: {
+      owner:     { am: "ባለቤት (የደብሩ ሰ/ት/ቤት ጽ/ቤት)", en: "Owner (Parish Sunday School Office)", om: "Abbaa Qabeenyaa (Waajjira Mana Barnoota Sanbataa Waldaa)", ti: "ወናኒ (ቤ/ጽ ት/ቤት ሰንበት ኣጥቢያ)", ar: "المالك (مكتب مدرسة الأحد بالرعية)", fr: "Propriétaire (Bureau de l'école du dimanche paroissiale)", es: "Propietario (Oficina de la Escuela Dominical parroquial)" },
+      admin:     { am: "አስተዳዳሪ (የደብሩ ጽሕፈት ቤት)", en: "Admin (Parish Office)", om: "Bulchaa (Waajjira Waldaa)", ti: "ኣመሓዳሪ (ቤ/ጽ ኣጥቢያ)", ar: "المسؤول (مكتب الرعية)", fr: "Administrateur (Bureau paroissial)", es: "Administrador (Oficina parroquial)" },      collector: { am: "የደብሩ ስ/ት/ቤት ጽ/ቤት (ሰብሳቢ/ም-ሰብሳቢ/ጸሐፊ)", en: "Parish Sunday School Office (Chair/Deputy/Secretary)", om: "Waajjira Mana Barnoota Sanbataa Waldaa (Hoogganaa/I.A/Barreessaa)", ti: "ቤ/ጽ ት/ቤት ሰንበት ኣጥቢያ (ሰብሳቢ/ም-ሰብሳቢ/ጸሓፊ)", ar: "مكتب مدرسة الأحد بالرعية (الرئيس/النائب/السكرتير)", fr: "Bureau de l'école du dimanche paroissiale (Président/Adjoint/Secrétaire)", es: "Oficina de la Escuela Dominical parroquial (Presidente/Adjunto/Secretario)" },
+      viewer:    { am: "ተመልካች", en: "Viewer", om: "Ilaalaa", ti: "ተዓዛቢ", ar: "مشاهد", fr: "Observateur", es: "Observador" }    },
+    dash: {
+      summaryNote:   { am: "ይህ ማጠቃለያ ከሁሉም የደብሩ ጽሕፈት ቤት እና የሰ/ት/ቤቱ ቁጥጥር ክፍል የተሰበሰበ ወቅታዊ ድምር ነው። (%ROLE% ሚና ውስጥ ነዎት)", en: "This is a live summary collected from all dioceses and parishes. (You are in the %ROLE% role)", om: "Kun cuunfaa yeroo ammaa Waajjira Waldaa fi Kutaa To'annoo Mana Barnoota Sanbataa hunda irraa walitti qabame. (Gahee %ROLE% keessatti jirtu)", ti: "እዚ ጠቕላላ ድምር ካብ ኩሉ ቤ/ጽ ኣጥቢያን ክፍሊ ቁጽጽር ት/ቤት ሰንበትን ዝተኣከበ እዩ። (ኣብ ግደ %ROLE% ኣሎኻ)", ar: "هذا ملخص حي تم جمعه من جميع مكاتب الرعايا وأقسام مراقبة مدرسة الأحد. (أنت في دور %ROLE%)", fr: "Ceci est un résumé en direct de tous les bureaux paroissiaux et sections de contrôle de l'école du dimanche. (Vous êtes dans le rôle %ROLE%)", es: "Este es un resumen en vivo de todas las oficina parroquial y secciones de control de la escuela dominical. (Usted está en el rol %ROLE%)" },      cardTotal:     { am: "ጠቅላላ ሁኔታ", en: "Overall Status", om: "Haala Waliigalaa", ti: "ጠቕላላ ኩነታት", ar: "الحالة العامة", fr: "État général", es: "Estado general" },      dioceseCount:  { am: "የደብሩ ጽሕፈት ቤቶች", en: "Parish Offices", om: "Waajjira Waldaa", ti: "ቤ/ጽ ኣጥቢያታት", ar: "مكاتب الرعايا", fr: "Bureaux paroissiaux", es: "Oficina parroquial" },      parishCount:   { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍልዎች", en: "Sunday School Control Sections", om: "Kutaalee To'annoo Mana Barnoota Sanbataa", ti: "ክፍልታት ቁጽጽር ት/ቤት ሰንበት", ar: "أقسام مراقبة مدرسة الأحد", fr: "Sections de contrôle de l'école du dimanche", es: "Secciones de Control de la Escuela Dominical" },      totalMembers:  { am: "ጠቅላላ አባላት", en: "Total Members", om: "Miseensota Waliigalaa", ti: "ጠቕላላ ኣባላት", ar: "إجمالي الأعضاء", fr: "Total des membres", es: "Total de miembros" },      totalStudents: { am: "ጠቅላላ ተማሪዎች", en: "Total Students", om: "Barattoota Waliigalaa", ti: "ጠቕላላ ተመሃሮ", ar: "إجمالي الطلاب", fr: "Total des élèves", es: "Total de estudiantes" },      totalTeachers: { am: "ጠቅላላ መምህራን", en: "Total Teachers", om: "Barsiisota Waliigalaa", ti: "ጠቕላላ መምህራን", ar: "إجمالي المعلمين", fr: "Total des enseignants", es: "Total de maestros" },      maleMembers:   { am: "ወንድ አባላት", en: "Male Members", om: "Miseensota Dhiiraa", ti: "ተባዕታይ ኣባላት", ar: "الأعضاء الذكور", fr: "Membres masculins", es: "Miembros hombres" },      byDiocese:     { am: "በየደብሩ ጽሕፈት ቤት የተከፋፈለ", en: "By Parish Office", om: "Akka Waajjira Waldaatti Qoodame", ti: "ብቤ/ጽ ኣጥቢያ ዝተመቓረሐ", ar: "حسب مكتب الرعية", fr: "Par bureau paroissial", es: "Por oficina parroquial" },      noDiocese:     { am: "እስካሁን የደብሩ ጽሕፈት ቤት አልተመዘገበም", en: "No diocese registered yet", om: "Hanga ammaatti Waajjirri Waldaa hin galmoofne", ti: "ክሳብ ሕጂ ቤ/ጽ ኣጥቢያ ኣይተመዝገበን", ar: "لم يتم تسجيل أي مكتب رعية بعد", fr: "Aucun bureau paroissial enregistré pour l'instant", es: "Aún no se ha registrado ninguna oficina parroquial" },      parishWord:    { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍል", en: "parishes", om: "waldaa", ti: "ክፍሊ ቁጽጽር ት/ቤት ሰንበት", ar: "قسم مراقبة مدرسة الأحد", fr: "sections de contrôle de l'école du dimanche", es: "secciones de control de la escuela dominical" },      memberWord:    { am: "አባል", en: "members", om: "miseensa", ti: "ኣባል", ar: "عضو", fr: "membres", es: "miembros" }    },
+    common: {
+      save: { am: "መዝግብ", en: "Save", om: "Galmeessi", ti: "መዝግብ", ar: "حفظ", fr: "Enregistrer", es: "Guardar" },      none: { am: "እስካሁን የተመዘገበ የለም", en: "None registered yet", om: "Hanga ammaatti wanti hin galmoofne", ti: "ክሳብ ሕጂ ዝተመዝገበ የለን", ar: "لم يتم تسجيل أي شيء بعد", fr: "Rien n'a encore été enregistré", es: "Aún no se ha registrado nada" },      male: { am: "ወንድ", en: "Male", om: "Dhiira", ti: "ተባዕታይ", ar: "ذكر", fr: "Homme", es: "Hombre" },      female: { am: "ሴት", en: "Female", om: "Dubara", ti: "ኣንስተይቲ", ar: "أنثى", fr: "Femme", es: "Mujer" },      selectPlaceholder: { am: "ይምረጡ", en: "Select", om: "Filadhu", ti: "ምረጹ", ar: "اختر", fr: "Sélectionner", es: "Seleccionar" },      codeLabel: { am: "የመለያ ቁጥር", en: "Registration Code", om: "Lakkoofsa Galmee", ti: "ቁጽሪ ምዝገባ", ar: "رقم التسجيل", fr: "Numéro d'enregistrement", es: "Número de registro" },      synced: { am: "ተልኳል", en: "Synced", om: "Ergameera", ti: "ተልኢኹ", ar: "تمت المزامنة", fr: "Synchronisé", es: "Sincronizado" },      pending: { am: "ያልተላከ", en: "Pending", om: "Hin ergamne", ti: "ዘይተለኣኸ", ar: "قيد الانتظار", fr: "En attente", es: "Pendiente" }    },
+    dio: {
+      newTitle:        { am: "አዲስ የደብሩ ጽሕፈት ቤት መዝግብ", en: "Register a New Parish Office", om: "Waajjira Waldaa Haaraa Galmeessi", ti: "ሓድሽ ቤ/ጽ ኣጥቢያ መዝግብ", ar: "تسجيل مكتب رعية جديدة", fr: "Enregistrer un nouveau bureau paroissial", es: "Registrar una nueva oficina parroquial" },      nameLabel:       { am: "የየደብሩ ጽሕፈት ቤት ስም", en: "Parish Office Name", om: "Maqaa Waajjira Waldaa", ti: "ስም ቤ/ጽ ኣጥቢያ", ar: "اسم مكتب الرعية", fr: "Nom du bureau paroissial", es: "Nombre de la oficina parroquial" },      namePlaceholder: { am: "የየደብሩ ጽሕፈት ቤቱን ስም ያስገቡ", en: "Enter parish office name", om: "Maqaa Waajjira Waldaa galchi", ti: "ስም ቤ/ጽ ኣጥቢያ የእቱ", ar: "أدخل اسم مكتب الرعية", fr: "Entrez le nom du bureau paroissial", es: "Ingrese el nombre de la oficina parroquial" },      nameErr:         { am: "እባክዎ ስም ያስገቡ", en: "Please enter a name", om: "Maaloo maqaa galchaa", ti: "በጃኹም ስም የእትዉ", ar: "الرجاء إدخال الاسم", fr: "Veuillez entrer un nom", es: "Por favor ingrese un nombre" },      lockMsg:         { am: "የ %ROLE% ሚና የደብሩ ጽሕፈት ቤት መመዝገብ አይፈቀድለትም — ይህ የባለቤት (የደብሩ ሰ/ት/ቤት) ስልጣን ብቻ ነው።", en: "The %ROLE% role may not register a diocese — this is the Owner's (Parish Sunday School) authority only.", om: "Gaheen %ROLE% Waajjira Waldaa galmeessuu hin danda'u — kun mirga Abbaa Qabeenyaa (Waajjira Waldaa) qofa.", ti: "ግደ %ROLE% ቤ/ጽ ኣጥቢያ ምምዝጋብ ኣይፍቀዶን እዩ — እዚ ናይ ወናኒ (ት/ቤት ሰንበት ኣጥቢያ) ስልጣን ጥራይ እዩ።", ar: "لا يُسمح لدور %ROLE% بتسجيل مكتب رعية — هذه صلاحية المالك (مدرسة الأحد بالرعية) فقط.", fr: "Le rôle %ROLE% n'est pas autorisé à enregistrer un bureau paroissial — prérogative exclusive du Propriétaire (École du dimanche paroissiale).", es: "El rol %ROLE% no puede registrar una oficina parroquial — esto es exclusivo del Propietario (Escuela Dominical parroquial)." },      registeredTitle: { am: "የተመዘገቡ የደብሩ ጽሕፈት ቤቶች", en: "Registered Parish Offices", om: "Waajjira Waldaa Galmaa'an", ti: "ዝተመዝገቡ ቤ/ጽ ኣጥቢያታት", ar: "مكاتب الرعايا المسجلة", fr: "Bureaux paroissiaux enregistrés", es: "Oficina parroquial registradas" }    },
+    par: {
+      needDiocese:     { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍል ከመመዝገብዎ በፊት ቢያንስ አንድ የደብሩ ጽሕፈት ቤት መመዝገብ ያስፈልጋል።", en: "You must register at least one diocese before registering a parish.", om: "Kutaa To'annoo Mana Barnoota Sanbataa galmeessuun dura yoo xiqqaate Waajjira Waldaa tokko galmeessuun dirqama.", ti: "ክፍሊ ቁጽጽር ት/ቤት ሰንበት ቅድሚ ምምዝጋብኩም ብውሑዱ ሓደ ቤ/ጽ ኣጥቢያ ክትምዝግቡ ኣለኩም።", ar: "يجب تسجيل مكتب رعية واحدة على الأقل قبل تسجيل قسم مراقبة مدرسة الأحد.", fr: "Vous devez enregistrer au moins un bureau paroissial avant d'enregistrer une section de contrôle de l'école du dimanche.", es: "Debe registrar al menos una oficina parroquial antes de registrar una sección de control de la escuela dominical." },      newTitle:        { am: "አዲስ የሰ/ት/ቤቱ ቁጥጥር ክፍል መዝግብ", en: "Register a New Sunday School Control Section", om: "Kutaa To'annoo Mana Barnoota Sanbataa Haaraa Galmeessi", ti: "ሓድሽ ክፍሊ ቁጽጽር ት/ቤት ሰንበት መዝግብ", ar: "تسجيل قسم مراقبة مدرسة الأحد جديدة", fr: "Enregistrer une nouvelle section de contrôle de l'école du dimanche", es: "Registrar una nueva sección de control de la escuela dominical" },      dioceseLabel:    { am: "ንብረት የደብሩ ጽሕፈት ቤት", en: "Belongs to Parish Office", om: "Waajjira Waldaa Keessatti Argamu", ti: "ናይ ቤ/ጽ ኣጥቢያ", ar: "مكتب الرعية التابعة", fr: "Bureau paroissial d'appartenance", es: "Oficina parroquial a la que pertenece" },      nameLabel:       { am: "የየሰ/ት/ቤቱ ቁጥጥር ክፍል ስም", en: "Sunday School Control Section Name", om: "Maqaa Kutaa To'annoo Mana Barnoota Sanbataa", ti: "ስም ክፍሊ ቁጽጽር ት/ቤት ሰንበት", ar: "اسم قسم مراقبة مدرسة الأحد", fr: "Nom de la section de contrôle de l'école du dimanche", es: "Nombre de la sección de control de la escuela dominical" },      namePlaceholder: { am: "የየሰ/ት/ቤቱ ቁጥጥር ክፍልውን ስም ያስገቡ", en: "Enter parish name", om: "Maqaa waldaa galchi", ti: "ስም ክፍሊ ቁጽጽር ት/ቤት ሰንበት የእቱ", ar: "أدخل اسم قسم مراقبة مدرسة الأحد", fr: "Entrez le nom de la section de contrôle de l'école du dimanche", es: "Ingrese el nombre de la sección de control de la escuela dominical" },      titleLabel:      { am: "ልዩ መጠሪያ (አማራጭ)", en: "Special Title (optional)", om: "Maqaa Addaa (filannoo)", ti: "ፍሉይ መጸውዒ (ኣማራጺ)", ar: "لقب خاص (اختياري)", fr: "Titre spécial (facultatif)", es: "Título especial (opcional)" },      titlePlaceholder:{ am: "ካለ ያስገቡ", en: "Enter if any", om: "Yoo jiraate galchi", ti: "እንተሎ የእቱ", ar: "أدخل إن وجد", fr: "Entrez le cas échéant", es: "Ingrese si corresponde" },      foundedLabel:    { am: "የተመሰረተበት ዓመት", en: "Year Founded", om: "Bara Hundeeffame", ti: "ዓመተ ምስረታ", ar: "سنة التأسيس", fr: "Année de fondation", es: "Año de fundación" },      foundedPlaceholder: { am: "ለምሳሌ 1975 ዓ.ም", en: "e.g. 1975 EC", om: "fkn 1975 ALI", ti: "ኣብነት 1975 ዓ.ም", ar: "مثال: 1975 هـ.إ", fr: "ex. 1975 EC", es: "ej. 1975 CE" },      errAll:          { am: "እባክዎ ሁሉንም ያስፈልጋሉ የተባሉ መስኮች ይሙሉ", en: "Please fill in all required fields", om: "Maaloo dirreewwan barbaachisoo hunda guuti", ti: "በጃኹም ኩሎም ዘድልዩ ሜዳታት መልእዎም", ar: "يرجى ملء جميع الحقول المطلوبة", fr: "Veuillez remplir tous les champs requis", es: "Por favor complete todos los campos requeridos" },      lockMsg:         { am: "የ %ROLE% ሚና አዲስ የሰ/ት/ቤቱ ቁጥጥር ክፍል መመዝገብ አይፈቀድለትም።", en: "The %ROLE% role is not allowed to register a new parish.", om: "Gaheen %ROLE% Kutaa To'annoo Mana Barnoota Sanbataa haaraa galmeessuu hin danda'u.", ti: "ግደ %ROLE% ሓድሽ ክፍሊ ቁጽጽር ት/ቤት ሰንበት ምምዝጋብ ኣይፍቀዶን።", ar: "لا يُسمح لدور %ROLE% بتسجيل قسم مراقبة مدرسة الأحد جديدة.", fr: "Le rôle %ROLE% n'est pas autorisé à enregistrer une nouvelle section de contrôle de l'école du dimanche.", es: "El rol %ROLE% no tiene permitido registrar una nueva sección de control de la escuela dominical." },      registeredTitle: { am: "የተመዘገቡ የሰ/ት/ቤቱ ቁጥጥር ክፍልዎች", en: "Registered Sunday School Control Sections", om: "Kutaalee To'annoo Mana Barnoota Sanbataa Galmaa'an", ti: "ዝተመዝገቡ ክፍልታት ቁጽጽር ት/ቤት ሰንበት", ar: "أقسام مراقبة مدرسة الأحد المسجلة", fr: "Sections de contrôle de l'école du dimanche enregistrées", es: "Secciones de Control de la Escuela Dominical registradas" }    },
+    mem: {
+      needParish:      { am: "አባል ከመመዝገብዎ በፊት ቢያንስ አንድ የሰ/ት/ቤቱ ቁጥጥር ክፍል መመዝገብ ያስፈልጋል።", en: "You must register at least one parish before registering a member.", om: "Miseensa galmeessuun dura yoo xiqqaate Kutaa To'annoo Mana Barnoota Sanbataa tokko galmeessuun dirqama.", ti: "ኣባል ቅድሚ ምምዝጋብኩም ብውሑዱ ሓደ ክፍሊ ቁጽጽር ት/ቤት ሰንበት ክትምዝግቡ ኣለኩም።", ar: "يجب تسجيل قسم مراقبة مدرسة الأحد واحدة على الأقل قبل تسجيل عضو.", fr: "Vous devez enregistrer au moins une section de contrôle de l'école du dimanche avant d'enregistrer un membre.", es: "Debe registrar al menos una sección de control de la escuela dominical antes de registrar un miembro." },      newTitle:        { am: "አዲስ አባል መዝግብ", en: "Register a New Member", om: "Miseensa Haaraa Galmeessi", ti: "ሓድሽ ኣባል መዝግብ", ar: "تسجيل عضو جديد", fr: "Enregistrer un nouveau membre", es: "Registrar un nuevo miembro" },      parishLabel:     { am: "ንብረት የሰ/ት/ቤቱ ቁጥጥር ክፍል", en: "Sunday School Control Section", om: "Kutaa To'annoo Mana Barnoota Sanbataa", ti: "ክፍሊ ቁጽጽር ት/ቤት ሰንበት", ar: "قسم مراقبة مدرسة الأحد", fr: "Section de contrôle de l'école du dimanche", es: "Sección de Control de la Escuela Dominical" },      nameLabel:       { am: "ሙሉ ስም", en: "Full Name", om: "Maqaa Guutuu", ti: "ምሉእ ስም", ar: "الاسم الكامل", fr: "Nom complet", es: "Nombre completo" },      genderLabel:     { am: "ጾታ", en: "Gender", om: "Saala", ti: "ጾታ", ar: "الجنس", fr: "Sexe", es: "Sexo" },      residenceLabel:  { am: "የመኖሪያ ስፍራ", en: "Residence", om: "Iddoo Jireenyaa", ti: "ናይ ምንባር ቦታ", ar: "مكان الإقامة", fr: "Lieu de résidence", es: "Lugar de residencia" },      residencePh:     { am: "ቀበሌ/ሰፈር", en: "Kebele/neighborhood", om: "Ganda/Naannoo", ti: "ቀቢሌ/ከባቢ", ar: "الحي", fr: "Quartier", es: "Vecindario" },      educationLabel:  { am: "የትምህርት ደረጃ", en: "Education Level", om: "Sadarkaa Barnootaa", ti: "ደረጃ ትምህርቲ", ar: "المستوى التعليمي", fr: "Niveau d'éducation", es: "Nivel educativo" },      educationPh:     { am: "ለምሳሌ ዲግሪ", en: "e.g. Degree", om: "fkn Digrii", ti: "ኣብነት ዲግሪ", ar: "مثال: درجة جامعية", fr: "ex. Licence", es: "ej. Licenciatura" },      parentEduLabel:  { am: "የወላጅ ትምህርት ደረጃ", en: "Parent's Education Level", om: "Sadarkaa Barnoota Maatii", ti: "ደረጃ ትምህርቲ ወላዲ", ar: "المستوى التعليمي للوالدين", fr: "Niveau d'éducation des parents", es: "Nivel educativo de los padres" },      titleLabel:      { am: "ልዩ መጠሪያ", en: "Special Title", om: "Maqaa Addaa", ti: "ፍሉይ መጸውዒ", ar: "لقب خاص", fr: "Titre spécial", es: "Título especial" },      optional:        { am: "አማራጭ", en: "Optional", om: "Filannoo", ti: "ኣማራጺ", ar: "اختياري", fr: "Facultatif", es: "Opcional" },      joinLabel:       { am: "የገባበት ቀን", en: "Join Date", om: "Guyyaa Seenee", ti: "ዕለት ምእታው", ar: "تاريخ الانضمام", fr: "Date d'adhésion", es: "Fecha de ingreso" },      joinPh:          { am: "ለምሳሌ 2015 ዓ.ም", en: "e.g. 2015 EC", om: "fkn 2015 ALI", ti: "ኣብነት 2015 ዓ.ም", ar: "مثال: 2015 هـ.إ", fr: "ex. 2015 EC", es: "ej. 2015 CE" },      statusLabel:     { am: "ወቅታዊ ሁኔታ", en: "Current Status", om: "Haala Ammaa", ti: "ህሉው ኩነታት", ar: "الحالة الحالية", fr: "Statut actuel", es: "Estado actual" },      statusActive:    { am: "ንቁ አባል", en: "Active Member", om: "Miseensa Hojjetaa", ti: "ንጡፍ ኣባል", ar: "عضو نشط", fr: "Membre actif", es: "Miembro activo" },      statusLeft:      { am: "የወጣ", en: "Left", om: "Ba'e", ti: "ዝወጸ", ar: "غادر", fr: "Parti", es: "Salió" },      statusTransferred: { am: "የተዛወረ", en: "Transferred", om: "Dabarfame", ti: "ዝተሳገረ", ar: "منقول", fr: "Transféré", es: "Transferido" },      errNameGender:   { am: "እባክዎ ስም እና ጾታ ቢያንስ ያስፈልጋሉ", en: "Name and gender are at least required", om: "Maqaa fi saalli yoo xiqqaate barbaachisu", ti: "ስምን ጾታን ብውሑዱ የድልዩ", ar: "الاسم والجنس مطلوبان على الأقل", fr: "Le nom et le sexe sont au moins requis", es: "El nombre y el sexo son al menos obligatorios" },      lockMsg:         { am: "የ %ROLE% ሚና አዲስ አባል መመዝገብ አይፈቀድለትም።", en: "The %ROLE% role is not allowed to register a new member.", om: "Gaheen %ROLE% Miseensa haaraa galmeessuu hin danda'u.", ti: "ግደ %ROLE% ሓድሽ ኣባል ምምዝጋብ ኣይፍቀዶን።", ar: "لا يُسمح لدور %ROLE% بتسجيل عضو جديد.", fr: "Le rôle %ROLE% n'est pas autorisé à enregistrer un nouveau membre.", es: "El rol %ROLE% no tiene permitido registrar un nuevo miembro." },      registeredTitle: { am: "የተመዘገቡ አባላት", en: "Registered Members", om: "Miseensota Galmaa'an", ti: "ዝተመዝገቡ ኣባላት", ar: "الأعضاء المسجلون", fr: "Membres enregistrés", es: "Miembros registrados" }    },
+    stu: {
+      needParish:      { am: "ተማሪ ከመመዝገብዎ በፊት ቢያንስ አንድ የሰ/ት/ቤቱ ቁጥጥር ክፍል መመዝገብ ያስፈልጋል።", en: "You must register at least one parish before registering a student.", om: "Barataa galmeessuun dura yoo xiqqaate Kutaa To'annoo Mana Barnoota Sanbataa tokko galmeessuun dirqama.", ti: "ተመሃራይ ቅድሚ ምምዝጋብኩም ብውሑዱ ሓደ ክፍሊ ቁጽጽር ት/ቤት ሰንበት ክትምዝግቡ ኣለኩም።", ar: "يجب تسجيل قسم مراقبة مدرسة الأحد واحدة على الأقل قبل تسجيل طالب.", fr: "Vous devez enregistrer au moins une section de contrôle de l'école du dimanche avant d'enregistrer un élève.", es: "Debe registrar al menos una sección de control de la escuela dominical antes de registrar un estudiante." },      newTitle:        { am: "አዲስ ተማሪ መዝግብ", en: "Register a New Student", om: "Barataa Haaraa Galmeessi", ti: "ሓድሽ ተመሃራይ መዝግብ", ar: "تسجيل طالب جديد", fr: "Enregistrer un nouvel élève", es: "Registrar un nuevo estudiante" },      levelLabel:      { am: "ደረጃ", en: "Level", om: "Sadarkaa", ti: "ደረጃ", ar: "المستوى", fr: "Niveau", es: "Nivel" },      yearTermLabel:   { am: "የትምህርት ዘመን", en: "Academic Year", om: "Bara Barnootaa", ti: "ዓመተ ትምህርቲ", ar: "العام الدراسي", fr: "Année scolaire", es: "Año académico" },      yearPh:          { am: "ለምሳሌ 2018 ዓ.ም", en: "e.g. 2018 EC", om: "fkn 2018 ALI", ti: "ኣብነት 2018 ዓ.ም", ar: "مثال: 2018 هـ.إ", fr: "ex. 2018 EC", es: "ej. 2018 CE" },      courseLabel:     { am: "ኮርስ/ትምህርት", en: "Course/Subject", om: "Koorsii/Barnoota", ti: "ኮርስ/ትምህርቲ", ar: "المقرر/المادة", fr: "Cours/Matière", es: "Curso/Materia" },      coursePh:        { am: "ለምሳሌ ብሉይ ኪዳን መግቢያ", en: "e.g. Introduction to Old Testament", om: "fkn Seera Duraanii Seensa", ti: "ኣብነት መእተዊ ብሉይ ኪዳን", ar: "مثال: مقدمة في العهد القديم", fr: "ex. Introduction à l'Ancien Testament", es: "ej. Introducción al Antiguo Testamento" },      scoreLabel:      { am: "ውጤት (%) አማራጭ", en: "Score (%) optional", om: "Qabxii (%) filannoo", ti: "ውጽኢት (%) ኣማራጺ", ar: "الدرجة (%) اختياري", fr: "Score (%) facultatif", es: "Puntaje (%) opcional" },      statusLabel:     { am: "ሁኔታ", en: "Status", om: "Haala", ti: "ኩነታት", ar: "الحالة", fr: "Statut", es: "Estado" },      statusInProgress:{ am: "በሂደት ላይ", en: "In Progress", om: "Adeemsa Irra", ti: "ኣብ ምዕባለ", ar: "قيد التقدم", fr: "En cours", es: "En progreso" },      statusPassed:    { am: "አልፏል", en: "Passed", om: "Darbeera", ti: "ሓሊፉ", ar: "ناجح", fr: "Réussi", es: "Aprobado" },      statusFailed:    { am: "ወድቋል", en: "Failed", om: "Kufeera", ti: "ወዲቑ", ar: "راسب", fr: "Échoué", es: "Reprobado" },      gradLabel:       { am: "የምረቃ ሁኔታ", en: "Graduation Status", om: "Haala Eebba", ti: "ኩነታት ምረቓ", ar: "حالة التخرج", fr: "Statut de fin d'études", es: "Estado de graduación" },      notGraduated:    { am: "ያልተመረቀ", en: "Not Graduated", om: "Hin Eebbifamne", ti: "ዘይተመረቐ", ar: "لم يتخرج", fr: "Non diplômé", es: "No graduado" },      graduated:       { am: "ተመርቋል", en: "Graduated", om: "Eebbifameera", ti: "ተመሪቑ", ar: "متخرج", fr: "Diplômé", es: "Graduado" },      gradYearLabel:   { am: "የምረቃ ዓ.ም (ተመርቋል ከሆነ)", en: "Graduation Year (if graduated)", om: "Bara Eebba (yoo eebbifame)", ti: "ዓመተ ምረቓ (እንተተመሪቑ)", ar: "سنة التخرج (إن تخرج)", fr: "Année de fin d'études (si diplômé)", es: "Año de graduación (si se graduó)" },      errNameLevel:    { am: "እባክዎ ስም እና ደረጃ ቢያንስ ያስፈልጋሉ", en: "Name and level are at least required", om: "Maqaa fi sadarkaan yoo xiqqaate barbaachisu", ti: "ስምን ደረጃን ብውሑዱ የድልዩ", ar: "الاسم والمستوى مطلوبان على الأقل", fr: "Le nom et le niveau sont au moins requis", es: "El nombre y el nivel son al menos obligatorios" },      lockMsg:         { am: "የ %ROLE% ሚና አዲስ ተማሪ መመዝገብ አይፈቀድለትም።", en: "The %ROLE% role is not allowed to register a new student.", om: "Gaheen %ROLE% Barataa haaraa galmeessuu hin danda'u.", ti: "ግደ %ROLE% ሓድሽ ተመሃራይ ምምዝጋብ ኣይፍቀዶን።", ar: "لا يُسمح لدور %ROLE% بتسجيل طالب جديد.", fr: "Le rôle %ROLE% n'est pas autorisé à enregistrer un nouvel élève.", es: "El rol %ROLE% no tiene permitido registrar un nuevo estudiante." },      summaryTitle:    { am: "የደረጃ ማጠቃለያ", en: "Level Summary", om: "Cuunfaa Sadarkaa", ti: "ጠቕላላ ደረጃ", ar: "ملخص المستوى", fr: "Résumé par niveau", es: "Resumen por nivel" },      gradedCount:     { am: "የተመረቁ", en: "Graduated", om: "Eebbifaman", ti: "ዝተመረቑ", ar: "المتخرجون", fr: "Diplômés", es: "Graduados" },      notGradedCount:  { am: "ያልተመረቁ", en: "Not Graduated", om: "Hin Eebbifamne", ti: "ዘይተመረቑ", ar: "غير المتخرجين", fr: "Non diplômés", es: "No graduados" },      rosterTitle:     { am: "ደረጃ ሮስተር", en: "Level Roster", om: "Roosterii Sadarkaa", ti: "ሮስተር ደረጃ", ar: "قائمة المستوى", fr: "Liste du niveau", es: "Lista del nivel" },      noteText:        { am: "ይህ ክፍል ተማሪዎችን በደረጃ (ሕጻናትና መጣኒያን/ወጣቶች/ወላጆች) እየመደበ ውጤታቸውን እና የምረቃ ሁኔታቸውን የሚከታተል ሮስተር ነው።", en: "This section tracks students by level (Children & Toddlers/Youth/Parents), their scores, and graduation status.", om: "Kutaan kun barattoota sadarkaadhaan (Ijoollee/Dargaggoota/Maatii) ramadee qabxii fi haala eebba isaanii hordofa.", ti: "እዚ ክፍሊ ተመሃሮ ብደረጃ (ህጻናት/መንእሰያት/ወለዲ) እናመቐለ ውጽኢቶምን ኩነታት ምረቓኦምን ዝከታተል እዩ።", ar: "يتتبع هذا القسم الطلاب حسب المستوى (الأطفال/الشباب/الآباء) ودرجاتهم وحالة تخرجهم.", fr: "Cette section suit les élèves par niveau (Enfants/Jeunes/Parents), leurs scores et leur statut de fin d'études.", es: "Esta sección rastrea a los estudiantes por nivel (Niños/Jóvenes/Padres), sus puntajes y estado de graduación." }    },
+    levels: {
+      "ሕጻናትና መጣኒያን": { am: "ሕጻናትና መጣኒያን", en: "Children & Toddlers", om: "Ijoollee fi Daa'imman", ti: "ቆልዑን ህጻናትን", ar: "الأطفال والصغار", fr: "Enfants et tout-petits", es: "Niños y pequeños" },
+      "ወጣቶች":         { am: "ወጣቶች", en: "Youth", om: "Dargaggoota", ti: "መንእሰያት", ar: "الشباب", fr: "Jeunes", es: "Jóvenes" },
+      "ወላጆች":         { am: "ወላጆች", en: "Parents", om: "Maatii", ti: "ወለዲ", ar: "الآباء", fr: "Parents", es: "Padres" }
+    },
+    courseTypes: {
+      "መደበኛ ትምህርት":     { am: "መደበኛ ትምህርት", en: "Regular Class", om: "Barnoota Idileessaa", ti: "ስሩዕ ትምህርቲ", ar: "تعليم عادي", fr: "Cours régulier", es: "Curso regular" },
+      "ስልጠና":           { am: "ስልጠና", en: "Training", om: "Leenjii", ti: "ስልጠና", ar: "تدريب", fr: "Formation", es: "Capacitación" },
+      "ግዕዝና አብነት ትምህርት": { am: "ግዕዝና አብነት ትምህርት", en: "Ge'ez & Abinet Studies", om: "Barnoota Gi'iz fi Abinet", ti: "ትምህርቲ ግእዝን ኣብነትን", ar: "دراسات الجعزية والتقليدية", fr: "Études du Guèze et traditionnelles", es: "Estudios de Ge'ez y tradicionales" },
+      "ልዩ ትምህርት":       { am: "ልዩ ትምህርት", en: "Special Course", om: "Barnoota Addaa", ti: "ፍሉይ ትምህርቲ", ar: "دورة خاصة", fr: "Cours spécial", es: "Curso especial" },
+      "ሌላ":             { am: "ሌላ", en: "Other", om: "Kan biraa", ti: "ካልእ", ar: "أخرى", fr: "Autre", es: "Otro" }
+    },
+    tea: {
+      needParish:   { am: "የመምህር ምደባ ከመመዝገብዎ በፊት ቢያንስ አንድ የሰ/ት/ቤቱ ቁጥጥር ክፍል መመዝገብ ያስፈልጋል።", en: "You must register at least one parish before registering a teacher assignment.", om: "Ramaddii barsiisaa galmeessuun dura yoo xiqqaate Kutaa To'annoo Mana Barnoota Sanbataa tokko galmeessuun dirqama.", ti: "ምድባ መምህር ቅድሚ ምምዝጋብኩም ብውሑዱ ሓደ ክፍሊ ቁጽጽር ት/ቤት ሰንበት ክትምዝግቡ ኣለኩም።", ar: "يجب تسجيل قسم مراقبة مدرسة الأحد واحدة على الأقل قبل تسجيل تعيين معلم.", fr: "Vous devez enregistrer au moins une section de contrôle de l'école du dimanche avant d'enregistrer une affectation d'enseignant.", es: "Debe registrar al menos una sección de control de la escuela dominical antes de registrar una asignación de maestro." },      newTitle:     { am: "አዲስ የመምህር ምደባ መዝግብ", en: "Register a New Teacher Assignment", om: "Ramaddii Barsiisaa Haaraa Galmeessi", ti: "ሓድሽ ምድባ መምህር መዝግብ", ar: "تسجيل تعيين معلم جديد", fr: "Enregistrer une nouvelle affectation d'enseignant", es: "Registrar una nueva asignación de maestro" },      parishLabel:  { am: "ንብረት የሰ/ት/ቤቱ ቁጥጥር ክፍል", en: "Sunday School Control Section", om: "Kutaa To'annoo Mana Barnoota Sanbataa", ti: "ክፍሊ ቁጽጽር ት/ቤት ሰንበት", ar: "قسم مراقبة مدرسة الأحد", fr: "Section de contrôle de l'école du dimanche", es: "Sección de Control de la Escuela Dominical" },      nameLabel:    { am: "የመምህሩ ሙሉ ስም", en: "Teacher's Full Name", om: "Maqaa Guutuu Barsiisaa", ti: "ምሉእ ስም መምህር", ar: "الاسم الكامل للمعلم", fr: "Nom complet de l'enseignant", es: "Nombre completo del maestro" },      phoneLabel:   { am: "ስልክ ቁጥር", en: "Phone Number", om: "Lakkoofsa Bilbilaa", ti: "ቁጽሪ ተሌፎን", ar: "رقم الهاتف", fr: "Numéro de téléphone", es: "Número de teléfono" },      levelLabel:   { am: "የሚያስተምረው ደረጃ", en: "Level Taught", om: "Sadarkaa Barsiisu", ti: "ደረጃ ዘመሃር", ar: "المستوى الذي يدرّسه", fr: "Niveau enseigné", es: "Nivel que enseña" },      subjectLabel: { am: "የሚያስተምረው ትምህርት አይነት", en: "Subject Taught", om: "Barnoota Barsiisu", ti: "ትምህርቲ ዘመሃር", ar: "المادة التي يدرّسها", fr: "Matière enseignée", es: "Materia que enseña" },      subjectPh:    { am: "ለምሳሌ ብሉይ ኪዳን", en: "e.g. Old Testament", om: "fkn Seera Duraanii", ti: "ኣብነት ብሉይ ኪዳን", ar: "مثال: العهد القديم", fr: "ex. Ancien Testament", es: "ej. Antiguo Testamento" },      courseTypeLabel: { am: "የኮርሱ አይነት", en: "Course Type", om: "Gosa Koorsii", ti: "ዓይነት ኮርስ", ar: "نوع المقرر", fr: "Type de cours", es: "Tipo de curso" },      yearLabel:    { am: "ዓመተ ምህረት", en: "Academic Year", om: "Bara Barnootaa", ti: "ዓመተ ምህረት", ar: "السنة الدراسية", fr: "Année académique", es: "Año académico" },      errNameYear:  { am: "እባክዎ ስም እና ዓመተ ምህረት ቢያንስ ያስፈልጋሉ", en: "Name and academic year are at least required", om: "Maqaa fi bara barnootaa yoo xiqqaate barbaachisu", ti: "ስምን ዓመተ ምህረትን ብውሑዱ የድልዩ", ar: "الاسم والسنة الدراسية مطلوبان على الأقل", fr: "Le nom et l'année académique sont au moins requis", es: "El nombre y el año académico son al menos obligatorios" },      lockMsg:      { am: "የ %ROLE% ሚና የመምህር ምደባ መመዝገብ አይፈቀድለትም።", en: "The %ROLE% role is not allowed to register a teacher assignment.", om: "Gaheen %ROLE% ramaddii barsiisaa galmeessuu hin danda'u.", ti: "ግደ %ROLE% ምድባ መምህር ምምዝጋብ ኣይፍቀዶን።", ar: "لا يُسمح لدور %ROLE% بتسجيل تعيين معلم.", fr: "Le rôle %ROLE% n'est pas autorisé à enregistrer une affectation d'enseignant.", es: "El rol %ROLE% no tiene permitido registrar una asignación de maestro." },      summaryTitle: { am: "ማጠቃለያ", en: "Summary", om: "Cuunfaa", ti: "ጠቕላላ", ar: "ملخص", fr: "Résumé", es: "Resumen" },      distinctCount:{ am: "የተለዩ መምህራን", en: "Distinct Teachers", om: "Barsiisota Addaa", ti: "ፍሱል መምህራን", ar: "معلمون مميزون", fr: "Enseignants distincts", es: "Maestros distintos" },      totalAssign:  { am: "ጠቅላላ ምደባዎች", en: "Total Assignments", om: "Ramaddii Waliigalaa", ti: "ጠቕላላ ምድባታት", ar: "إجمالي التعيينات", fr: "Total des affectations", es: "Total de asignaciones" },      assignWord:   { am: "ምደባ", en: "assignments", om: "ramaddii", ti: "ምድባ", ar: "تعيينات", fr: "affectations", es: "asignaciones" },      noneYet:      { am: "እስካሁን የመምህር ምደባ አልተመዘገበም", en: "No teacher assignment registered yet", om: "Hanga ammaatti ramaddiin barsiisaa hin galmoofne", ti: "ክሳብ ሕጂ ምድባ መምህር ኣይተመዝገበን", ar: "لم يتم تسجيل أي تعيين معلم بعد", fr: "Aucune affectation d'enseignant enregistrée pour l'instant", es: "Aún no se ha registrado ninguna asignación de maestro" },      noteText:     { am: "ይህ ክፍል የመምህራንን ምደባ፣ የሚያስተምሩትን ትምህርት እና ኮርስ አይነት በየዓመቱ (ዓመተ ምህረት) እየለየ ይከታተላል።", en: "This section tracks teacher assignments, the subject and course type they teach, by academic year.", om: "Kutaan kun ramaddii barsiisootaa, barnoota fi gosa koorsii isaan barsiisan, bara barnootaan hordofa.", ti: "እዚ ክፍሊ ምድባ መምህራን፣ ትምህርትን ዓይነት ኮርስን ብዓመተ ምህረት ዝከታተል እዩ።", ar: "يتتبع هذا القسم تعيينات المعلمين والمادة ونوع المقرر الذي يدرّسونه حسب السنة الدراسية.", fr: "Cette section suit les affectations des enseignants, la matière et le type de cours qu'ils enseignent, par année académique.", es: "Esta sección rastrea las asignaciones de maestros, la materia y el tipo de curso que enseñan, por año académico." },      yearCard:     { am: "ዓ.ም", en: "Year", om: "Bara", ti: "ዓ.ም", ar: "سنة", fr: "Année", es: "Año" }    },
+    docCategories: {
+      "ውስጠ ደንብ":      { am: "ውስጠ ደንብ", en: "Bylaws", om: "Seera Keessoo", ti: "ውሽጣዊ ሕጊ", ar: "اللائحة الداخلية", fr: "Statuts internes", es: "Estatutos internos" },
+      "መመሪያ":         { am: "መመሪያ", en: "Directive", om: "Qajeelfama", ti: "መምርሒ", ar: "توجيه", fr: "Directive", es: "Directiva" },
+      "ሌላ መረጃ/ሰነድ":  { am: "ሌላ መረጃ/ሰነድ", en: "Other Info/Document", om: "Odeeffannoo/Sanadii Biraa", ti: "ካልእ ሓበሬታ/ሰነድ", ar: "معلومات/وثيقة أخرى", fr: "Autre info/document", es: "Otra información/documento" }
+    },
+    doc: {
+      newTitle:    { am: "አዲስ ሰነድ/ደንብ አክል", en: "Add a New Document/Bylaw", om: "Sanadii/Seera Haaraa Ida'i", ti: "ሓድሽ ሰነድ/ሕጊ ወስኽ", ar: "إضافة وثيقة/لائحة جديدة", fr: "Ajouter un nouveau document/règlement", es: "Agregar un nuevo documento/estatuto" },      titleLabel:  { am: "ርዕስ", en: "Title", om: "Mata Duree", ti: "ኣርእስቲ", ar: "العنوان", fr: "Titre", es: "Título" },      titlePh:     { am: "ለምሳሌ የአባልነት ሂደት ደንብ", en: "e.g. Membership Process Bylaw", om: "fkn Seera Adeemsa Miseensummaa", ti: "ኣብነት ሕጊ ኣገባብ ኣባልነት", ar: "مثال: لائحة إجراءات العضوية", fr: "ex. Règlement du processus d'adhésion", es: "ej. Estatuto del proceso de membresía" },      typeLabel:   { am: "ዓይነት", en: "Type", om: "Gosa", ti: "ዓይነት", ar: "النوع", fr: "Type", es: "Tipo" },      issuerLabel: { am: "ያወጣው/ያጸደቀው አካል (አማራጭ)", en: "Issued/Approved by (optional)", om: "Kan Baase/Mirkaneesse (filannoo)", ti: "ዘውጽኦ/ዘጽደቖ ኣካል (ኣማራጺ)", ar: "الجهة المصدرة/المعتمدة (اختياري)", fr: "Émis/approuvé par (facultatif)", es: "Emitido/aprobado por (opcional)" },      issuerPh:    { am: "ለምሳሌ የየሰ/ት/ቤቱ ቁጥጥር ክፍልው ሥራ አስፈጻሚ", en: "e.g. Sunday School Control Section Executive Committee", om: "fkn Koree Raawwachiiftuu Kutaa To'annoo Mana Barnoota Sanbataa", ti: "ኣብነት ስራሕ ኣፈጻጺሚ ክፍሊ ቁጽጽር ት/ቤት ሰንበት", ar: "مثال: اللجنة التنفيذية للقسم مراقبة مدرسة الأحد", fr: "ex. Comité exécutif de la section de contrôle de l'école du dimanche", es: "ej. Comité ejecutivo de la sección de control de la escuela dominical" },      bodyLabel:   { am: "ይዘት", en: "Content", om: "Qabiyyee", ti: "ትሕዝቶ", ar: "المحتوى", fr: "Contenu", es: "Contenido" },      bodyPh:      { am: "ሙሉ ዝርዝር ይዘት...", en: "Full detailed content...", om: "Qabiyyee guutuu...", ti: "ምሉእ ዝርዝር ትሕዝቶ...", ar: "المحتوى التفصيلي الكامل...", fr: "Contenu détaillé complet...", es: "Contenido detallado completo..." },      errTitleBody:{ am: "እባክዎ ርዕስ እና ይዘት ያስፈልጋሉ", en: "Title and content are required", om: "Mata duree fi qabiyyeen barbaachisu", ti: "ኣርእስትን ትሕዝቶን የድልዩ", ar: "العنوان والمحتوى مطلوبان", fr: "Le titre et le contenu sont requis", es: "El título y el contenido son obligatorios" },      addBtn:      { am: "አክል", en: "Add", om: "Ida'i", ti: "ወስኽ", ar: "إضافة", fr: "Ajouter", es: "Agregar" },      lockMsg:     { am: "የ %ROLE% ሚና አዲስ ደንብ/ሰነድ ማከል አይፈቀድለትም — ማየት ብቻ ይችላል።", en: "The %ROLE% role may not add new bylaws/documents — view only.", om: "Gaheen %ROLE% seera/sanadii haaraa ida'uu hin danda'u — ilaaluu qofa.", ti: "ግደ %ROLE% ሓድሽ ሕጊ/ሰነድ ምውሳኽ ኣይፍቀዶን — ምርኣይ ጥራይ ይኽእል።", ar: "لا يُسمح لدور %ROLE% بإضافة لوائح/وثائق جديدة — العرض فقط.", fr: "Le rôle %ROLE% ne peut pas ajouter de nouveaux règlements/documents — lecture seule.", es: "El rol %ROLE% no puede agregar nuevos estatutos/documentos — solo lectura." },      noteText:    { am: "ይህ ክፍል የሰ/ት/ቤቱን ውስጠ ደንብ፣ መመሪያዎች እና ሌላ ማንኛውም ማጣቀሻ ሰነድ/መረጃ ለሁሉም ተጠቃሚዎች ክፍት አድርጎ የሚያቀርብ ማህደር (archive) ነው።", en: "This section is an archive offering the Sunday school's bylaws, directives, and any other reference document/info to all users.", om: "Kutaan kun seera keessoo, qajeelfamoota, fi odeeffannoo/sanadii biraa waldaa barnoota sanbataa hunda fayyadamtootaaf kan banu kuusaa dha.", ti: "እዚ ክፍሊ ውሽጣዊ ሕጊ፣ መምርሒታትን ካልእ ዝኾነ ማጣቀሲ ሰነድ/ሓበሬታ ንኹሎም ተጠቀምቲ ክፉት ዝገብር ማህደር እዩ።", ar: "هذا القسم أرشيف يقدم اللوائح الداخلية والتوجيهات وأي وثيقة/معلومات مرجعية أخرى لمدرسة الأحد لجميع المستخدمين.", fr: "Cette section est une archive offrant les statuts, directives et tout autre document/info de référence de l'école du dimanche à tous les utilisateurs.", es: "Esta sección es un archivo que ofrece los estatutos, directivas y cualquier otro documento/información de referencia de la escuela dominical a todos los usuarios." }    },
+    lessonTypes: {
+      "ቪዲዮ": { am: "ቪዲዮ", en: "Video", om: "Viidiyoo", ti: "ቪድዮ", ar: "فيديو", fr: "Vidéo", es: "Video" },
+      "ኦዲዮ": { am: "ኦዲዮ", en: "Audio", om: "Sagalee", ti: "ድምጺ", ar: "صوت", fr: "Audio", es: "Audio" }
+    },
+    les: {
+      newTitle:   { am: "አዲስ የትምህርት ይዘት አክል", en: "Add New Lesson Content", om: "Qabiyyee Barnoota Haaraa Ida'i", ti: "ሓድሽ ትሕዝቶ ትምህርቲ ወስኽ", ar: "إضافة محتوى درس جديد", fr: "Ajouter un nouveau contenu de leçon", es: "Agregar nuevo contenido de lección" },      titleLabel: { am: "ርዕስ", en: "Title", om: "Mata Duree", ti: "ኣርእስቲ", ar: "العنوان", fr: "Titre", es: "Título" },      titlePh:    { am: "ለምሳሌ የሐዲስ ኪዳን መግቢያ ትምህርት 1", en: "e.g. Intro to New Testament, Lesson 1", om: "fkn Seensa Kakuu Haaraa, Barnoota 1", ti: "ኣብነት መእተዊ ሓድሽ ኪዳን፣ ትምህርቲ 1", ar: "مثال: مقدمة العهد الجديد، الدرس 1", fr: "ex. Introduction au Nouveau Testament, Leçon 1", es: "ej. Introducción al Nuevo Testamento, Lección 1" },      levelLabel: { am: "ለየትኛው ደረጃ", en: "For Which Level", om: "Sadarkaa Kamiif", ti: "ንየትኛው ደረጃ", ar: "لأي مستوى", fr: "Pour quel niveau", es: "Para qué nivel" },      typeLabel:  { am: "ዓይነት", en: "Type", om: "Gosa", ti: "ዓይነት", ar: "النوع", fr: "Type", es: "Tipo" },      urlLabel:   { am: "ማገናኛ (URL)", en: "Link (URL)", om: "Hidhannoo (URL)", ti: "ማላገጺ (URL)", ar: "الرابط (URL)", fr: "Lien (URL)", es: "Enlace (URL)" },      urlPh:      { am: "የቪዲዮ/ኦዲዮ ማገናኛ", en: "Video/audio link", om: "Hidhannoo viidiyoo/sagalee", ti: "ማላገጺ ቪድዮ/ድምጺ", ar: "رابط الفيديو/الصوت", fr: "Lien vidéo/audio", es: "Enlace de video/audio" },      descLabel:  { am: "አጭር መግለጫ", en: "Short Description", om: "Ibsa Gabaabaa", ti: "ሓጺር መግለጺ", ar: "وصف موجز", fr: "Description courte", es: "Descripción breve" },      descPh:     { am: "ስለ ትምህርቱ አጭር ማብራሪያ...", en: "A brief note about the lesson...", om: "Ibsa gabaabaa waa'ee barnootichaa...", ti: "ሓጺር ገለጻ ብዛዕባ ትምህርቲ...", ar: "شرح موجز عن الدرس...", fr: "Brève explication sur la leçon...", es: "Breve explicación sobre la lección..." },      errAll:     { am: "እባክዎ ርዕስ እና ማገናኛ ያስፈልጋሉ", en: "Title and link are required", om: "Mata duree fi hidhannoon barbaachisu", ti: "ኣርእስትን ማላገጽን የድልዩ", ar: "العنوان والرابط مطلوبان", fr: "Le titre et le lien sont requis", es: "El título y el enlace son obligatorios" },      addBtn:     { am: "አክል", en: "Add", om: "Ida'i", ti: "ወስኽ", ar: "إضافة", fr: "Ajouter", es: "Agregar" },      lockMsg:    { am: "የ %ROLE% ሚና አዲስ ትምህርት ይዘት ማከል አይፈቀድለትም — ማየት/ማዳመጥ/መመልከት ብቻ ይችላል።", en: "The %ROLE% role may not add new lesson content — view/listen/watch only.", om: "Gaheen %ROLE% qabiyyee barnoota haaraa ida'uu hin danda'u — ilaaluu/dhaggeeffachuu qofa.", ti: "ግደ %ROLE% ሓድሽ ትሕዝቶ ትምህርቲ ምውሳኽ ኣይፍቀዶን — ምርኣይ/ምስማዕ ጥራይ ይኽእል።", ar: "لا يُسمح لدور %ROLE% بإضافة محتوى درس جديد — المشاهدة/الاستماع فقط.", fr: "Le rôle %ROLE% ne peut pas ajouter de nouveau contenu de leçon — lecture/écoute seule.", es: "El rol %ROLE% no puede agregar nuevo contenido de lección — solo ver/escuchar." },      noteText:   { am: "ተማሪዎች ትምህርትን በኦዲዮ እና ቪዲዮ መልክ በደረጃቸው ተከፋፍሎ እዚህ ማግኘት ይችላሉ።", en: "Students can access lessons here in audio and video form, organized by their level.", om: "Barattoonni barnoota sagalee fi viidiyoodhaan sadarkaa isaaniitiin qoodamee argachuu ni danda'u.", ti: "ተመሃሮ ትምህርቲ ብድምጽን ብቪድዮን ብደረጃኦም ተመቓቒሉ ኣብዚ ክረኽብዎ ይኽእሉ።", ar: "يمكن للطلاب الوصول إلى الدروس هنا بصيغة صوتية ومرئية، مقسمة حسب مستواهم.", fr: "Les élèves peuvent accéder aux leçons ici en format audio et vidéo, organisées par niveau.", es: "Los estudiantes pueden acceder a las lecciones aquí en formato de audio y video, organizadas por nivel." },      contentWord:{ am: "የትምህርት ይዘት", en: "lesson content", om: "qabiyyee barnootaa", ti: "ትሕዝቶ ትምህርቲ", ar: "محتوى الدرس", fr: "contenu de leçon", es: "contenido de lección" },      watchYoutube: { am: "▶ ቪዲዮውን ይመልከቱ (YouTube)", en: "▶ Watch video (YouTube)", om: "▶ Viidiyoo ilaali (YouTube)", ti: "▶ ቪድዮ ርኣዩ (YouTube)", ar: "▶ شاهد الفيديو (YouTube)", fr: "▶ Regarder la vidéo (YouTube)", es: "▶ Ver video (YouTube)" }    },
+    tools: {
+      noteText:      { am: "ይህ ገጽ ተጨማሪ ረዳት መሳሪያዎችን ይይዛል፤ አሁን ላይ በኢትዮጵያዊ እና በአውሮፓዊ የቀን አቆጣጠር መካከል የሚቀይር መሳሪያ ይገኛል።", en: "This page holds additional helper tools; a converter between the Ethiopian and Gregorian calendars is currently available.", om: "Fuulli kun meeshaalee gargaarsaa dabalataa qaba; yeroo ammaa meeshaan jijjiirraa kalandarii Itoophiyaa fi Awurooppaa ni argama.", ti: "እዚ ገጽ ተወሳኺ መሳርሒታት ሓገዝ ይሕዝ፤ ሕጂ ኣብ መንጎ ናይ ኢትዮጵያን ኣውሮጳን ካላንደር ዝቕይር መሳርሒ ኣሎ።", ar: "تحتوي هذه الصفحة على أدوات مساعدة إضافية؛ تتوفر حالياً أداة تحويل بين التقويم الإثيوبي والميلادي.", fr: "Cette page contient des outils d'aide supplémentaires ; un convertisseur entre les calendriers éthiopien et grégorien est actuellement disponible.", es: "Esta página contiene herramientas de ayuda adicionales; actualmente hay un convertidor entre los calendarios etíope y gregoriano." },      converterTitle:{ am: "🗓 የቀን መቀየሪያ (ኢትዮጵያዊ ⇄ አውሮፓዊ)", en: "🗓 Date Converter (Ethiopian ⇄ Gregorian)", om: "🗓 Jijjiirraa Guyyaa (Itoophiyaa ⇄ Awurooppaa)", ti: "🗓 መቐየሪ ዕለት (ኢትዮጵያዊ ⇄ ኣውሮጳዊ)", ar: "🗓 محول التاريخ (إثيوبي ⇄ ميلادي)", fr: "🗓 Convertisseur de dates (Éthiopien ⇄ Grégorien)", es: "🗓 Convertidor de fechas (Etíope ⇄ Gregoriano)" },      ecToGcTitle:   { am: "ከኢትዮጵያዊ ወደ አውሮፓዊ", en: "From Ethiopian to Gregorian", om: "Itoophiyaadhaa gara Awurooppaatti", ti: "ካብ ኢትዮጵያዊ ናብ ኣውሮጳዊ", ar: "من الإثيوبي إلى الميلادي", fr: "De l'éthiopien au grégorien", es: "De etíope a gregoriano" },      dayLabel:      { am: "ቀን", en: "Day", om: "Guyyaa", ti: "መዓልቲ", ar: "اليوم", fr: "Jour", es: "Día" },      monthLabel:    { am: "ወር", en: "Month", om: "Ji'a", ti: "ወርሒ", ar: "الشهر", fr: "Mois", es: "Mes" },      yearLabel:     { am: "ዓ.ም", en: "Year (EC)", om: "Bara (ALI)", ti: "ዓ.ም", ar: "السنة (هـ.إ)", fr: "Année (EC)", es: "Año (CE)" },      convertToGc:   { am: "ወደ አውሮፓዊ ቀይር", en: "Convert to Gregorian", om: "Gara Awurooppaatti Jijjiiri", ti: "ናብ ኣውሮጳዊ ቀይር", ar: "التحويل إلى الميلادي", fr: "Convertir en grégorien", es: "Convertir a gregoriano" },      gcToEcTitle:   { am: "ከአውሮፓዊ ወደ ኢትዮጵያዊ", en: "From Gregorian to Ethiopian", om: "Awurooppaadhaa gara Itoophiyaatti", ti: "ካብ ኣውሮጳዊ ናብ ኢትዮጵያዊ", ar: "من الميلادي إلى الإثيوبي", fr: "Du grégorien à l'éthiopien", es: "De gregoriano a etíope" },      gcDateLabel:   { am: "የአውሮፓዊ ቀን", en: "Gregorian Date", om: "Guyyaa Awurooppaa", ti: "ዕለት ኣውሮጳዊ", ar: "التاريخ الميلادي", fr: "Date grégorienne", es: "Fecha gregoriana" },      convertToEc:   { am: "ወደ ኢትዮጵያዊ ቀይር", en: "Convert to Ethiopian", om: "Gara Itoophiyaatti Jijjiiri", ti: "ናብ ኢትዮጵያዊ ቀይር", ar: "التحويل إلى الإثيوبي", fr: "Convertir en éthiopien", es: "Convertir a etíope" },      errYear:       { am: "እባክዎ ትክክለኛ ዓ.ም ያስገቡ", en: "Please enter a valid year", om: "Maaloo bara sirrii galchaa", ti: "በጃኹም ቅኑዕ ዓ.ም የእትዉ", ar: "يرجى إدخال سنة صحيحة", fr: "Veuillez entrer une année valide", es: "Por favor ingrese un año válido" },      errDate:       { am: "እባክዎ ቀን ይምረጡ", en: "Please select a date", om: "Maaloo guyyaa filadhaa", ti: "በጃኹም ዕለት ምረጹ", ar: "يرجى اختيار تاريخ", fr: "Veuillez sélectionner une date", es: "Por favor seleccione una fecha" },      copyIdTitle:   { am: "🔖 የዚህ ቅጂ መለያ ቁጥር", en: "🔖 This Copy's ID", om: "🔖 Lakkoofsa Ragaa Kanaa", ti: "🔖 መለለዪ ቁጽሪ ናይዚ ቅዳሕ", ar: "🔖 رقم تعريف هذه النسخة", fr: "🔖 Identifiant de cette copie", es: "🔖 Identificador de esta copia" },      copyIdNote:    { am: "ይህ ቁጥር ለዚህ ስልክ/ጭነት ልዩ ነው። ማንኛውም ሰነድ ወይም ሰርተፍኬት ሲወጣ ይህ ቁጥር ተለጥፎ ስለሚወጣ፣ ውሂብ ወይም ሰነድ ያለፈቃድ ቢወጣ ከየትኛው ቅጂ እንደወጣ ለመለየት ያግዛል።", en: "This number is unique to this phone/install. It is stamped on every generated document or certificate, so if data or a document leaks without permission, you can trace which copy it came from.", om: "Lakkoofsi kun bilbila/fe'umsa kanaaf addaa dha. Sanadii ykn ragaa maraa irratti chaappaa ta'ee waan bahuuf, odeeffannoon ykn sanadiin eyyama malee yoo dhoke, ragaa kam irraa akka ba'e beekuu ni gargaara.", ti: "እዚ ቁጽሪ ንዚ ስልኪ/ተገጣጣሚ ፍሉይ እዩ። ኩሉ ዝወጽእ ሰነድ ወይ ምስክር ወረቐት ተለጢፉ ስለዝወጽእ፣ ሓበሬታ ወይ ሰነድ ብዘይ ፍቓድ እንተ ወጺኡ ካብ ኣየናይ ቅዳሕ ከምዝወጸ ንምልላይ ይሕግዝ።", ar: "هذا الرقم فريد لهذا الهاتف/التثبيت. يُطبع على كل وثيقة أو شهادة يتم إنشاؤها، لذا إذا تسربت بيانات أو وثيقة دون إذن، يمكنك تتبع النسخة التي صدرت منها.", fr: "Ce numéro est unique à ce téléphone/installation. Il est estampillé sur chaque document ou certificat généré, donc en cas de fuite non autorisée, vous pouvez retracer la copie d'origine.", es: "Este número es único para este teléfono/instalación. Se estampa en cada documento o certificado generado, así que si se filtran datos sin permiso, puede rastrear de qué copia provienen." }    },
+    fb: {
+      btn:          { am: "🐛 አስተያየት ላክ", en: "🐛 Send Feedback", om: "🐛 Yaada Ergi", ti: "🐛 ርእይቶ ላኣኽ", ar: "🐛 إرسال ملاحظات", fr: "🐛 Envoyer un avis", es: "🐛 Enviar comentario" },      panelTitle:   { am: "አስተያየት/ችግር ላክ", en: "Send Feedback / Report Issue", om: "Yaada/Rakkoo Ergi", ti: "ርእይቶ/ጸገም ላኣኽ", ar: "إرسال ملاحظات / إبلاغ عن مشكلة", fr: "Envoyer un avis / signaler un problème", es: "Enviar comentario / reportar problema" },      nameLabel:    { am: "ስምዎ (አማራጭ)", en: "Your name (optional)", om: "Maqaa keessan (filannoo)", ti: "ስምኩም (ኣማራጺ)", ar: "اسمك (اختياري)", fr: "Votre nom (facultatif)", es: "Su nombre (opcional)" },      typeLabel:    { am: "ዓይነት", en: "Type", om: "Gosa", ti: "ዓይነት", ar: "النوع", fr: "Type", es: "Tipo" },      typeBug:      { am: "ስህተት/ችግር", en: "Bug/Problem", om: "Dogoggora/Rakkoo", ti: "ጌጋ/ጸገም", ar: "خطأ/مشكلة", fr: "Bug/Problème", es: "Error/Problema" },      typeConfuse:  { am: "ግራ የሚያጋባ", en: "Confusing", om: "Kan nama jeequ", ti: "ዘደናግር", ar: "مربك", fr: "Déroutant", es: "Confuso" },      typeIdea:     { am: "ሀሳብ/ጥቆማ", en: "Idea/Suggestion", om: "Yaada/Gorsa", ti: "ሓሳብ/ምጥቃም", ar: "فكرة/اقتراح", fr: "Idée/Suggestion", es: "Idea/Sugerencia" },      msgLabel:     { am: "መልዕክት", en: "Message", om: "Ergaa", ti: "መልእኽቲ", ar: "الرسالة", fr: "Message", es: "Mensaje" },      msgPh:        { am: "የገጠመዎትን ችግር ወይም ሀሳብዎን ይግለጹ...", en: "Describe what you ran into or your suggestion...", om: "Rakkina isin mudate ykn yaada keessan ibsaa...", ti: "ዝገጠመኩም ጸገም ወይ ሓሳብኩም ግለጹ...", ar: "صف المشكلة التي واجهتها أو اقتراحك...", fr: "Décrivez ce que vous avez rencontré ou votre suggestion...", es: "Describa lo que encontró o su sugerencia..." },      errMsg:       { am: "እባክዎ መልዕክት ይጻፉ", en: "Please write a message", om: "Maaloo ergaa barreessaa", ti: "በጃኹም መልእኽቲ ጻሑፉ", ar: "يرجى كتابة رسالة", fr: "Veuillez écrire un message", es: "Por favor escriba un mensaje" },      sendBtn:      { am: "ላክ", en: "Send", om: "Ergi", ti: "ላኣኽ", ar: "إرسال", fr: "Envoyer", es: "Enviar" },      thanks:       { am: "አመሰግናለሁ! አስተያየትዎ ተመዝግቧል።", en: "Thank you! Your feedback was recorded.", om: "Galatoomaa! Yaadni keessan galmaa'eera.", ti: "የቐንየለይ! ርእይቶኹም ተመዝጊቡ።", ar: "شكراً لك! تم تسجيل ملاحظاتك.", fr: "Merci ! Votre avis a été enregistré.", es: "¡Gracias! Su comentario fue registrado." },      listTitle:    { am: "የተሰበሰቡ አስተያየቶች", en: "Collected Feedback", om: "Yaadota Walitti Qabaman", ti: "ዝተኣከቡ ርእይቶታት", ar: "الملاحظات المجمعة", fr: "Avis collectés", es: "Comentarios recopilados" },      exportBtn:    { am: "አስተያየቶችን አውርድ (CSV)", en: "Download Feedback (CSV)", om: "Yaadota Buufadhu (CSV)", ti: "ርእይቶታት ኣውርድ (CSV)", ar: "تنزيل الملاحظات (CSV)", fr: "Télécharger les avis (CSV)", es: "Descargar comentarios (CSV)" },      close:        { am: "ዝጋ", en: "Close", om: "Cufi", ti: "ዕጸው", ar: "إغلاق", fr: "Fermer", es: "Cerrar" }    },
+    comms: {
+      syncTitle:       { am: "ወደ ላይ የመረጃ ፍሰት (የሰ/ት/ቤቱ ቁጥጥር ክፍል → የደብሩ ጽሕፈት ቤት → የደብሩ ሰ/ት/ቤት)", en: "Upward Data Flow (Sunday School Control Section → Parish Office → Parish Sunday School)", om: "Adeemsa Odeeffannoo Gara Olii (Kutaa To'annoo Mana Barnoota Sanbataa → Waajjira Waldaa → Mana Barnoota Sanbataa Waldaa)", ti: "ንላዕሊ ዝኸይድ ፍሰት ሓበሬታ (ክፍሊ ቁጽጽር ት/ቤት ሰንበት → ቤ/ጽ ኣጥቢያ → ት/ቤት ሰንበት ኣጥቢያ)", ar: "تدفق البيانات إلى الأعلى (قسم مراقبة مدرسة الأحد ← مكتب الرعية ← مدرسة الأحد بالرعية)", fr: "Flux de données ascendant (Section de contrôle de l'école du dimanche → Bureau paroissial → École du dimanche paroissiale)", es: "Flujo de datos ascendente (Sección de Control de la Escuela Dominical → Oficina parroquial → Escuela Dominical parroquial)" },      syncNote:        { am: "%N% ያልተላከ የአባል መዝገብ አለ። መስመር ላይ ሲሆኑ ብቻ ወደ ላይኛው እርከን ሊላክ ይችላል።", en: "There are %N% unsent member records. They can only be sent upward while you are online.", om: "%N% galmee miseensaa hin ergamin jira. Yeroo interneetii irra jirtan qofa gara olitti erguu dandeessu.", ti: "%N% ዘይተላእከ ናይ ኣባል መዝገብ ኣሎ። ኣብ ኦንላይን ኣብ ዘለኹምሉ ጥራይ ናብ ላዕሊ ክለኣኽ ይኽእል።", ar: "يوجد %N% سجل عضو غير مرسل. يمكن إرسالها للأعلى فقط عند الاتصال بالإنترنت.", fr: "Il y a %N% enregistrements de membres non envoyés. Ils ne peuvent être envoyés que lorsque vous êtes en ligne.", es: "Hay %N% registros de miembros sin enviar. Solo se pueden enviar cuando está en línea." },      syncBtn:         { am: "ሁሉንም አሁን አመሳስል", en: "Sync All Now", om: "Amma Hunda Walsimsiisi", ti: "ሕጂ ኩሉ ኣሳኒ", ar: "مزامنة الكل الآن", fr: "Synchroniser tout maintenant", es: "Sincronizar todo ahora" },      reportTitle:     { am: "የየሰ/ት/ቤቱ ቁጥጥር ክፍል ወቅታዊ ሪፖርት ላክ", en: "Send Sunday School Control Section Periodic Report", om: "Gabaasa Yeroo Kutaa To'annoo Mana Barnoota Sanbataa Ergi", ti: "ናይ ክፍሊ ቁጽጽር ት/ቤት ሰንበት ወቕታዊ ጸብጻብ ላኣኽ", ar: "إرسال تقرير قسم مراقبة مدرسة الأحد الدوري", fr: "Envoyer le rapport périodique de la section de contrôle de l'école du dimanche", es: "Enviar informe periódico de la sección de control de la escuela dominical" },      selectParish:    { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍል ይምረጡ", en: "Select Sunday School Control Section", om: "Kutaa To'annoo Mana Barnoota Sanbataa Filadhaa", ti: "ክፍሊ ቁጽጽር ት/ቤት ሰንበት ምረጹ", ar: "اختر قسم مراقبة مدرسة الأحد", fr: "Sélectionner la section de contrôle de l'école du dimanche", es: "Seleccione la sección de control de la escuela dominical" },      sendReportBtn:   { am: "ሪፖርት ወደ የደብሩ ጽሕፈት ቤት/የደብሩ ሰ/ት/ቤት ላክ", en: "Send Report to Parish Office/Parish Sunday School", om: "Gabaasa gara Waajjira Waldaa/Mana Barnoota Sanbataa Waldaatti Ergi", ti: "ጸብጻብ ናብ ቤ/ጽ ኣጥቢያ/ት/ቤት ሰንበት ኣጥቢያ ላኣኽ", ar: "إرسال التقرير إلى مكتب الرعية/مدرسة الأحد بالرعية", fr: "Envoyer le rapport au bureau paroissial/synode", es: "Enviar informe a la oficina parroquial/sínodo" },      onlineToEnable:  { am: "መስመር ላይ ሲሆኑ ንቁ ይሆናል", en: "This will activate when you are online", om: "Yeroo interneetii irra jirtan ni hojjata", ti: "ኣብ ኦንላይን ምስ ኮንኩም ንጡፍ ይኸውን", ar: "سيتم تفعيل هذا عند الاتصال بالإنترنت", fr: "Ceci s'activera lorsque vous serez en ligne", es: "Esto se activará cuando esté en línea" },      reportsRxTitle:  { am: "የደረሱ ሪፖርቶች", en: "Received Reports", om: "Gabaasawwan Dhufan", ti: "ዝበጽሑ ጸብጻባት", ar: "التقارير المستلمة", fr: "Rapports reçus", es: "Informes recibidos" },      noneReceived:    { am: "እስካሁን የደረሰ ሪፖርት የለም", en: "No report received yet", om: "Hanga ammaatti gabaasni hin dhufne", ti: "ክሳብ ሕጂ ዝበጽሐ ጸብጻብ የለን", ar: "لم يتم استلام أي تقرير بعد", fr: "Aucun rapport reçu pour l'instant", es: "Aún no se ha recibido ningún informe" },      circFormTitle:   { am: "ወደ ታች መመሪያ/ማስታወቂያ ላክ (ከየደብሩ ሰ/ት/ቤት ወደ የሰ/ት/ቤቱ ቁጥጥር ክፍል)", en: "Send Directive/Notice Downward (Parish Sunday School to Sunday School Control Section)", om: "Qajeelfama/Beeksisa Gara Gadiitti Ergi (Waajjira Waldaadhaa gara Kutaa To'annoo Mana Barnoota Sanbataatti)", ti: "ንታሕቲ ዝኸይድ መምርሒ/ማስታወቂያ ላኣኽ (ካብ ት/ቤት ሰንበት ኣጥቢያ ናብ ክፍሊ ቁጽጽር ት/ቤት ሰንበት)", ar: "إرسال توجيه/إشعار إلى الأسفل (من مدرسة الأحد بالرعية إلى قسم مراقبة مدرسة الأحد)", fr: "Envoyer une directive/avis vers le bas (du École du dimanche paroissiale à la Section de contrôle de l'école du dimanche)", es: "Enviar directiva/aviso hacia abajo (del Escuela Dominical parroquial a la Sección de Control de la Escuela Dominical)" },      circTitleLabel:  { am: "ርዕስ", en: "Title", om: "Mata Duree", ti: "ኣርእስቲ", ar: "العنوان", fr: "Titre", es: "Título" },      circTitlePh:     { am: "ለምሳሌ የበዓል መርሃ ግብር", en: "e.g. Holiday Schedule", om: "fkn Sagantaa Ayyaanaa", ti: "ኣብነት መደብ በዓል", ar: "مثال: جدول العيد", fr: "ex. Programme des fêtes", es: "ej. Calendario de festividades" },      circBodyLabel:   { am: "መልዕክት", en: "Message", om: "Ergaa", ti: "መልእኽቲ", ar: "الرسالة", fr: "Message", es: "Mensaje" },      circBodyPh:      { am: "ዝርዝር መልዕክት...", en: "Detailed message...", om: "Ergaa bal'aa...", ti: "ዝርዝር መልእኽቲ...", ar: "رسالة مفصلة...", fr: "Message détaillé...", es: "Mensaje detallado..." },      circSendBtn:     { am: "መልዕክት ላክ", en: "Send Message", om: "Ergaa Ergi", ti: "መልእኽቲ ላኣኽ", ar: "إرسال الرسالة", fr: "Envoyer le message", es: "Enviar mensaje" },      circListTitle:   { am: "የተላኩ መመሪያዎች", en: "Sent Directives", om: "Qajeelfamoota Ergaman", ti: "ዝተላእኩ መምርሒታት", ar: "التوجيهات المرسلة", fr: "Directives envoyées", es: "Directivas enviadas" },      noneSent:        { am: "እስካሁን የተላከ የለም", en: "None sent yet", om: "Hanga ammaatti wanti hin ergamne", ti: "ክሳብ ሕጂ ዝተላእከ የለን", ar: "لم يتم إرسال أي شيء بعد", fr: "Rien n'a encore été envoyé", es: "Aún no se ha enviado nada" },      mainNote:        { am: "ይህ ክፍል ከየደብሩ ሰ/ት/ቤት እስከ የሰ/ት/ቤቱ ቁጥጥር ክፍል ያለውን ወጥ የሆነ ሁለት-አቅጣጫ የመረጃ ፍሰት ያሳያል፦ ሪፖርት ወደ ላይ፣ መመሪያ ወደ ታች።", en: "This section shows the standardized two-way data flow from Parish Sunday School down to Sunday School Control Section: reports upward, directives downward.", om: "Kutaan kun adeemsa odeeffannoo lamee-kallattii, Waajjira Waldaadhaa hanga Kutaa To'annoo Mana Barnoota Sanbataatti argisiisa: gabaasni gara olii, qajeelfamni gara gadii.", ti: "እዚ ክፍሊ ካብ ት/ቤት ሰንበት ኣጥቢያ ክሳብ ክፍሊ ቁጽጽር ት/ቤት ሰንበት ዘሎ ሚዛናዊ ክልተ-ኣንፈት ፍሰት ሓበሬታ የርኢ፦ ጸብጻብ ንላዕሊ፣ መምርሒ ንታሕቲ።", ar: "يوضح هذا القسم تدفق البيانات ثنائي الاتجاه الموحد من مدرسة الأحد بالرعية إلى قسم مراقبة مدرسة الأحد: تقارير للأعلى وتوجيهات للأسفل.", fr: "Cette section montre le flux de données bidirectionnel standardisé du École du dimanche paroissiale à la Section de contrôle de l'école du dimanche : rapports vers le haut, directives vers le bas.", es: "Esta sección muestra el flujo de datos bidireccional estandarizado del Escuela Dominical parroquial a la Sección de Control de la Escuela Dominical: informes hacia arriba, directivas hacia abajo." },      smsTitle:  { am: "📱 ኤስኤምኤስ አማራጭ (ለስማርት ስልክ/ኢንተርኔት ለሌላቸው)", en: "📱 SMS Fallback (for those without a smartphone/internet)", om: "📱 Filannoo SMS (kanneen smartphone/interneetii hin qabneef)", ti: "📱 ኣማራጺ SMS (ንዘይብሎም ስማርት ስልኪ/ኢንተርነት)", ar: "📱 بديل الرسائل النصية (لمن لا يملك هاتفاً ذكياً/إنترنت)", fr: "📱 Solution SMS (pour ceux sans smartphone/internet)", es: "📱 Alternativa SMS (para quienes no tienen smartphone/internet)" },      smsNote:   { am: "ኤስኤምኤስ ኢንተርኔት ስለማይፈልግ፣ ስማርት ስልክ ወይም ዳታ ለሌላቸው ሰብሳቢዎች/አስተዳዳሪዎች አማራጭ የማሳወቂያ መንገድ ሆኖ ያገለግላል።", en: "Since SMS doesn't require internet, it works as an alternative notification method for collectors/admins without a smartphone or data.", om: "SMS interneetii waan hin barbaachifneef, walitti qabaa/bulchaa smartphone ykn daataa hin qabneef karaa beeksisa biraa ta'a.", ti: "SMS ኢንተርነት ስለዘየድልዮ፣ ንዘይብሎም ስማርት ስልኪ ወይ ዳታ ኣኪብቲ/ኣመሓደርቲ ኣማራጺ መገዲ ምልክታ ኮይኑ የገልግል።", ar: "بما أن الرسائل النصية لا تحتاج إلى إنترنت، فإنها توفر وسيلة إشعار بديلة لجامعي البيانات/المسؤولين الذين لا يملكون هاتفاً ذكياً أو بيانات.", fr: "Comme le SMS ne nécessite pas Internet, il offre un moyen de notification alternatif pour les collecteurs/administrateurs sans smartphone ni données.", es: "Como el SMS no requiere internet, sirve como un método de notificación alternativo para recolectores/administradores sin smartphone o datos." },      smsPhoneLabel: { am: "የአስተዳዳሪ ስልክ ቁጥር", en: "Admin Phone Number", om: "Lakkoofsa Bilbilaa Bulchaa", ti: "ቁጽሪ ስልኪ ኣመሓዳሪ", ar: "رقم هاتف المسؤول", fr: "Numéro de téléphone de l'administrateur", es: "Número de teléfono del administrador" },      smsPhonePh:    { am: "ለምሳሌ +251911223344", en: "e.g. +251911223344", om: "fkn +251911223344", ti: "ኣብነት +251911223344", ar: "مثال: +251911223344", fr: "ex. +251911223344", es: "ej. +251911223344" },      smsSendBtn:    { am: "📱 ወቅታዊ ማጠቃለያ በኤስኤምኤስ ላክ", en: "📱 Send Current Summary via SMS", om: "📱 Cuunfaa Ammaa SMS'n Ergi", ti: "📱 ሕጂ ጠቕላላ ብSMS ላኣኽ", ar: "📱 إرسال الملخص الحالي عبر الرسائل النصية", fr: "📱 Envoyer le résumé actuel par SMS", es: "📱 Enviar resumen actual por SMS" },      smsBody:       { am: "BK/B/N ማጠቃለያ፦ %DIO% የደብሩ ጽሕፈት ቤት፣ %PAR% የሰ/ት/ቤቱ ቁጥጥር ክፍል፣ %MEM% ጠቅላላ አባል፣ %PEND% ያልተላከ መዝገብ።", en: "BK/B/N Summary: %DIO% dioceses, %PAR% parishes, %MEM% total members, %PEND% unsent records.", om: "Cuunfaa BK/B/N: Waajjira Waldaa %DIO%, Kutaa To'annoo Mana Barnoota Sanbataa %PAR%, Miseensota %MEM%, Galmee %PEND% hin ergamin.", ti: "ጠቕላላ BK/B/N፦ %DIO% ቤ/ጽ ኣጥቢያ፣ %PAR% ክፍሊ ቁጽጽር ት/ቤት ሰንበት፣ %MEM% ጠቕላላ ኣባል፣ %PEND% ዘይተላእከ መዝገብ።", ar: "ملخص BK/B/N: %DIO% مكتب رعية، %PAR% قسم مراقبة مدرسة الأحد، %MEM% إجمالي الأعضاء، %PEND% سجل غير مرسل.", fr: "Résumé BK/B/N : %DIO% bureaux paroissiaux, %PAR% sections de contrôle de l'école du dimanche, %MEM% membres au total, %PEND% enregistrements non envoyés.", es: "Resumen BK/B/N: %DIO% oficina parroquial, %PAR% secciones de control de la escuela dominical, %MEM% miembros totales, %PEND% registros sin enviar." },      smsNoPhone:    { am: "እባክዎ የስልክ ቁጥር ያስገቡ", en: "Please enter a phone number", om: "Maaloo lakkoofsa bilbilaa galchaa", ti: "በጃኹም ቁጽሪ ስልኪ የእትዉ", ar: "يرجى إدخال رقم الهاتف", fr: "Veuillez entrer un numéro de téléphone", es: "Por favor ingrese un número de teléfono" },      smsCaveat:     { am: "ማሳሰቢያ፦ ይህ የስልክዎን ነባሪ SMS መተግበሪያ ይከፍታል፤ በአንዳንድ ስልኮች ላይ አሠራሩ ትንሽ ሊለያይ ይችላል።", en: "Note: this opens your phone's default SMS app; behavior may vary slightly by device.", om: "Yaadachiisa: kun app SMS durtii bilbila keessanii bana; haala isaa bilbila garaagaraatti xiqqoo garaagara ta'uu danda'a.", ti: "ማሳሰቢያ፦ እዚ ናይ ንቡር SMS ኣፕ ስልክኹም ይኸፍት፤ ኣብ ገሊኡ ስልኪ ኣገባቡ ቁሩብ ክፈላለ ይኽእል።", ar: "ملاحظة: يفتح هذا تطبيق الرسائل النصية الافتراضي في هاتفك؛ قد يختلف السلوك قليلاً حسب الجهاز.", fr: "Remarque : ceci ouvre l'application SMS par défaut de votre téléphone ; le comportement peut varier légèrement selon l'appareil.", es: "Nota: esto abre la aplicación de SMS predeterminada de su teléfono; el comportamiento puede variar ligeramente según el dispositivo." }    },
+    cert: {
+      tabNote:       { am: "ይህ ክፍል ለአባላት እና ለተመረቁ ተማሪዎች ኦፊሴላዊ፣ ሊታተሙ የሚችሉ ሰነዶች እንዲያመነጩ ያስችላል።", en: "This section lets you generate official, printable documents for members and graduated students.", om: "Kutaan kun ragaalee ashaakiloo, kan maxxanfaman miseensotaa fi barattoota eebbifamaniif akka uumtan isin dandeessisa.", ti: "እዚ ክፍሊ ንኣባላትን ንዝተመረቑ ተመሃሮን ወግዓዊ፣ ክሕተሙ ዝኽእሉ ሰነዳት ንኽትፈጥሩ ዘኽእል እዩ።", ar: "يتيح لك هذا القسم إنشاء وثائق رسمية قابلة للطباعة للأعضاء والطلاب الخريجين.", fr: "Cette section vous permet de générer des documents officiels imprimables pour les membres et les élèves diplômés.", es: "Esta sección le permite generar documentos oficiales imprimibles para miembros y estudiantes graduados." },      typeLabel:     { am: "የሰነድ አይነት", en: "Document Type", om: "Gosa Ragaa", ti: "ዓይነት ሰነድ", ar: "نوع الوثيقة", fr: "Type de document", es: "Tipo de documento" },      typeMembership:{ am: "የአባልነት ማረጋገጫ", en: "Membership Confirmation", om: "Mirkaneessa Miseensummaa", ti: "ምርግጋጽ ኣባልነት", ar: "تأكيد العضوية", fr: "Confirmation d'adhésion", es: "Confirmación de membresía" },      typeGraduation:{ am: "የምረቃ የምስክር ወረቀት", en: "Graduation Certificate", om: "Waraqaa Ragaa Eebba", ti: "ናይ ምረቓ ምስክር ወረቐት", ar: "شهادة التخرج", fr: "Certificat de fin d'études", es: "Certificado de graduación" },      personLabel:   { am: "ሰው ይምረጡ", en: "Select Person", om: "Nama Filadhu", ti: "ሰብ ምረጹ", ar: "اختر الشخص", fr: "Sélectionner la personne", es: "Seleccionar persona" },      noPeople:      { am: "ለዚህ አይነት ሰነድ የሚያስፈልግ ተመዝጋቢ የለም", en: "No eligible registrant for this document type", om: "Galmeessituu gosa ragaa kanaaf ta'u hin jiru", ti: "ንዚ ዓይነት ሰነድ ዝበቅዕ ተመዝጋቢ የለን", ar: "لا يوجد مسجل مؤهل لهذا النوع من الوثائق", fr: "Aucun inscrit éligible pour ce type de document", es: "No hay ningún inscrito elegible para este tipo de documento" },      generateBtn:   { am: "ሰነድ አመንጭ", en: "Generate Document", om: "Ragaa Uumi", ti: "ሰነድ ኣፍሪ", ar: "إنشاء الوثيقة", fr: "Générer le document", es: "Generar documento" },      printBtn:      { am: "🖨 አትም", en: "🖨 Print", om: "🖨 Maxxansi", ti: "🖨 ሕተም", ar: "🖨 طباعة", fr: "🖨 Imprimer", es: "🖨 Imprimir" },      titleMembership:{ am: "የአባልነት ማረጋገጫ ደብዳቤ", en: "Membership Confirmation Letter", om: "Xalayaa Mirkaneessa Miseensummaa", ti: "ደብዳበ ምርግጋጽ ኣባልነት", ar: "خطاب تأكيد العضوية", fr: "Lettre de confirmation d'adhésion", es: "Carta de confirmación de membresía" },      bodyMembership:{ am: "እኛ ከዚህ በታች የተፈረምነው የ%PARISH% (%DIOCESE%) የሰንበት ት/ቤት ኃላፊዎች፣ አቶ/ወ/ሮ/ወ/ት %NAME% በመዝገባችን ቁጥር %CODE% ስር በሕጋዊ መንገድ የተመዘገቡ ንቁ አባል መሆናቸውን በዚህ ደብዳቤ እናረጋግጣለን። ይህ ሰነድ በ%DATE% የተዘጋጀ ነው።", en: "We, the undersigned officials of the Sunday School of %PARISH% (%DIOCESE%), hereby confirm that %NAME%, registered under record number %CODE%, is a duly registered active member. This document was issued on %DATE%.", om: "Nuti qondaaltota Mana Barnoota Sanbataa %PARISH% (%DIOCESE%) mallatteessine, %NAME% lakkoofsa galmee %CODE% jalatti seeraan galmaa'e miseensa hojjataa ta'uu isaanii xalayaa kanaan mirkaneessina. Ragaan kun guyyaa %DATE% qophaa'e.", ti: "ንሕና ትሕቲ እዚ ዝፈረምና ሓለፍቲ ናይ ት/ቤት ሰንበት %PARISH% (%DIOCESE%)፣ %NAME% ብቁጽሪ መዝገብ %CODE% ብሕጋዊ መንገዲ ዝተመዝገቡ ንጡፍ ኣባል ምዃኖም በዚ ደብዳበ ነረጋግጽ። እዚ ሰነድ ኣብ %DATE% ተዳልዩ እዩ።", ar: "نحن الموقعون أدناه، مسؤولو مدرسة الأحد في %PARISH% (%DIOCESE%)، نؤكد بموجب هذا الخطاب أن %NAME%، المسجل تحت رقم السجل %CODE%، هو عضو نشط مسجل حسب الأصول. صدرت هذه الوثيقة بتاريخ %DATE%.", fr: "Nous, responsables soussignés de l'école du dimanche de %PARISH% (%DIOCESE%), confirmons par la présente que %NAME%, enregistré sous le numéro %CODE%, est un membre actif dûment enregistré. Ce document a été délivré le %DATE%.", es: "Nosotros, los funcionarios abajo firmantes de la Escuela Dominical de %PARISH% (%DIOCESE%), confirmamos que %NAME%, registrado bajo el número %CODE%, es un miembro activo debidamente registrado. Este documento fue emitido el %DATE%." },      titleGraduation:{ am: "የምረቃ የምስክር ወረቀት", en: "Certificate of Graduation", om: "Waraqaa Ragaa Eebba", ti: "ናይ ምረቓ ምስክር ወረቐት", ar: "شهادة التخرج", fr: "Certificat de fin d'études", es: "Certificado de graduación" },      bodyGraduation:{ am: "ይህ የምስክር ወረቀት %NAME% በ%PARISH% ሰንበት ትምህርት ቤት በ%LEVEL% ደረጃ የ«%COURSE%» ትምህርትን በሚገባ አጠናቅቀው በ%GRADYEAR% ዓ.ም መመረቃቸውን ያረጋግጣል።", en: "This certificate confirms that %NAME% has successfully completed the course \"%COURSE%\" at the %LEVEL% level of the Sunday School of %PARISH%, and graduated in %GRADYEAR%.", om: "Ragaan kun %NAME% koorsii \"%COURSE%\" sadarkaa %LEVEL% Mana Barnoota Sanbataa %PARISH% keessatti milkaa'inaan xumuranii bara %GRADYEAR% eebbifamuu isaanii ni mirkaneessa.", ti: "እዚ ምስክር ወረቐት %NAME% ኣብ %PARISH% ት/ቤት ሰንበት ብደረጃ %LEVEL% ትምህርቲ «%COURSE%» ብዕቱብ ወዲኦም ብ%GRADYEAR% ዓ.ም ከምዝተመረቑ የረጋግጽ።", ar: "تؤكد هذه الشهادة أن %NAME% قد أكمل بنجاح مقرر \"%COURSE%\" في مستوى %LEVEL% بمدرسة الأحد في %PARISH%، وتخرج في عام %GRADYEAR%.", fr: "Ce certificat confirme que %NAME% a terminé avec succès le cours « %COURSE% » au niveau %LEVEL% de l'école du dimanche de %PARISH%, et a obtenu son diplôme en %GRADYEAR%.", es: "Este certificado confirma que %NAME% completó con éxito el curso «%COURSE%» en el nivel %LEVEL% de la Escuela Dominical de %PARISH%, y se graduó en %GRADYEAR%." },      signOff1:      { am: "ፊርማ (የሰ/ት/ቤቱ ሰብሳቢ)", en: "Signature (Sunday School Head)", om: "Mallattoo (Hoogganaa Mana Barnootaa)", ti: "ፊርማ (ሓላፊ ት/ቤት ሰንበት)", ar: "التوقيع (رئيس مدرسة الأحد)", fr: "Signature (Responsable de l'école du dimanche)", es: "Firma (Responsable de la Escuela Dominical)" },      signOff2:      { am: "ማህተም እና ቀን", en: "Seal and Date", om: "Chaappaa fi Guyyaa", ti: "ማሕተምን ዕለትን", ar: "الختم والتاريخ", fr: "Cachet et date", es: "Sello y fecha" }    },
+    io: {
+      exportTitle:    { am: "ውሂብ ማውጫ (Export)", en: "Data Export", om: "Baasuu Ragaa", ti: "ምውጻእ ሓበሬታ", ar: "تصدير البيانات", fr: "Exportation des données", es: "Exportación de datos" },      exportNote:     { am: "ውሂብዎን ወደ CSV ፋይል (በExcel ሊከፈት የሚችል) ማውረድ ይችላሉ።", en: "You can download your data as a CSV file (openable in Excel).", om: "Ragaa keessan akka faayilii CSV (Excel keessatti banamuu danda'u) buufachuu dandeessu.", ti: "ሓበሬታኹም ከም CSV ፋይል (ብExcel ክኽፈት ዝኽእል) ከተውርዱ ትኽእሉ።", ar: "يمكنك تنزيل بياناتك كملف CSV (يمكن فتحه في Excel).", fr: "Vous pouvez télécharger vos données sous forme de fichier CSV (ouvrable dans Excel).", es: "Puede descargar sus datos como un archivo CSV (que se puede abrir en Excel)." },      exportMembers:  { am: "አባላትን አውርድ (CSV)", en: "Download Members (CSV)", om: "Miseensota Buufadhu (CSV)", ti: "ኣባላት ኣውርድ (CSV)", ar: "تنزيل الأعضاء (CSV)", fr: "Télécharger les membres (CSV)", es: "Descargar miembros (CSV)" },      exportStudents: { am: "ተማሪዎችን አውርድ (CSV)", en: "Download Students (CSV)", om: "Barattoota Buufadhu (CSV)", ti: "ተመሃሮ ኣውርድ (CSV)", ar: "تنزيل الطلاب (CSV)", fr: "Télécharger les élèves (CSV)", es: "Descargar estudiantes (CSV)" },      exportTeachers: { am: "መምህራንን አውርድ (CSV)", en: "Download Teachers (CSV)", om: "Barsiisota Buufadhu (CSV)", ti: "መምህራን ኣውርድ (CSV)", ar: "تنزيل المعلمين (CSV)", fr: "Télécharger les enseignants (CSV)", es: "Descargar maestros (CSV)" },      exportParishes: { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍልዎችን አውርድ (CSV)", en: "Download Sunday School Control Sections (CSV)", om: "Kutaalee To'annoo Mana Barnoota Sanbataa Buufadhu (CSV)", ti: "ክፍልታት ቁጽጽር ት/ቤት ሰንበት ኣውርድ (CSV)", ar: "تنزيل أقسام مراقبة مدرسة الأحد (CSV)", fr: "Télécharger les sections de contrôle de l'école du dimanche (CSV)", es: "Descargar secciones de control de la escuela dominical (CSV)" },      printReportBtn: { am: "🖨 ሙሉ ማጠቃለያ ሪፖርት አትም / እንደ PDF አስቀምጥ", en: "🖨 Print Full Summary / Save as PDF", om: "🖨 Gabaasa Guutuu Maxxansi / Akka PDF Olkaa'i", ti: "🖨 ምሉእ ጸብጻብ ሕተም / ከም PDF ኣቐምጥ", ar: "🖨 طباعة التقرير الكامل / حفظ كـPDF", fr: "🖨 Imprimer le rapport complet / Enregistrer en PDF", es: "🖨 Imprimir informe completo / Guardar como PDF" },      importTitle:    { am: "ውሂብ ማስመጣት (Bulk Import)", en: "Bulk Data Import", om: "Ragaa Baay'ee Galchuu", ti: "ብዙሕ ሓበሬታ ምእታው", ar: "استيراد البيانات بالجملة", fr: "Importation groupée de données", es: "Importación masiva de datos" },      importNote:     { am: "ነባር የአባላት ዝርዝር (ከExcel/CSV) በአንድ ጊዜ ማስገባት ይችላሉ። መጀመሪያ የናሙና ፋይሉን አውርደው ቅርጸቱን ይከተሉ።", en: "You can import an existing member list (from Excel/CSV) all at once. First download the sample file and follow its format.", om: "Tarreeffama miseensotaa kan jiru (Excel/CSV irraa) yeroo tokkotti galchuu dandeessu. Jalqaba faayilii fakkeenyaa buufadhaatii bifa isaa hordofaa.", ti: "ዘሎ ዝርዝር ኣባላት (ካብ Excel/CSV) ብሓደ ግዜ ከተእትዉ ትኽእሉ። ቅድም ናይ ኣብነት ፋይል ኣውርዱ ቅርጺኡ ተኸተሉ።", ar: "يمكنك استيراد قائمة الأعضاء الحالية (من Excel/CSV) دفعة واحدة. أولاً قم بتنزيل الملف النموذجي واتبع تنسيقه.", fr: "Vous pouvez importer une liste de membres existante (depuis Excel/CSV) en une seule fois. Téléchargez d'abord le fichier exemple et suivez son format.", es: "Puede importar una lista de miembros existente (desde Excel/CSV) de una vez. Primero descargue el archivo de ejemplo y siga su formato." },      downloadTemplate:{ am: "የናሙና CSV ፋይል አውርድ", en: "Download Sample CSV Template", om: "Fakkeenya Faayilii CSV Buufadhu", ti: "ናይ ኣብነት CSV ፋይል ኣውርድ", ar: "تنزيل نموذج ملف CSV", fr: "Télécharger le modèle CSV", es: "Descargar plantilla CSV de ejemplo" },      fileLabel:      { am: "ፋይል ይምረጡ", en: "Choose a file", om: "Faayilii filadhu", ti: "ፋይል ምረጹ", ar: "اختر ملفاً", fr: "Choisissez un fichier", es: "Elija un archivo" },      pasteLabel:     { am: "ወይም የCSV ጽሁፍ ይለጥፉ", en: "Or paste CSV text", om: "Yookiin barreeffama CSV maxxansi", ti: "ወይ ጽሑፍ CSV ለጥፉ", ar: "أو الصق نص CSV", fr: "Ou collez le texte CSV", es: "O pegue el texto CSV" },      pasteAreaPh:    { am: "የCSV ይዘት እዚህ ይለጥፉ...", en: "Paste CSV content here...", om: "Qabiyyee CSV asitti maxxansi...", ti: "ትሕዝቶ CSV ኣብዚ ለጥፉ...", ar: "الصق محتوى CSV هنا...", fr: "Collez le contenu CSV ici...", es: "Pegue el contenido CSV aquí..." },      importBtn:      { am: "አስመጣ", en: "Import", om: "Galchi", ti: "ኣእትው", ar: "استيراد", fr: "Importer", es: "Importar" },      importAdded:    { am: "%N% መዝገብ በተሳካ ሁኔታ ገብቷል።", en: "%N% records were imported successfully.", om: "Galmeen %N% milkaa'inaan galfame.", ti: "%N% መዝገብ ብዓወት ኣትዩ።", ar: "تم استيراد %N% سجل بنجاح.", fr: "%N% enregistrements ont été importés avec succès.", es: "%N% registros se importaron con éxito." },      importSkipped:  { am: "%N% መዝገብ ተዘሏል (የየሰ/ት/ቤቱ ቁጥጥር ክፍል ኮድ ስላልተገኘ ወይም ስም ባዶ ስለሆነ)።", en: "%N% records were skipped (parish code not found or name missing).", om: "Galmeen %N% darbame (koodiin waldaa hin argamne ykn maqaan hin jiru).", ti: "%N% መዝገብ ተዝሊሉ (ኮድ ክፍሊ ቁጽጽር ት/ቤት ሰንበት ስለዘይተረኸበ ወይ ስም ስለዘየለዎ)።", ar: "تم تخطي %N% سجل (لم يتم العثور على رمز قسم مراقبة مدرسة الأحد أو الاسم مفقود).", fr: "%N% enregistrements ont été ignorés (code de section de contrôle de l'école du dimanche introuvable ou nom manquant).", es: "%N% registros fueron omitidos (código de sección de control de la escuela dominical no encontrado o nombre faltante)." },      noInput:        { am: "እባክዎ ፋይል ይምረጡ ወይም ጽሁፍ ይለጥፉ", en: "Please choose a file or paste text", om: "Maaloo faayilii filadhaa ykn barreeffama maxxansaa", ti: "በጃኹም ፋይል ምረጹ ወይ ጽሑፍ ለጥፉ", ar: "يرجى اختيار ملف أو لصق نص", fr: "Veuillez choisir un fichier ou coller du texte", es: "Por favor elija un archivo o pegue texto" }    },
+    audit: {
+      noteText:   { am: "ይህ ክፍል በስርዓቱ ውስጥ የተደረገውን ማንኛውንም ለውጥ ማን መቼ እንዳደረገው ሙሉ ታሪክ ይመዘግባል።", en: "This section keeps a full history of who did what and when across the system.", om: "Kutaan kun seenaa guutuu eenyu maal akka raawwatee fi yoom akka raawwate sirna kana keessatti ni galmeessa.", ti: "እዚ ክፍሊ መን እንታይ መዓስ ከምዝገበረ ምሉእ ታሪኽ ኣብ ዙርያ ስርዓት የመዝግብ።", ar: "يحتفظ هذا القسم بسجل كامل لمن قام بماذا ومتى في النظام.", fr: "Cette section conserve un historique complet de qui a fait quoi et quand dans le système.", es: "Esta sección mantiene un historial completo de quién hizo qué y cuándo en el sistema." },      act_diocese: { am: "የደብሩ ጽሕፈት ቤት ተመዘገበ", en: "Parish Office registered", om: "Waajjirri Waldaa galmaa'e", ti: "ቤ/ጽ ኣጥቢያ ተመዝጊቡ", ar: "تم تسجيل مكتب الرعية", fr: "Bureau paroissial enregistré", es: "Oficina parroquial registrada" },      act_parish:  { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍል ተመዘገበ", en: "Sunday School Control Section registered", om: "Kutaan To'annoo Mana Barnoota Sanbataa galmaa'e", ti: "ክፍሊ ቁጽጽር ት/ቤት ሰንበት ተመዝጊቡ", ar: "تم تسجيل قسم مراقبة مدرسة الأحد", fr: "Section de contrôle de l'école du dimanche enregistrée", es: "Sección de Control de la Escuela Dominical registrada" },      act_member:  { am: "አባል ተመዘገበ", en: "Member registered", om: "Miseensi galmaa'e", ti: "ኣባል ተመዝጊቡ", ar: "تم تسجيل العضو", fr: "Membre enregistré", es: "Miembro registrado" },      act_student: { am: "ተማሪ ተመዘገበ", en: "Student registered", om: "Barataan galmaa'e", ti: "ተመሃራይ ተመዝጊቡ", ar: "تم تسجيل الطالب", fr: "Élève enregistré", es: "Estudiante registrado" },      act_teacher: { am: "የመምህር ምደባ ተመዘገበ", en: "Teacher assignment registered", om: "Ramaddiin barsiisaa galmaa'e", ti: "ምድባ መምህር ተመዝጊቡ", ar: "تم تسجيل تعيين المعلم", fr: "Affectation d'enseignant enregistrée", es: "Asignación de maestro registrada" },      act_document:{ am: "ሰነድ/ደንብ ታክሏል", en: "Document/bylaw added", om: "Ragaan/Seerri dabalame", ti: "ሰነድ/ሕጊ ተወሲኹ", ar: "تمت إضافة وثيقة/لائحة", fr: "Document/règlement ajouté", es: "Documento/estatuto agregado" },      act_lesson:  { am: "የትምህርት ይዘት ታክሏል", en: "Lesson content added", om: "Qabiyyeen barnootaa dabalame", ti: "ትሕዝቶ ትምህርቲ ተወሲኹ", ar: "تمت إضافة محتوى الدرس", fr: "Contenu de leçon ajouté", es: "Contenido de lección agregado" },      act_circular:{ am: "መመሪያ ተልኳል", en: "Directive sent", om: "Qajeelfamni ergame", ti: "መምርሒ ተላኢኹ", ar: "تم إرسال التوجيه", fr: "Directive envoyée", es: "Directiva enviada" },      act_report:  { am: "ሪፖርት ተልኳል", en: "Report sent", om: "Gabaasni ergame", ti: "ጸብጻብ ተላኢኹ", ar: "تم إرسال التقرير", fr: "Rapport envoyé", es: "Informe enviado" },      act_sync:    { am: "ውሂብ ተመሳስሏል", en: "Data synced", om: "Ragaan walsimsiifame", ti: "ሓበሬታ ተሰኒዩ", ar: "تمت مزامنة البيانات", fr: "Données synchronisées", es: "Datos sincronizados" },      act_import:  { am: "የጅምላ ማስመጣት ተከናውኗል", en: "Bulk import performed", om: "Galuun baay'inaan raawwatame", ti: "ብዙሕ ምእታው ተፈጺሙ", ar: "تم تنفيذ الاستيراد بالجملة", fr: "Importation groupée effectuée", es: "Importación masiva realizada" },      act_cert:    { am: "ኦፊሴላዊ ሰነድ ተፈጥሯል", en: "Official document generated", om: "Ragaan ashaakiloo uumame", ti: "ወግዓዊ ሰነድ ተፈጢሩ", ar: "تم إنشاء وثيقة رسمية", fr: "Document officiel généré", es: "Documento oficial generado" }    },
+    fb: {
+      title:        { am: "🐛 አስተያየት ላክ", en: "🐛 Send Feedback", om: "🐛 Yaada Ergi", ti: "🐛 ርእይቶ ላኣኽ", ar: "🐛 إرسال ملاحظات", fr: "🐛 Envoyer un commentaire", es: "🐛 Enviar comentarios" },      categoryLabel:{ am: "ምድብ", en: "Category", om: "Ramaddii", ti: "ምድብ", ar: "الفئة", fr: "Catégorie", es: "Categoría" },      catBug:       { am: "ስህተት/ባግ", en: "Bug/Error", om: "Dogoggora", ti: "ጌጋ/ባግ", ar: "خطأ/عطل", fr: "Bug/Erreur", es: "Error/Falla" },      catIdea:      { am: "ሃሳብ/ጥቆማ", en: "Idea/Suggestion", om: "Yaada/Gorsa", ti: "ሓሳብ/ርእይቶ", ar: "فكرة/اقتراح", fr: "Idée/Suggestion", es: "Idea/Sugerencia" },      catConfusing: { am: "ግራ የሚያጋባ ነገር", en: "Something confusing", om: "Waan nama jeequ", ti: "ዘደናግር ነገር", ar: "شيء محير", fr: "Quelque chose de confus", es: "Algo confuso" },      catOther:     { am: "ሌላ", en: "Other", om: "Kan biraa", ti: "ካልእ", ar: "أخرى", fr: "Autre", es: "Otro" },      commentLabel: { am: "አስተያየት", en: "Comment", om: "Yaada", ti: "ርእይቶ", ar: "التعليق", fr: "Commentaire", es: "Comentario" },      commentPh:    { am: "ምን እንዳጋጠመዎት ወይም ምን እንደሚያስቡ ይንገሩን...", en: "Tell us what happened or what you think...", om: "Maal akka isin mudate ykn maal akka yaaddan nutti himaa...", ti: "እንታይ ከምዘጋጠመኩም ወይ እንታይ ከምትሓስቡ ንገሩና...", ar: "أخبرنا بما حدث أو بما تعتقده...", fr: "Dites-nous ce qui s'est passé ou ce que vous en pensez...", es: "Cuéntenos qué pasó o qué piensa..." },      submitBtn:    { am: "ላክ", en: "Submit", om: "Ergi", ti: "ላኣኽ", ar: "إرسال", fr: "Envoyer", es: "Enviar" },      closeBtn:     { am: "ዝጋ", en: "Close", om: "Cufi", ti: "ዕጸው", ar: "إغلاق", fr: "Fermer", es: "Cerrar" },      thanksMsg:    { am: "አመሰግናለሁ! አስተያየትዎ ተመዝግቧል።", en: "Thank you! Your feedback was recorded.", om: "Galatoomaa! Yaadni keessan galmeeffameera.", ti: "የቐንየለይ! ርእይቶኹም ተመዝጊቡ።", ar: "شكراً! تم تسجيل ملاحظتك.", fr: "Merci ! Votre commentaire a été enregistré.", es: "¡Gracias! Su comentario fue registrado." },      recentTitle:  { am: "በዚህ ስልክ የተላኩ አስተያየቶች", en: "Feedback sent from this phone", om: "Yaada bilbila kanarraa ergame", ti: "ካብዚ ስልኪ ዝተላእከ ርእይቶ", ar: "الملاحظات المرسلة من هذا الهاتف", fr: "Commentaires envoyés depuis ce téléphone", es: "Comentarios enviados desde este teléfono" },      capturedFrom: { am: "ከየትር ላይ ሆነው ነው", en: "Captured from tab", om: "Kutaa irraa qabame", ti: "ካበየናይ ትር", ar: "من علامة تبويب", fr: "Capturé depuis l'onglet", es: "Capturado desde la pestaña" },      errComment:   { am: "እባክዎ አስተያየት ይጻፉ", en: "Please write a comment", om: "Maaloo yaada barreessaa", ti: "በጃኹም ርእይቶ ጽሓፉ", ar: "يرجى كتابة تعليق", fr: "Veuillez écrire un commentaire", es: "Por favor escriba un comentario" }    }
+  };
+
+  function TFb(key){ return (STRINGS.fb[key] && STRINGS.fb[key][lang]) || key; }
+
+  function T(key){ return (STRINGS.dash[key] && STRINGS.dash[key][lang]) || (STRINGS.common[key] && STRINGS.common[key][lang]) || key; }
+  function TD(key){ return (STRINGS.dio[key] && STRINGS.dio[key][lang]) || key; }
+  function TP(key){ return (STRINGS.par[key] && STRINGS.par[key][lang]) || key; }
+  function TM(key){ return (STRINGS.mem[key] && STRINGS.mem[key][lang]) || key; }
+  function TS(key){ return (STRINGS.stu[key] && STRINGS.stu[key][lang]) || key; }
+  function TL(canon){ return (STRINGS.levels[canon] && STRINGS.levels[canon][lang]) || canon; }
+  function TC(canon){ return (STRINGS.courseTypes[canon] && STRINGS.courseTypes[canon][lang]) || canon; }
+  function TT(key){ return (STRINGS.tea[key] && STRINGS.tea[key][lang]) || key; }
+  function TDoc(key){ return (STRINGS.doc[key] && STRINGS.doc[key][lang]) || key; }
+  function TCat(canon){ return (STRINGS.docCategories[canon] && STRINGS.docCategories[canon][lang]) || canon; }
+  function TLes(key){ return (STRINGS.les[key] && STRINGS.les[key][lang]) || key; }
+  function TLesType(canon){ return (STRINGS.lessonTypes[canon] && STRINGS.lessonTypes[canon][lang]) || canon; }
+  function TTool(key){ return (STRINGS.tools[key] && STRINGS.tools[key][lang]) || key; }
+  function TFb(key){ return (STRINGS.fb[key] && STRINGS.fb[key][lang]) || key; }
+  function TCm(key){ return (STRINGS.comms[key] && STRINGS.comms[key][lang]) || key; }
+  function TCert(key){ return (STRINGS.cert[key] && STRINGS.cert[key][lang]) || key; }
+  function TIO(key){ return (STRINGS.io[key] && STRINGS.io[key][lang]) || key; }
+  function TAudit(key){ return (STRINGS.audit[key] && STRINGS.audit[key][lang]) || key; }
+  var EC_MONTHS_LATIN = ["Meskerem","Tikimt","Hidar","Tahsas","Tir","Yekatit","Megabit","Miazia","Ginbot","Sene","Hamle","Nehase","Pagume"];
+  function ecMonthName(i){ return (lang === "am" || lang === "ti") ? EC_MONTHS[i] : EC_MONTHS_LATIN[i]; }
+  function genderOptionsHtml(){
+    return '<option value="">'+T("selectPlaceholder")+'</option><option value="ወንድ">'+T("male")+'</option><option value="ሴት">'+T("female")+'</option>';
+  }
+
+  function applyLang(){
+    document.getElementById("app-title").textContent = STRINGS.appTitle[lang];
+    document.getElementById("app-subtitle").textContent = STRINGS.appSubtitle[lang];
+    document.getElementById("owner-name-label").textContent = STRINGS.ownerLabel[lang];
+    document.getElementById("online-label").textContent = STRINGS.onlineLabel[lang];
+    document.getElementById("conn-badge").textContent = online ? STRINGS.connOnline[lang] : STRINGS.connOffline[lang];
+    document.querySelectorAll("nav.tabs button").forEach(function(btn){
+      var key = btn.getAttribute("data-tab");
+      if (STRINGS.tabs[key]) btn.textContent = STRINGS.tabs[key][lang];
+    });
+    document.querySelectorAll("#role-select option").forEach(function(o){
+      if (STRINGS.roleOptions[o.value]) o.textContent = STRINGS.roleOptions[o.value][lang];
+    });
+    document.documentElement.setAttribute("dir", (lang === "ar") ? "rtl" : "ltr");
+  }
+  var uid = function(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,6); };
+  function generateInstallId(){
+    var chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no 0/O/1/I ambiguity
+    var groups = [];
+    for (var g = 0; g < 3; g++){
+      var s = "";
+      for (var i = 0; i < 4; i++){ s += chars[Math.floor(Math.random() * chars.length)]; }
+      groups.push(s);
+    }
+    return "BKBN-" + groups.join("-");
+  }
+  function pad(n, width){ var s = String(n); while (s.length < width) s = "0" + s; return s; }
+
+  // ---------- persistence ----------
+  function save(){
+    try {
+      if (window.storage) {
+        window.storage.set(STORAGE_KEY, JSON.stringify(state), false);
+      } else if (window.localStorage) {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+    } catch(e){}
+  }
+  function logAction(actionKey, details){
+    var ownerInput = document.getElementById("owner-name");
+    var actorName = (ownerInput && ownerInput.value.trim()) || "";
+    state.auditLog.push({
+      id: uid(),
+      ts: new Date().toLocaleString("en-GB"),
+      role: role,
+      actor: actorName,
+      actionKey: actionKey,
+      details: details || ""
+    });
+  }
+  function load(){
+    return new Promise(function(resolve){
+      try {
+        if (window.storage) {
+          window.storage.get(STORAGE_KEY).then(function(res){
+            if (res && res.value) {
+              try { state = JSON.parse(res.value); } catch(e){}
+            }
+            resolve();
+          }).catch(function(){ resolve(); });
+        } else if (window.localStorage) {
+          try {
+            var raw = window.localStorage.getItem(STORAGE_KEY);
+            if (raw) state = JSON.parse(raw);
+          } catch(e){}
+          resolve();
+        } else {
+          resolve();
+        }
+      } catch(e){ resolve(); }
+    });
+  }
+
+  // ---------- permissions ----------
+  function can(action){
+    var perms = {
+      owner:     ["add-diocese","add-parish","add-member","add-student","add-teacher","add-document","add-lesson","send-circular","send-report","sync"],
+      admin:     ["add-parish","add-member","add-student","add-teacher","add-document","add-lesson","send-report","sync"],
+      collector: ["add-member","add-student","add-teacher","send-report"],
+      viewer:    []
+    };
+    return (perms[role] || []).indexOf(action) !== -1;
+  }
+
+  // ---------- helpers ----------
+  function dioceseName(id){
+    var d = state.dioceses.find(function(x){ return x.id === id; });
+    return d ? d.name : "—";
+  }
+  function parishName(id){
+    var p = state.parishes.find(function(x){ return x.id === id; });
+    return p ? p.name : "—";
+  }
+  function parishesOf(dioceseId){
+    return state.parishes.filter(function(p){ return p.dioceseId === dioceseId; });
+  }
+  function membersOf(parishId){
+    return state.members.filter(function(m){ return m.parishId === parishId; });
+  }
+  function studentsOf(parishId){
+    return state.students.filter(function(s){ return s.parishId === parishId; });
+  }
+  function teachersOf(parishId){
+    return state.teachers.filter(function(t){ return t.parishId === parishId; });
+  }
+  function opt(list, valueKey, labelKey){
+    return list.map(function(x){ return '<option value="'+x[valueKey]+'">'+x[labelKey]+'</option>'; }).join('');
+  }
+
+  // ---------- tab switching ----------
+  document.querySelectorAll("nav.tabs button").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      activeTab = btn.getAttribute("data-tab");
+      document.querySelectorAll("nav.tabs button").forEach(function(b){ b.classList.remove("active"); });
+      btn.classList.add("active");
+      renderAll();
+    });
+  });
+
+  document.getElementById("owner-name").addEventListener("change", function(){
+    state.ownerName = this.value.trim();
+    save();
+  });
+
+  document.getElementById("role-select").addEventListener("change", function(){
+    role = this.value;
+    renderAll();
+  });
+  document.getElementById("online-toggle").addEventListener("change", function(){
+    online = this.checked;
+    var b = document.getElementById("conn-badge");
+    b.textContent = online ? STRINGS.connOnline[lang] : STRINGS.connOffline[lang];
+    b.className = "badge " + (online ? "synced" : "pending");
+    renderAll();
+  });
+  document.getElementById("lang-select").addEventListener("change", function(){
+    lang = this.value;
+    applyLang();
+    renderAll();
+  });
+
+  // ---------- feedback panel (floating button, always available) ----------
+  function renderFbPanel(){
+    var el = document.getElementById("fb-panel-content");
+    el.innerHTML =
+      '<h2 style="margin-top:0;">'+TFb("panelTitle")+'</h2>' +
+      '<div class="field"><label>'+TFb("nameLabel")+'</label><input type="text" id="fb-name"></div>' +
+      '<div class="field"><label>'+TFb("typeLabel")+'</label><select id="fb-type">' +
+        '<option value="bug">'+TFb("typeBug")+'</option>' +
+        '<option value="confuse">'+TFb("typeConfuse")+'</option>' +
+        '<option value="idea">'+TFb("typeIdea")+'</option>' +
+      '</select></div>' +
+      '<div class="field"><label>'+TFb("msgLabel")+'</label><textarea id="fb-msg" placeholder="'+TFb("msgPh")+'" style="min-height:90px;"></textarea></div>' +
+      '<p class="error" id="fb-error">'+TFb("errMsg")+'</p>' +
+      '<div style="display:flex;gap:8px;">' +
+        '<button class="primary" id="fb-submit" style="flex:1;">'+TFb("sendBtn")+'</button>' +
+        '<button class="ghost" id="fb-close">'+TFb("close")+'</button>' +
+      '</div>';
+
+    document.getElementById("fb-submit").addEventListener("click", function(){
+      var msg = document.getElementById("fb-msg").value.trim();
+      var err = document.getElementById("fb-error");
+      if (!msg){ err.style.display = "block"; return; }
+      err.style.display = "none";
+      state.feedback.push({
+        id: uid(),
+        ts: new Date().toLocaleString("en-GB"),
+        tester: document.getElementById("fb-name").value.trim(),
+        type: document.getElementById("fb-type").value,
+        tab: activeTab,
+        message: msg,
+        installId: state.installId || ""
+      });
+      save();
+      el.innerHTML = '<p style="text-align:center;padding:20px 0;">✅ '+TFb("thanks")+'</p>';
+      setTimeout(function(){
+        document.getElementById("fb-overlay").style.display = "none";
+      }, 1200);
+    });
+    document.getElementById("fb-close").addEventListener("click", function(){
+      document.getElementById("fb-overlay").style.display = "none";
+    });
+  }
+
+  document.getElementById("fb-fab").addEventListener("click", function(){
+    renderFbPanel();
+    document.getElementById("fb-overlay").style.display = "block";
+  });
+  document.getElementById("fb-overlay").addEventListener("click", function(e){
+    if (e.target === this) this.style.display = "none";
+  });
+
+  // ---------- render root ----------
+  function renderAll(){
+    document.querySelectorAll(".tab").forEach(function(t){ t.classList.add("hidden"); });
+    document.getElementById("tab-" + activeTab).classList.remove("hidden");
+    if (activeTab === "dashboard") renderDashboard();
+    if (activeTab === "dioceses") renderDioceses();
+    if (activeTab === "parishes") renderParishes();
+    if (activeTab === "members") renderMembers();
+    if (activeTab === "students") renderStudents();
+    if (activeTab === "teachers") renderTeachers();
+    if (activeTab === "documents") renderDocuments();
+    if (activeTab === "lessons") renderLessons();
+    if (activeTab === "tools") renderTools();
+    if (activeTab === "cert") renderCert();
+    if (activeTab === "io") renderIO();
+    if (activeTab === "audit") renderAudit();
+    if (activeTab === "comms") renderComms();
+  }
+
+  // ---------- dashboard ----------
+  function renderDashboard(){
+    var el = document.getElementById("tab-dashboard");
+    var totalMembers = state.members.length;
+    var male = state.members.filter(function(m){ return m.gender === "ወንድ"; }).length;
+    var female = state.members.filter(function(m){ return m.gender === "ሴት"; }).length;
+    var pendingSync = state.members.filter(function(m){ return !m.synced; }).length;
+    var totalStudents = state.students.length;
+    var totalTeachers = {};
+    state.teachers.forEach(function(t){ totalTeachers[t.name] = true; });
+    el.innerHTML =
+      '<div class="note">'+T("summaryNote").replace("%ROLE%", (STRINGS.roleOptions[role] ? STRINGS.roleOptions[role][lang] : role))+'</div>' +
+      '<div class="card"><h2>'+T("cardTotal")+'</h2><div class="stat-grid">' +
+        stat(state.dioceses.length, T("dioceseCount")) +
+        stat(state.parishes.length, T("parishCount")) +
+        stat(totalMembers, T("totalMembers")) +
+        stat(totalStudents, T("totalStudents")) +
+        stat(Object.keys(totalTeachers).length, T("totalTeachers")) +
+        stat(male, T("maleMembers")) +
+      '</div></div>' +
+      '<div class="card"><h2>'+T("byDiocese")+'</h2>' +
+      (state.dioceses.length ? state.dioceses.map(function(d){
+        var ps = parishesOf(d.id);
+        var mCount = ps.reduce(function(sum,p){ return sum + membersOf(p.id).length; }, 0);
+        return '<div class="row"><span>'+d.name+'</span><span class="meta">'+ps.length+' '+T("parishWord")+' &middot; '+mCount+' '+T("memberWord")+'</span></div>';
+      }).join('') : '<div class="empty">'+T("noDiocese")+'</div>') +
+      '</div>';
+  }
+  function stat(num, label){
+    return '<div class="stat"><div class="num">'+num+'</div><div class="label">'+label+'</div></div>';
+  }
+
+  // ---------- dioceses ----------
+  function renderDioceses(){
+    var el = document.getElementById("tab-dioceses");
+    var roleDisplay = STRINGS.roleOptions[role] ? STRINGS.roleOptions[role][lang] : role;
+    var formHtml = can("add-diocese") ?
+      '<div class="card"><h2>'+TD("newTitle")+'</h2>' +
+      '<div class="field"><label>'+TD("nameLabel")+'</label><input type="text" id="dio-name" placeholder="'+TD("namePlaceholder")+'"></div>' +
+      '<p class="error" id="dio-error">'+TD("nameErr")+'</p>' +
+      '<button class="primary" id="dio-save">'+T("save")+'</button></div>' :
+      '<div class="note lock-msg">'+TD("lockMsg").replace("%ROLE%", roleDisplay)+'</div>';
+
+    el.innerHTML = formHtml +
+      '<div class="card"><h2>'+TD("registeredTitle")+' ('+state.dioceses.length+')</h2>' +
+      (state.dioceses.length ? state.dioceses.map(function(d){
+        return '<div class="row"><span><span class="badge role">'+(d.code||'—')+'</span> '+d.name+'</span><span class="meta">'+parishesOf(d.id).length+' '+T("parishWord")+'</span></div>';
+      }).join('') : '<div class="empty">'+T("none")+'</div>') +
+      '</div>';
+
+    var saveBtn = document.getElementById("dio-save");
+    if (saveBtn){
+      saveBtn.addEventListener("click", function(){
+        var name = document.getElementById("dio-name").value.trim();
+        var err = document.getElementById("dio-error");
+        if (!name){ err.style.display = "block"; return; }
+        err.style.display = "none";
+        state.dioceses.push({ id: uid(), name: name, code: "D" + pad(state.dioceses.length + 1, 2) });
+        logAction("act_diocese", name);
+        save(); renderAll();
+      });
+    }
+  }
+
+  // ---------- parishes ----------
+  function renderParishes(){
+    var el = document.getElementById("tab-parishes");
+    var noDiocese = state.dioceses.length === 0;
+    var roleDisplay = STRINGS.roleOptions[role] ? STRINGS.roleOptions[role][lang] : role;
+    var formHtml = can("add-parish") ?
+      (noDiocese ?
+        '<div class="note">'+TP("needDiocese")+'</div>' :
+        '<div class="card"><h2>'+TP("newTitle")+'</h2>' +
+        '<div class="field"><label>'+TP("dioceseLabel")+'</label><select id="par-dio">'+opt(state.dioceses,"id","name")+'</select></div>' +
+        '<div class="field"><label>'+TP("nameLabel")+'</label><input type="text" id="par-name" placeholder="'+TP("namePlaceholder")+'"></div>' +
+        '<div class="field"><label>'+TP("titleLabel")+'</label><input type="text" id="par-title" placeholder="'+TP("titlePlaceholder")+'"></div>' +
+        '<div class="field"><label>'+TP("foundedLabel")+'</label><input type="text" id="par-founded" placeholder="'+TP("foundedPlaceholder")+'"></div>' +
+        '<p class="error" id="par-error">'+TP("errAll")+'</p>' +
+        '<button class="primary" id="par-save">'+T("save")+'</button></div>') :
+      '<div class="note lock-msg">'+TP("lockMsg").replace("%ROLE%", roleDisplay)+'</div>';
+
+    el.innerHTML = formHtml +
+      '<div class="card"><h2>'+TP("registeredTitle")+' ('+state.parishes.length+')</h2>' +
+      (state.parishes.length ? state.parishes.map(function(p){
+        return '<div class="row"><span><span class="badge role">'+(p.code||'—')+'</span> '+p.name+'<br><span class="meta">'+dioceseName(p.dioceseId)+'</span></span><span class="meta">'+membersOf(p.id).length+' '+T("memberWord")+'</span></div>';
+      }).join('') : '<div class="empty">'+T("none")+'</div>') +
+      '</div>';
+
+    var saveBtn = document.getElementById("par-save");
+    if (saveBtn){
+      saveBtn.addEventListener("click", function(){
+        var dioceseId = document.getElementById("par-dio").value;
+        var name = document.getElementById("par-name").value.trim();
+        var title = document.getElementById("par-title").value.trim();
+        var founded = document.getElementById("par-founded").value.trim();
+        var err = document.getElementById("par-error");
+        if (!dioceseId || !name){ err.style.display = "block"; return; }
+        err.style.display = "none";
+        var dioceseObj = state.dioceses.find(function(x){ return x.id === dioceseId; });
+        var seq = parishesOf(dioceseId).length + 1;
+        var code = (dioceseObj && dioceseObj.code ? dioceseObj.code : "D00") + "-P" + pad(seq, 2);
+        state.parishes.push({ id: uid(), dioceseId: dioceseId, name: name, specialTitle: title, founded: founded, code: code });
+        logAction("act_parish", code + " — " + name);
+        save(); renderAll();
+      });
+    }
+  }
+
+
+  // ---------- members ----------
+  function renderMembers(){
+    var el = document.getElementById("tab-members");
+    var noParish = state.parishes.length === 0;
+    var roleDisplay = STRINGS.roleOptions[role] ? STRINGS.roleOptions[role][lang] : role;
+    var formHtml = can("add-member") ?
+      (noParish ?
+        '<div class="note">'+TM("needParish")+'</div>' :
+        '<div class="card"><h2>'+TM("newTitle")+'</h2>' +
+        '<div class="field"><label>'+TM("parishLabel")+'</label><select id="m-parish">'+opt(state.parishes,"id","name")+'</select></div>' +
+        '<div class="grid2">' +
+          '<div class="field"><label>'+TM("nameLabel")+'</label><input type="text" id="m-name" placeholder="'+TM("nameLabel")+'"></div>' +
+          '<div class="field"><label>'+TM("genderLabel")+'</label><select id="m-gender">'+genderOptionsHtml()+'</select></div>' +
+        '</div>' +
+        '<div class="grid2">' +
+          '<div class="field"><label>'+TM("residenceLabel")+'</label><input type="text" id="m-residence" placeholder="'+TM("residencePh")+'"></div>' +
+          '<div class="field"><label>'+TM("educationLabel")+'</label><input type="text" id="m-education" placeholder="'+TM("educationPh")+'"></div>' +
+        '</div>' +
+        '<div class="grid2">' +
+          '<div class="field"><label>'+TM("parentEduLabel")+'</label><input type="text" id="m-parent-edu" placeholder="'+TM("optional")+'"></div>' +
+          '<div class="field"><label>'+TM("titleLabel")+'</label><input type="text" id="m-title" placeholder="'+TM("optional")+'"></div>' +
+        '</div>' +
+        '<div class="grid2">' +
+          '<div class="field"><label>'+TM("joinLabel")+'</label><input type="text" id="m-join" placeholder="'+TM("joinPh")+'"></div>' +
+          '<div class="field"><label>'+TM("statusLabel")+'</label><select id="m-status"><option value="ንቁ">'+TM("statusActive")+'</option><option value="የወጣ">'+TM("statusLeft")+'</option><option value="የተዛወረ">'+TM("statusTransferred")+'</option></select></div>' +
+        '</div>' +
+        '<p class="error" id="m-error">'+TM("errNameGender")+'</p>' +
+        '<button class="primary" id="m-save">'+T("save")+'</button></div>') :
+      '<div class="note lock-msg">'+TM("lockMsg").replace("%ROLE%", roleDisplay)+'</div>';
+
+    el.innerHTML = formHtml +
+      '<div class="card"><h2>'+TM("registeredTitle")+' ('+state.members.length+')</h2>' +
+      (state.members.length ? state.members.slice().reverse().map(function(m){
+        var genderDisplay = m.gender === "ወንድ" ? T("male") : (m.gender === "ሴት" ? T("female") : "—");
+        return '<div class="row"><span><span class="badge role">'+(m.code||'—')+'</span> '+m.name+'<br><span class="meta">'+genderDisplay+' &middot; '+parishName(m.parishId)+'</span></span>' +
+          '<span class="badge '+(m.synced ? "synced" : "pending")+'">'+(m.synced ? T("synced") : T("pending"))+'</span></div>';
+      }).join('') : '<div class="empty">'+T("none")+'</div>') +
+      '</div>';
+
+    var saveBtn = document.getElementById("m-save");
+    if (saveBtn){
+      saveBtn.addEventListener("click", function(){
+        var name = document.getElementById("m-name").value.trim();
+        var gender = document.getElementById("m-gender").value;
+        var err = document.getElementById("m-error");
+        if (!name || !gender){ err.style.display = "block"; return; }
+        err.style.display = "none";
+        var parishId = document.getElementById("m-parish").value;
+        var parishObj = state.parishes.find(function(x){ return x.id === parishId; });
+        var seq = membersOf(parishId).length + 1;
+        var code = (parishObj && parishObj.code ? parishObj.code : "D00-P00") + "-M" + pad(seq, 4);
+        state.members.push({
+          id: uid(),
+          parishId: parishId,
+          name: name,
+          gender: gender,
+          residence: document.getElementById("m-residence").value.trim(),
+          education: document.getElementById("m-education").value.trim(),
+          parentEducation: document.getElementById("m-parent-edu").value.trim(),
+          specialTitle: document.getElementById("m-title").value.trim(),
+          joinDate: document.getElementById("m-join").value.trim(),
+          status: document.getElementById("m-status").value,
+          code: code,
+          synced: false
+        });
+        logAction("act_member", code + " — " + name);
+        save(); renderAll();
+      });
+    }
+  }
+
+  // ---------- students (level & result roster) ----------
+  function renderStudents(){
+    var el = document.getElementById("tab-students");
+    var noParish = state.parishes.length === 0;
+    var levels = ["ሕጻናትና መጣኒያን", "ወጣቶች", "ወላጆች"];
+    var roleDisplay = STRINGS.roleOptions[role] ? STRINGS.roleOptions[role][lang] : role;
+
+    var formHtml = can("add-student") ?
+      (noParish ?
+        '<div class="note">'+TS("needParish")+'</div>' :
+        '<div class="card"><h2>'+TS("newTitle")+'</h2>' +
+        '<div class="field"><label>'+TM("parishLabel")+'</label><select id="s-parish">'+opt(state.parishes,"id","name")+'</select></div>' +
+        '<div class="grid2">' +
+          '<div class="field"><label>'+TM("nameLabel")+'</label><input type="text" id="s-name" placeholder="'+TM("nameLabel")+'"></div>' +
+          '<div class="field"><label>'+TM("genderLabel")+'</label><select id="s-gender">'+genderOptionsHtml()+'</select></div>' +
+        '</div>' +
+        '<div class="grid2">' +
+          '<div class="field"><label>'+TS("levelLabel")+'</label><select id="s-level">'+levels.map(function(l){return '<option value="'+l+'">'+TL(l)+'</option>';}).join('')+'</select></div>' +
+          '<div class="field"><label>'+TS("yearTermLabel")+'</label><input type="text" id="s-year" placeholder="'+TS("yearPh")+'"></div>' +
+        '</div>' +
+        '<div class="grid2">' +
+          '<div class="field"><label>'+TS("courseLabel")+'</label><input type="text" id="s-course" placeholder="'+TS("coursePh")+'"></div>' +
+          '<div class="field"><label>'+TS("scoreLabel")+'</label><input type="number" id="s-score" min="0" max="100" placeholder="0-100"></div>' +
+        '</div>' +
+        '<div class="grid2">' +
+          '<div class="field"><label>'+TS("statusLabel")+'</label><select id="s-status"><option value="በሂደት ላይ">'+TS("statusInProgress")+'</option><option value="አልፏል">'+TS("statusPassed")+'</option><option value="ወድቋል">'+TS("statusFailed")+'</option></select></div>' +
+          '<div class="field"><label>'+TS("gradLabel")+'</label><select id="s-grad"><option value="ያልተመረቀ">'+TS("notGraduated")+'</option><option value="ተመርቋል">'+TS("graduated")+'</option></select></div>' +
+        '</div>' +
+        '<div class="field"><label>'+TS("gradYearLabel")+'</label><input type="text" id="s-grad-year" placeholder="'+TS("yearPh")+'"></div>' +
+        '<p class="error" id="s-error">'+TS("errNameLevel")+'</p>' +
+        '<button class="primary" id="s-save">'+T("save")+'</button></div>') :
+      '<div class="note lock-msg">'+TS("lockMsg").replace("%ROLE%", roleDisplay)+'</div>';
+
+    var gradCount = state.students.filter(function(s){ return s.graduated === "ተመርቋል"; }).length;
+    var notGradCount = state.students.length - gradCount;
+    var summaryHtml = '<div class="card"><h2>'+TS("summaryTitle")+'</h2><div class="stat-grid">' +
+      levels.map(function(l){
+        var count = state.students.filter(function(s){ return s.level === l; }).length;
+        return stat(count, TL(l));
+      }).join('') +
+      stat(gradCount, TS("gradedCount")) +
+      stat(notGradCount, TS("notGradedCount")) +
+      '</div></div>';
+
+    var rosterHtml = levels.map(function(l){
+      var rows = state.students.filter(function(s){ return s.level === l; });
+      return '<div class="card"><h2>'+TL(l)+' — '+TS("rosterTitle")+' ('+rows.length+')</h2>' +
+        (rows.length ? rows.slice().reverse().map(function(s){
+          var statusBadge = s.status === "አልፏል" ? '<span class="badge synced">'+TS("statusPassed")+'</span>' :
+                             s.status === "ወድቋል" ? '<span class="badge pending" style="background:#F7DADA;color:#9C2B2B;">'+TS("statusFailed")+'</span>' :
+                             '<span class="badge role">'+TS("statusInProgress")+'</span>';
+          var gradBadge = s.graduated === "ተመርቋል" ?
+            '<span class="badge synced" style="margin-left:4px;">'+TS("graduated")+(s.gradYear ? ' ('+s.gradYear+')' : '')+'</span>' :
+            '<span class="badge pending" style="margin-left:4px;">'+TS("notGraduated")+'</span>';
+          return '<div class="row"><span><span class="badge role" style="font-size:10px;">'+(s.code||'—')+'</span> '+s.name+'<br><span class="meta">'+parishName(s.parishId)+' &middot; '+(s.course||'—')+(s.year ? ' &middot; '+s.year : '')+'</span></span>' +
+            '<span style="text-align:right;">'+(s.score !== "" && s.score !== null && s.score !== undefined ? '<div class="meta">'+s.score+'%</div>' : '')+statusBadge+gradBadge+'</span></div>';
+        }).join('') : '<div class="empty">'+T("none")+'</div>') +
+        '</div>';
+    }).join('');
+
+    el.innerHTML = '<div class="note">'+TS("noteText")+'</div>' +
+      formHtml + summaryHtml + rosterHtml;
+
+    var saveBtn = document.getElementById("s-save");
+    if (saveBtn){
+      saveBtn.addEventListener("click", function(){
+        var name = document.getElementById("s-name").value.trim();
+        var level = document.getElementById("s-level").value;
+        var err = document.getElementById("s-error");
+        if (!name || !level){ err.style.display = "block"; return; }
+        err.style.display = "none";
+        var scoreVal = document.getElementById("s-score").value;
+        var sParishId = document.getElementById("s-parish").value;
+        var sParishObj = state.parishes.find(function(x){ return x.id === sParishId; });
+        var sSeq = studentsOf(sParishId).length + 1;
+        var sCode = (sParishObj && sParishObj.code ? sParishObj.code : "D00-P00") + "-S" + pad(sSeq, 4);
+        state.students.push({
+          id: uid(),
+          parishId: sParishId,
+          name: name,
+          gender: document.getElementById("s-gender").value,
+          level: level,
+          year: document.getElementById("s-year").value.trim(),
+          course: document.getElementById("s-course").value.trim(),
+          score: scoreVal === "" ? "" : Number(scoreVal),
+          status: document.getElementById("s-status").value,
+          graduated: document.getElementById("s-grad").value,
+          gradYear: document.getElementById("s-grad-year").value.trim(),
+          code: sCode,
+          synced: false
+        });
+        logAction("act_student", sCode + " — " + name);
+        save(); renderAll();
+      });
+    }
+  }
+
+  // ---------- teachers (assignment & per-year tracker) ----------
+  function renderTeachers(){
+    var el = document.getElementById("tab-teachers");
+    var noParish = state.parishes.length === 0;
+    var roleDisplay = STRINGS.roleOptions[role] ? STRINGS.roleOptions[role][lang] : role;
+    var levels = ["ሕጻናትና መጣኒያን", "ወጣቶች", "ወላጆች"];
+    var courseTypes = ["መደበኛ ትምህርት", "ስልጠና", "ግዕዝና አብነት ትምህርት", "ልዩ ትምህርት", "ሌላ"];
+
+    var formHtml = can("add-teacher") ?
+      (noParish ?
+        '<div class="note">'+TT("needParish")+'</div>' :
+        '<div class="card"><h2>'+TT("newTitle")+'</h2>' +
+        '<div class="field"><label>'+TT("parishLabel")+'</label><select id="t-parish">'+opt(state.parishes,"id","name")+'</select></div>' +
+        '<div class="grid2">' +
+          '<div class="field"><label>'+TT("nameLabel")+'</label><input type="text" id="t-name" placeholder="'+TT("nameLabel")+'"></div>' +
+          '<div class="field"><label>'+TM("genderLabel")+'</label><select id="t-gender">'+genderOptionsHtml()+'</select></div>' +
+        '</div>' +
+        '<div class="grid2">' +
+          '<div class="field"><label>'+TT("phoneLabel")+'</label><input type="text" id="t-phone" placeholder="09-----"></div>' +
+          '<div class="field"><label>'+TT("levelLabel")+'</label><select id="t-level">'+levels.map(function(l){return '<option value="'+l+'">'+TL(l)+'</option>';}).join('')+'</select></div>' +
+        '</div>' +
+        '<div class="grid2">' +
+          '<div class="field"><label>'+TT("subjectLabel")+'</label><input type="text" id="t-subject" placeholder="'+TT("subjectPh")+'"></div>' +
+          '<div class="field"><label>'+TT("courseTypeLabel")+'</label><select id="t-coursetype">'+courseTypes.map(function(c){return '<option value="'+c+'">'+TC(c)+'</option>';}).join('')+'</select></div>' +
+        '</div>' +
+        '<div class="field"><label>'+TT("yearLabel")+'</label><input type="text" id="t-year" placeholder="'+TS("yearPh")+'"></div>' +
+        '<p class="error" id="t-error">'+TT("errNameYear")+'</p>' +
+        '<button class="primary" id="t-save">'+T("save")+'</button></div>') :
+      '<div class="note lock-msg">'+TT("lockMsg").replace("%ROLE%", roleDisplay)+'</div>';
+
+    var distinctTeachers = {};
+    state.teachers.forEach(function(t){ distinctTeachers[t.name] = true; });
+    var summaryHtml = '<div class="card"><h2>'+TT("summaryTitle")+'</h2><div class="stat-grid">' +
+      stat(Object.keys(distinctTeachers).length, TT("distinctCount")) +
+      stat(state.teachers.length, TT("totalAssign")) +
+      '</div></div>';
+
+    var years = [];
+    state.teachers.forEach(function(t){ if (t.year && years.indexOf(t.year) === -1) years.push(t.year); });
+    years.sort().reverse();
+
+    var trackerHtml = years.length ? years.map(function(y){
+      var rows = state.teachers.filter(function(t){ return t.year === y; });
+      return '<div class="card"><h2>'+TT("yearCard")+' '+y+' — '+rows.length+' '+TT("assignWord")+'</h2>' +
+        rows.map(function(t){
+          return '<div class="row"><span><span class="badge role" style="font-size:10px;">'+(t.code||'—')+'</span> '+t.name+'<br><span class="meta">'+parishName(t.parishId)+' &middot; '+TL(t.level)+' &middot; '+(t.subject||'—')+'</span></span>' +
+            '<span class="badge role">'+TC(t.courseType)+'</span></div>';
+        }).join('') + '</div>';
+    }).join('') : '<div class="card"><div class="empty">'+TT("noneYet")+'</div></div>';
+
+    el.innerHTML = '<div class="note">'+TT("noteText")+'</div>' +
+      formHtml + summaryHtml + trackerHtml;
+
+    var saveBtn = document.getElementById("t-save");
+    if (saveBtn){
+      saveBtn.addEventListener("click", function(){
+        var name = document.getElementById("t-name").value.trim();
+        var year = document.getElementById("t-year").value.trim();
+        var err = document.getElementById("t-error");
+        if (!name || !year){ err.style.display = "block"; return; }
+        err.style.display = "none";
+        var tParishId = document.getElementById("t-parish").value;
+        var tParishObj = state.parishes.find(function(x){ return x.id === tParishId; });
+        var tSeq = teachersOf(tParishId).length + 1;
+        var tCode = (tParishObj && tParishObj.code ? tParishObj.code : "D00-P00") + "-T" + pad(tSeq, 3);
+        state.teachers.push({
+          id: uid(),
+          parishId: tParishId,
+          name: name,
+          gender: document.getElementById("t-gender").value,
+          phone: document.getElementById("t-phone").value.trim(),
+          level: document.getElementById("t-level").value,
+          subject: document.getElementById("t-subject").value.trim(),
+          courseType: document.getElementById("t-coursetype").value,
+          year: year,
+          code: tCode,
+          synced: false
+        });
+        logAction("act_teacher", tCode + " — " + name);
+        save(); renderAll();
+      });
+    }
+  }
+
+  // ---------- documents (bylaws, directives & general resource exchange) ----------
+  function renderDocuments(){
+    var el = document.getElementById("tab-documents");
+    var categories = ["ውስጠ ደንብ", "መመሪያ", "ሌላ መረጃ/ሰነድ"];
+    var roleDisplay = STRINGS.roleOptions[role] ? STRINGS.roleOptions[role][lang] : role;
+
+    var formHtml = can("add-document") ?
+      '<div class="card"><h2>'+TDoc("newTitle")+'</h2>' +
+      '<div class="grid2">' +
+        '<div class="field"><label>'+TDoc("titleLabel")+'</label><input type="text" id="d-title" placeholder="'+TDoc("titlePh")+'"></div>' +
+        '<div class="field"><label>'+TDoc("typeLabel")+'</label><select id="d-type">'+categories.map(function(c){return '<option value="'+c+'">'+TCat(c)+'</option>';}).join('')+'</select></div>' +
+      '</div>' +
+      '<div class="field"><label>'+TDoc("issuerLabel")+'</label><input type="text" id="d-issuer" placeholder="'+TDoc("issuerPh")+'"></div>' +
+      '<div class="field"><label>'+TDoc("bodyLabel")+'</label><textarea id="d-body" placeholder="'+TDoc("bodyPh")+'"></textarea></div>' +
+      '<p class="error" id="d-error">'+TDoc("errTitleBody")+'</p>' +
+      '<button class="primary" id="d-save">'+TDoc("addBtn")+'</button></div>' :
+      '<div class="note lock-msg">'+TDoc("lockMsg").replace("%ROLE%", roleDisplay)+'</div>';
+
+    var listHtml = categories.map(function(cat){
+      var rows = state.documents.filter(function(d){ return d.type === cat; });
+      return '<div class="card"><h2>'+TCat(cat)+' ('+rows.length+')</h2>' +
+        (rows.length ? rows.slice().reverse().map(function(d){
+          return '<div class="row" style="display:block;"><strong>'+d.title+'</strong>' +
+            '<br><span class="meta">'+(d.issuer ? d.issuer+' &middot; ' : '')+d.date+'</span>' +
+            '<p style="margin:6px 0 0;font-size:13px;">'+d.body+'</p></div>';
+        }).join('') : '<div class="empty">'+T("none")+'</div>') +
+        '</div>';
+    }).join('');
+
+    el.innerHTML = '<div class="note">'+TDoc("noteText")+'</div>' +
+      formHtml + listHtml;
+
+    var saveBtn = document.getElementById("d-save");
+    if (saveBtn){
+      saveBtn.addEventListener("click", function(){
+        var title = document.getElementById("d-title").value.trim();
+        var body = document.getElementById("d-body").value.trim();
+        var err = document.getElementById("d-error");
+        if (!title || !body){ err.style.display = "block"; return; }
+        err.style.display = "none";
+        state.documents.push({
+          id: uid(),
+          title: title,
+          type: document.getElementById("d-type").value,
+          issuer: document.getElementById("d-issuer").value.trim(),
+          body: body,
+          date: new Date().toLocaleDateString("en-GB"),
+          synced: false
+        });
+        logAction("act_document", title);
+        save(); renderAll();
+      });
+    }
+  }
+
+  // ---------- lessons (audio/video learning content for students) ----------
+  function renderLessons(){
+    var el = document.getElementById("tab-lessons");
+    var levels = ["ሕጻናትና መጣኒያን", "ወጣቶች", "ወላጆች"];
+    var types = ["ቪዲዮ", "ኦዲዮ"];
+    var roleDisplay = STRINGS.roleOptions[role] ? STRINGS.roleOptions[role][lang] : role;
+
+    var formHtml = can("add-lesson") ?
+      '<div class="card"><h2>'+TLes("newTitle")+'</h2>' +
+      '<div class="grid2">' +
+        '<div class="field"><label>'+TLes("titleLabel")+'</label><input type="text" id="ln-title" placeholder="'+TLes("titlePh")+'"></div>' +
+        '<div class="field"><label>'+TLes("levelLabel")+'</label><select id="ln-level">'+levels.map(function(l){return '<option value="'+l+'">'+TL(l)+'</option>';}).join('')+'</select></div>' +
+      '</div>' +
+      '<div class="grid2">' +
+        '<div class="field"><label>'+TLes("typeLabel")+'</label><select id="ln-type">'+types.map(function(t){return '<option value="'+t+'">'+TLesType(t)+'</option>';}).join('')+'</select></div>' +
+        '<div class="field"><label>'+TLes("urlLabel")+'</label><input type="text" id="ln-url" placeholder="'+TLes("urlPh")+'"></div>' +
+      '</div>' +
+      '<div class="field"><label>'+TLes("descLabel")+'</label><textarea id="ln-desc" placeholder="'+TLes("descPh")+'"></textarea></div>' +
+      '<p class="error" id="ln-error">'+TLes("errAll")+'</p>' +
+      '<button class="primary" id="ln-save">'+TLes("addBtn")+'</button></div>' :
+      '<div class="note lock-msg">'+TLes("lockMsg").replace("%ROLE%", roleDisplay)+'</div>';
+
+    var listHtml = levels.map(function(l){
+      var rows = state.lessons.filter(function(x){ return x.level === l; });
+      return '<div class="card"><h2>'+TL(l)+' — '+TLes("contentWord")+' ('+rows.length+')</h2>' +
+        (rows.length ? rows.slice().reverse().map(function(x){
+          return '<div class="row" style="display:block;">' +
+            '<strong>'+x.title+'</strong> <span class="badge role">'+TLesType(x.type)+'</span>' +
+            (x.desc ? '<p style="margin:6px 0;font-size:13px;color:var(--muted);">'+x.desc+'</p>' : '') +
+            playerHtml(x.type, x.url) +
+            '</div>';
+        }).join('') : '<div class="empty">'+T("none")+'</div>') +
+        '</div>';
+    }).join('');
+
+    el.innerHTML = '<div class="note">'+TLes("noteText")+'</div>' +
+      formHtml + listHtml;
+
+    var saveBtn = document.getElementById("ln-save");
+    if (saveBtn){
+      saveBtn.addEventListener("click", function(){
+        var title = document.getElementById("ln-title").value.trim();
+        var url = document.getElementById("ln-url").value.trim();
+        var err = document.getElementById("ln-error");
+        if (!title || !url){ err.style.display = "block"; return; }
+        err.style.display = "none";
+        state.lessons.push({
+          id: uid(),
+          title: title,
+          level: document.getElementById("ln-level").value,
+          type: document.getElementById("ln-type").value,
+          url: url,
+          desc: document.getElementById("ln-desc").value.trim(),
+          synced: false
+        });
+        logAction("act_lesson", title);
+        save(); renderAll();
+      });
+    }
+  }
+
+  function playerHtml(type, url){
+    if (!url) return '';
+    var isYoutube = url.indexOf("youtube.com") !== -1 || url.indexOf("youtu.be") !== -1;
+    if (type === "ቪዲዮ"){
+      if (isYoutube) {
+        return '<p style="margin:6px 0 0;"><a href="'+url+'" target="_blank" rel="noopener" class="ghost" style="text-decoration:none;display:inline-block;">'+TLes("watchYoutube")+'</a></p>';
+      }
+      return '<video controls style="width:100%;border-radius:8px;margin-top:6px;" src="'+url+'"></video>';
+    }
+    return '<audio controls style="width:100%;margin-top:6px;" src="'+url+'"></audio>';
+  }
+
+  // ---------- Ethiopian <-> Gregorian calendar conversion (verified against 1 Meskerem 2017 = Sep 11, 2024) ----------
+  var EC_EPOCH_JDN = 1723856;
+  var EC_MONTHS = ["መስከረም","ጥቅምት","ኅዳር","ታኅሳስ","ጥር","የካቲት","መጋቢት","ሚያዝያ","ግንቦት","ሰኔ","ሐምሌ","ነሐሴ","ጳጉሜ"];
+
+  function gregorianToJdn(y, m, d){
+    var a = Math.floor((14 - m) / 12);
+    var yy = y + 4800 - a;
+    var mm = m + 12 * a - 3;
+    return d + Math.floor((153 * mm + 2) / 5) + 365 * yy + Math.floor(yy / 4) - Math.floor(yy / 100) + Math.floor(yy / 400) - 32045;
+  }
+  function jdnToGregorian(jdn){
+    var l = jdn + 68569;
+    var n = Math.floor(4 * l / 146097);
+    l = l - Math.floor((146097 * n + 3) / 4);
+    var i = Math.floor(4000 * (l + 1) / 1461001);
+    l = l - Math.floor(1461 * i / 4) + 31;
+    var j = Math.floor(80 * l / 2447);
+    var day = l - Math.floor(2447 * j / 80);
+    l = Math.floor(j / 11);
+    var month = j + 2 - 12 * l;
+    var year = 100 * (n - 49) + i + l;
+    return { year: year, month: month, day: day };
+  }
+  function ethiopicToJdn(y, m, d){
+    return EC_EPOCH_JDN + 365 * y + Math.floor(y / 4) + 30 * (m - 1) + (d - 1);
+  }
+  function jdnToEthiopic(jdn){
+    var diff = jdn - EC_EPOCH_JDN;
+    var r = diff % 1461;
+    var n = r % 365 + 365 * Math.floor(r / 1460);
+    var year = 4 * Math.floor(diff / 1461) + Math.floor(r / 365) - Math.floor(r / 1460);
+    var month = Math.floor(n / 30) + 1;
+    var day = n % 30 + 1;
+    return { year: year, month: month, day: day };
+  }
+  function ecToGc(y, m, d){ return jdnToGregorian(ethiopicToJdn(y, m, d)); }
+  function gcToEc(y, m, d){ return jdnToEthiopic(gregorianToJdn(y, m, d)); }
+
+  var GC_MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+  // ---------- tools (date converter & future utilities) ----------
+  function renderTools(){
+    var el = document.getElementById("tab-tools");
+    var dayOpts = ''; for (var d1=1; d1<=30; d1++) dayOpts += '<option value="'+d1+'">'+d1+'</option>';
+    var pagumeDayOpts = ''; for (var d2=1; d2<=6; d2++) pagumeDayOpts += '<option value="'+d2+'">'+d2+'</option>';
+    var monthOpts = EC_MONTHS.map(function(m,i){ return '<option value="'+(i+1)+'">'+ecMonthName(i)+'</option>'; }).join('');
+
+    el.innerHTML =
+      '<div class="note">'+TTool("noteText")+'</div>' +
+      '<div class="card"><h2>'+TTool("copyIdTitle")+'</h2>' +
+        '<p class="meta">'+TTool("copyIdNote")+'</p>' +
+        '<div style="background:var(--gold-bg);border-radius:8px;padding:12px;text-align:center;margin-top:8px;">' +
+          '<span style="font-size:18px;font-weight:600;letter-spacing:1px;color:var(--maroon-dark);">'+(state.installId||'—')+'</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="card"><h2>'+TTool("converterTitle")+'</h2>' +
+        '<h3>'+TTool("ecToGcTitle")+'</h3>' +
+        '<div class="grid2">' +
+          '<div class="field"><label>'+TTool("dayLabel")+'</label><select id="ec-day">'+dayOpts+'</select></div>' +
+          '<div class="field"><label>'+TTool("monthLabel")+'</label><select id="ec-month">'+monthOpts+'</select></div>' +
+        '</div>' +
+        '<div class="field"><label>'+TTool("yearLabel")+'</label><input type="number" id="ec-year" placeholder="e.g. 2017" value="2017"></div>' +
+        '<button class="primary" id="ec-to-gc-btn">'+TTool("convertToGc")+'</button>' +
+        '<p id="ec-to-gc-result" class="meta" style="margin-top:8px;"></p>' +
+      '</div>' +
+      '<div class="card">' +
+        '<h3>'+TTool("gcToEcTitle")+'</h3>' +
+        '<div class="field"><label>'+TTool("gcDateLabel")+'</label><input type="date" id="gc-date"></div>' +
+        '<button class="primary" id="gc-to-ec-btn">'+TTool("convertToEc")+'</button>' +
+        '<p id="gc-to-ec-result" class="meta" style="margin-top:8px;"></p>' +
+      '</div>';
+
+    document.getElementById("ec-month").addEventListener("change", function(){
+      var isPagume = this.value === "13";
+      document.getElementById("ec-day").innerHTML = isPagume ? pagumeDayOpts : dayOpts;
+    });
+
+    document.getElementById("ec-to-gc-btn").addEventListener("click", function(){
+      var d = parseInt(document.getElementById("ec-day").value, 10);
+      var m = parseInt(document.getElementById("ec-month").value, 10);
+      var y = parseInt(document.getElementById("ec-year").value, 10);
+      if (!y){ document.getElementById("ec-to-gc-result").textContent = TTool("errYear"); return; }
+      var g = ecToGc(y, m, d);
+      document.getElementById("ec-to-gc-result").innerHTML =
+        '<strong>' + d + ' ' + ecMonthName(m-1) + ' ' + y + '</strong> = <strong>' + g.day + ' ' + GC_MONTH_NAMES[g.month-1] + ' ' + g.year + '</strong>';
+    });
+
+    document.getElementById("gc-to-ec-btn").addEventListener("click", function(){
+      var val = document.getElementById("gc-date").value;
+      if (!val){ document.getElementById("gc-to-ec-result").textContent = TTool("errDate"); return; }
+      var parts = val.split("-");
+      var y = parseInt(parts[0], 10), m = parseInt(parts[1], 10), d = parseInt(parts[2], 10);
+      var e = gcToEc(y, m, d);
+      document.getElementById("gc-to-ec-result").innerHTML =
+        '<strong>' + d + ' ' + GC_MONTH_NAMES[m-1] + ' ' + y + '</strong> = <strong>' + e.day + ' ' + ecMonthName(e.month-1) + ' ' + e.year + '</strong>';
+    });
+  }
+
+  // ---------- certificates (official printable documents) ----------
+  function renderCert(){
+    var el = document.getElementById("tab-cert");
+
+    el.innerHTML =
+      '<div class="note">'+TCert("tabNote")+'</div>' +
+      '<div class="card">' +
+        '<div class="field"><label>'+TCert("typeLabel")+'</label><select id="cert-type">' +
+          '<option value="membership">'+TCert("typeMembership")+'</option>' +
+          '<option value="graduation">'+TCert("typeGraduation")+'</option>' +
+        '</select></div>' +
+        '<div class="field"><label>'+TCert("personLabel")+'</label><select id="cert-person"></select></div>' +
+        '<p class="note" id="cert-nopeople" style="display:none;">'+TCert("noPeople")+'</p>' +
+        '<button class="primary" id="cert-generate">'+TCert("generateBtn")+'</button>' +
+      '</div>' +
+      '<div class="card" id="cert-preview-card" style="display:none;">' +
+        '<div id="cert-preview" style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:22px;line-height:1.9;"></div>' +
+        '<button class="primary" id="cert-print" style="margin-top:12px;">'+TCert("printBtn")+'</button>' +
+      '</div>';
+
+    function graduatedStudents(){
+      return state.students.filter(function(s){ return s.graduated === "ተመርቋል"; });
+    }
+
+    function refreshPersonOptions(){
+      var type = document.getElementById("cert-type").value;
+      var list = type === "membership" ? state.members : graduatedStudents();
+      var sel = document.getElementById("cert-person");
+      var noPeopleNote = document.getElementById("cert-nopeople");
+      var genBtn = document.getElementById("cert-generate");
+      if (!list.length){
+        sel.innerHTML = "";
+        sel.style.display = "none";
+        noPeopleNote.style.display = "block";
+        genBtn.disabled = true;
+      } else {
+        sel.style.display = "block";
+        noPeopleNote.style.display = "none";
+        genBtn.disabled = false;
+        sel.innerHTML = list.map(function(p){
+          return '<option value="'+p.id+'">'+(p.code||'')+' — '+p.name+'</option>';
+        }).join('');
+      }
+    }
+    refreshPersonOptions();
+
+    document.getElementById("cert-type").addEventListener("change", refreshPersonOptions);
+
+    document.getElementById("cert-generate").addEventListener("click", function(){
+      var type = document.getElementById("cert-type").value;
+      var personId = document.getElementById("cert-person").value;
+      var html = "";
+      var todayStr = new Date().toLocaleDateString("en-GB");
+
+      if (type === "membership"){
+        var m = state.members.find(function(x){ return x.id === personId; });
+        if (!m) return;
+        var p1 = state.parishes.find(function(x){ return x.id === m.parishId; });
+        var body = TCert("bodyMembership")
+          .replace("%NAME%", m.name)
+          .replace("%CODE%", m.code || "—")
+          .replace("%PARISH%", p1 ? p1.name : "—")
+          .replace("%DIOCESE%", p1 ? dioceseName(p1.dioceseId) : "—")
+          .replace("%DATE%", todayStr);
+        html = '<h3 style="text-align:center;margin-top:0;">'+TCert("titleMembership")+'</h3>' +
+          '<p>'+body+'</p>' +
+          '<div style="display:flex;justify-content:space-between;margin-top:40px;font-size:13px;">' +
+            '<span>'+TCert("signOff1")+': ____________________</span>' +
+            '<span>'+TCert("signOff2")+': ____________________</span>' +
+          '</div>';
+      } else {
+        var s = state.students.find(function(x){ return x.id === personId; });
+        if (!s) return;
+        var p2 = state.parishes.find(function(x){ return x.id === s.parishId; });
+        var body2 = TCert("bodyGraduation")
+          .replace("%NAME%", s.name)
+          .replace("%LEVEL%", TL(s.level))
+          .replace("%COURSE%", s.course || "—")
+          .replace("%GRADYEAR%", s.gradYear || "—")
+          .replace("%PARISH%", p2 ? p2.name : "—");
+        html = '<h3 style="text-align:center;margin-top:0;">'+TCert("titleGraduation")+'</h3>' +
+          '<p>'+body2+'</p>' +
+          '<div style="display:flex;justify-content:space-between;margin-top:40px;font-size:13px;">' +
+            '<span>'+TCert("signOff1")+': ____________________</span>' +
+            '<span>'+TCert("signOff2")+': ____________________</span>' +
+          '</div>';
+      }
+
+      document.getElementById("cert-preview").innerHTML = html;
+      document.getElementById("cert-preview-card").style.display = "block";
+      var certActor = (type === "membership") ? m : s;
+      logAction("act_cert", TCert(type === "membership" ? "typeMembership" : "typeGraduation") + " — " + certActor.name + " (" + (certActor.code||"—") + ")");
+      save();
+    });
+
+    document.getElementById("cert-print").addEventListener("click", function(){
+      var content = document.getElementById("cert-preview").innerHTML;
+      var watermark = '<p style="margin-top:30px;font-size:10px;color:#999;text-align:right;">'+(state.installId||'')+' &middot; '+new Date().toLocaleString("en-GB")+'</p>';
+      var w = window.open("", "_blank");
+      if (!w) return;
+      w.document.write(
+        '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + document.title + '</title>' +
+        '<style>body{font-family:sans-serif;padding:40px;line-height:1.9;color:#2B2420;} h3{margin-top:0;}</style>' +
+        '</head><body>' + content + watermark + '</body></html>'
+      );
+      w.document.close();
+      w.focus();
+      setTimeout(function(){ w.print(); }, 250);
+    });
+  }
+
+  // ---------- CSV utilities ----------
+  function csvEscape(v){
+    v = (v === undefined || v === null) ? "" : String(v);
+    if (v.indexOf(",") !== -1 || v.indexOf('"') !== -1 || v.indexOf("\n") !== -1){
+      v = '"' + v.replace(/"/g, '""') + '"';
+    }
+    return v;
+  }
+  function toCSV(headers, rows){
+    var lines = [headers.map(csvEscape).join(",")];
+    rows.forEach(function(r){ lines.push(r.map(csvEscape).join(",")); });
+    return lines.join("\r\n");
+  }
+  function downloadTextFile(filename, content, mime){
+    var blob = new Blob(["\uFEFF" + content], { type: (mime || "text/csv") + ";charset=utf-8;" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  }
+  function parseCSV(text){
+    return text.split(/\r\n|\n/).filter(function(l){ return l.trim() !== ""; }).map(function(line){
+      var vals = [], cur = "", inQuotes = false;
+      for (var i = 0; i < line.length; i++){
+        var ch = line[i];
+        if (inQuotes){
+          if (ch === '"' && line[i+1] === '"'){ cur += '"'; i++; }
+          else if (ch === '"'){ inQuotes = false; }
+          else { cur += ch; }
+        } else {
+          if (ch === '"'){ inQuotes = true; }
+          else if (ch === ','){ vals.push(cur); cur = ""; }
+          else { cur += ch; }
+        }
+      }
+      vals.push(cur);
+      return vals;
+    });
+  }
+
+  // ---------- export / import (interoperability) ----------
+  function renderIO(){
+    var el = document.getElementById("tab-io");
+
+    el.innerHTML =
+      '<div class="card"><h2>'+TIO("exportTitle")+'</h2>' +
+        '<p class="meta">'+TIO("exportNote")+'</p>' +
+        '<div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;">' +
+          '<button class="ghost" id="io-exp-members">'+TIO("exportMembers")+'</button>' +
+          '<button class="ghost" id="io-exp-students">'+TIO("exportStudents")+'</button>' +
+          '<button class="ghost" id="io-exp-teachers">'+TIO("exportTeachers")+'</button>' +
+          '<button class="ghost" id="io-exp-parishes">'+TIO("exportParishes")+'</button>' +
+        '</div>' +
+        '<button class="primary" id="io-print-pdf" style="margin-top:14px;width:100%;">'+TIO("printReportBtn")+'</button>' +
+      '</div>' +
+      '<div class="card"><h2>'+TIO("importTitle")+'</h2>' +
+        '<p class="meta">'+TIO("importNote")+'</p>' +
+        '<button class="ghost" id="io-template" style="margin:8px 0;">'+TIO("downloadTemplate")+'</button>' +
+        '<div class="field"><label>'+TIO("fileLabel")+'</label><input type="file" id="io-file" accept=".csv,text/csv"></div>' +
+        '<div class="field"><label>'+TIO("pasteLabel")+'</label><textarea id="io-paste" placeholder="'+TIO("pasteAreaPh")+'" style="min-height:90px;"></textarea></div>' +
+        '<button class="primary" id="io-import-btn">'+TIO("importBtn")+'</button>' +
+        '<p class="meta" id="io-result" style="margin-top:8px;"></p>' +
+      '</div>' +
+      '<div class="card"><h2>'+TFb("listTitle")+' ('+state.feedback.length+')</h2>' +
+        (state.feedback.length ?
+          '<button class="ghost" id="io-exp-feedback" style="margin-bottom:10px;">'+TFb("exportBtn")+'</button>' +
+          state.feedback.slice().reverse().map(function(f){
+            var typeLabel = f.type === "bug" ? TFb("typeBug") : (f.type === "confuse" ? TFb("typeConfuse") : TFb("typeIdea"));
+            return '<div class="row" style="display:block;"><span class="badge role">'+typeLabel+'</span> <span class="meta">'+(f.tester||'—')+' &middot; '+f.tab+' &middot; '+f.ts+'</span>' +
+              '<p style="margin:6px 0 0;font-size:13px;">'+f.message+'</p></div>';
+          }).join('')
+        : '<div class="empty">'+T("none")+'</div>') +
+      '</div>';
+
+    var fbExpBtn = document.getElementById("io-exp-feedback");
+    if (fbExpBtn) fbExpBtn.addEventListener("click", function(){
+      var headers = ["Timestamp","Tester","Type","Tab","Message","InstallId"];
+      var rows = state.feedback.map(function(f){
+        return [f.ts, f.tester, f.type, f.tab, f.message, f.installId];
+      });
+      downloadTextFile("feedback.csv", toCSV(headers, rows));
+    });
+
+    // ---- Export handlers ----
+    document.getElementById("io-exp-members").addEventListener("click", function(){
+      var headers = ["Code","Name","Gender","Parish","Diocese","Residence","Education","ParentEducation","SpecialTitle","JoinDate","Status","Synced"];
+      var rows = state.members.map(function(m){
+        var p = state.parishes.find(function(x){ return x.id === m.parishId; });
+        return [m.code, m.name, m.gender, p ? p.name : "", p ? dioceseName(p.dioceseId) : "", m.residence, m.education, m.parentEducation, m.specialTitle, m.joinDate, m.status, m.synced ? "Yes" : "No"];
+      });
+      downloadTextFile("members.csv", toCSV(headers, rows));
+    });
+    document.getElementById("io-exp-students").addEventListener("click", function(){
+      var headers = ["Code","Name","Gender","Parish","Level","Year","Course","Score","Status","Graduated","GradYear"];
+      var rows = state.students.map(function(s){
+        var p = state.parishes.find(function(x){ return x.id === s.parishId; });
+        return [s.code, s.name, s.gender, p ? p.name : "", s.level, s.year, s.course, s.score, s.status, s.graduated, s.gradYear];
+      });
+      downloadTextFile("students.csv", toCSV(headers, rows));
+    });
+    document.getElementById("io-exp-teachers").addEventListener("click", function(){
+      var headers = ["Code","Name","Gender","Phone","Parish","Level","Subject","CourseType","Year"];
+      var rows = state.teachers.map(function(t){
+        var p = state.parishes.find(function(x){ return x.id === t.parishId; });
+        return [t.code, t.name, t.gender, t.phone, p ? p.name : "", t.level, t.subject, t.courseType, t.year];
+      });
+      downloadTextFile("teachers.csv", toCSV(headers, rows));
+    });
+    document.getElementById("io-exp-parishes").addEventListener("click", function(){
+      var headers = ["Code","Name","Diocese","SpecialTitle","Founded","MemberCount"];
+      var rows = state.parishes.map(function(p){
+        return [p.code, p.name, dioceseName(p.dioceseId), p.specialTitle, p.founded, membersOf(p.id).length];
+      });
+      downloadTextFile("parishes.csv", toCSV(headers, rows));
+    });
+
+    // ---- Template download ----
+    document.getElementById("io-template").addEventListener("click", function(){
+      var headers = ["Name","Gender","ParishCode","Residence","Education","JoinDate","Status"];
+      var sample = ["አበበ ከበደ","ወንድ","D01-P01","ቀበሌ 05","ዲግሪ","2015 ዓ.ም","ንቁ"];
+      downloadTextFile("member_import_template.csv", toCSV(headers, [sample]));
+    });
+
+    // ---- Import handler ----
+    function runImport(text){
+      var rows = parseCSV(text);
+      if (!rows.length) return;
+      // skip header row
+      var dataRows = rows.slice(1);
+      var added = 0, skipped = 0;
+      dataRows.forEach(function(r){
+        var name = (r[0] || "").trim();
+        var gender = (r[1] || "").trim();
+        var parishCode = (r[2] || "").trim();
+        var residence = (r[3] || "").trim();
+        var education = (r[4] || "").trim();
+        var joinDate = (r[5] || "").trim();
+        var status = (r[6] || "").trim() || "ንቁ";
+        var parishObj = state.parishes.find(function(p){ return p.code === parishCode; });
+        if (!name || !parishObj){ skipped++; return; }
+        var seq = membersOf(parishObj.id).length + 1;
+        var code = parishObj.code + "-M" + pad(seq, 4);
+        state.members.push({
+          id: uid(), parishId: parishObj.id, name: name, gender: gender,
+          residence: residence, education: education, parentEducation: "",
+          specialTitle: "", joinDate: joinDate, status: status, code: code, synced: false
+        });
+        added++;
+      });
+      if (added > 0) logAction("act_import", added + " " + T("memberWord") + ", " + skipped + " skipped");
+      save();
+      var resultEl = document.getElementById("io-result");
+      resultEl.innerHTML = TIO("importAdded").replace("%N%", added) + "<br>" + TIO("importSkipped").replace("%N%", skipped);
+      renderAll();
+    }
+
+    document.getElementById("io-import-btn").addEventListener("click", function(){
+      var fileInput = document.getElementById("io-file");
+      var pasteText = document.getElementById("io-paste").value.trim();
+      if (fileInput.files && fileInput.files[0]){
+        var reader = new FileReader();
+        reader.onload = function(e){ runImport(e.target.result); };
+        reader.readAsText(fileInput.files[0]);
+      } else if (pasteText){
+        runImport(pasteText);
+      } else {
+        document.getElementById("io-result").textContent = TIO("noInput");
+      }
+    });
+
+    // ---- PDF-style print of full summary ----
+    document.getElementById("io-print-pdf").addEventListener("click", function(){
+      var html = '<h2>'+STRINGS.appTitle[lang]+'</h2>';
+      html += '<h3>'+T("dioceseCount")+' ('+state.dioceses.length+')</h3><ul>';
+      state.dioceses.forEach(function(d){ html += '<li>'+(d.code||'')+' — '+d.name+' ('+parishesOf(d.id).length+' '+T("parishWord")+')</li>'; });
+      html += '</ul>';
+      html += '<h3>'+T("parishCount")+' ('+state.parishes.length+')</h3><table border="1" cellpadding="6" style="border-collapse:collapse;width:100%;font-size:13px;"><tr><th>Code</th><th>Name</th><th>Diocese</th><th>Members</th></tr>';
+      state.parishes.forEach(function(p){ html += '<tr><td>'+(p.code||'')+'</td><td>'+p.name+'</td><td>'+dioceseName(p.dioceseId)+'</td><td>'+membersOf(p.id).length+'</td></tr>'; });
+      html += '</table>';
+      html += '<h3>'+T("totalMembers")+' ('+state.members.length+')</h3><table border="1" cellpadding="6" style="border-collapse:collapse;width:100%;font-size:13px;"><tr><th>Code</th><th>Name</th><th>Gender</th><th>Parish</th><th>Status</th></tr>';
+      state.members.forEach(function(m){ html += '<tr><td>'+(m.code||'')+'</td><td>'+m.name+'</td><td>'+m.gender+'</td><td>'+parishName(m.parishId)+'</td><td>'+m.status+'</td></tr>'; });
+      html += '</table>';
+      html += '<p style="margin-top:30px;font-size:10px;color:#999;text-align:right;">'+(state.installId||'')+' &middot; '+new Date().toLocaleString("en-GB")+'</p>';
+
+      var w = window.open("", "_blank");
+      if (!w) return;
+      w.document.write(
+        '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + document.title + '</title>' +
+        '<style>body{font-family:sans-serif;padding:30px;color:#2B2420;} table{margin-bottom:24px;} th{background:#F3E7C9;}</style>' +
+        '</head><body>' + html + '</body></html>'
+      );
+      w.document.close();
+      w.focus();
+      setTimeout(function(){ w.print(); }, 250);
+    });
+  }
+
+  // ---------- audit trail ----------
+  function renderAudit(){
+    var el = document.getElementById("tab-audit");
+    var entries = state.auditLog.slice().reverse().slice(0, 300);
+
+    var listHtml = '<div class="card"><h2>'+STRINGS.tabs.audit[lang]+' ('+state.auditLog.length+')</h2>' +
+      (entries.length ? entries.map(function(e){
+        var actorLine = (e.actor ? e.actor + " &middot; " : "") + (STRINGS.roleOptions[e.role] ? STRINGS.roleOptions[e.role][lang] : e.role);
+        return '<div class="row" style="display:block;">' +
+          '<strong>'+TAudit(e.actionKey)+'</strong>' +
+          (e.details ? '<span class="meta"> — '+e.details+'</span>' : '') +
+          '<br><span class="meta">'+actorLine+' &middot; '+e.ts+'</span>' +
+          '</div>';
+      }).join('') : '<div class="empty">'+T("none")+'</div>') +
+      '</div>';
+
+    el.innerHTML = '<div class="note">'+TAudit("noteText")+'</div>' + listHtml;
+  }
+
+  // ---------- comms / data flow ----------
+  function renderComms(){
+    var el = document.getElementById("tab-comms");
+    var pending = state.members.filter(function(m){ return !m.synced; }).length;
+
+    var syncSection =
+      '<div class="card"><h2>'+TCm("syncTitle")+'</h2>' +
+      '<p class="meta">'+TCm("syncNote").replace("%N%", pending)+'</p>' +
+      '<button class="primary" id="sync-btn" '+((!online || pending===0 || !can("sync")) ? "disabled" : "")+'>'+TCm("syncBtn")+'</button>' +
+      '</div>';
+
+    var reportSection =
+      (can("send-report") && state.parishes.length ?
+        '<div class="card"><h2>'+TCm("reportTitle")+'</h2>' +
+        '<div class="field"><label>'+TCm("selectParish")+'</label><select id="rep-parish">'+opt(state.parishes,"id","name")+'</select></div>' +
+        '<button class="primary" id="rep-send" '+(!online ? "disabled" : "")+'>'+TCm("sendReportBtn")+'</button>' +
+        (!online ? '<p class="meta" style="margin-top:6px;">'+TCm("onlineToEnable")+'</p>' : '') +
+        '</div>' : '');
+
+    var reportsListSection =
+      '<div class="card"><h2>'+TCm("reportsRxTitle")+' ('+state.reports.length+')</h2>' +
+      (state.reports.length ? state.reports.slice().reverse().map(function(r){
+        return '<div class="row"><span>'+parishName(r.parishId)+'<br><span class="meta">'+dioceseName(r.dioceseId)+' &middot; '+r.date+'</span></span>' +
+          '<span class="meta">'+r.memberCount+' '+T("memberWord")+'</span></div>';
+      }).join('') : '<div class="empty">'+TCm("noneReceived")+'</div>') +
+      '</div>';
+
+    var circularForm = can("send-circular") ?
+      '<div class="card"><h2>'+TCm("circFormTitle")+'</h2>' +
+      '<div class="field"><label>'+TCm("circTitleLabel")+'</label><input type="text" id="circ-title" placeholder="'+TCm("circTitlePh")+'"></div>' +
+      '<div class="field"><label>'+TCm("circBodyLabel")+'</label><textarea id="circ-body" placeholder="'+TCm("circBodyPh")+'"></textarea></div>' +
+      '<button class="primary" id="circ-send">'+TCm("circSendBtn")+'</button></div>' :
+      '';
+
+    var circularsList =
+      '<div class="card"><h2>'+TCm("circListTitle")+' ('+state.circulars.length+')</h2>' +
+      (state.circulars.length ? state.circulars.slice().reverse().map(function(c){
+        return '<div class="row" style="display:block;"><strong>'+c.title+'</strong><br><span class="meta">'+c.date+'</span><p style="margin:6px 0 0;font-size:13px;">'+c.body+'</p></div>';
+      }).join('') : '<div class="empty">'+TCm("noneSent")+'</div>') +
+      '</div>';
+
+    var smsSection =
+      '<div class="card"><h2>'+TCm("smsTitle")+'</h2>' +
+      '<p class="meta">'+TCm("smsNote")+'</p>' +
+      '<div class="field"><label>'+TCm("smsPhoneLabel")+'</label><input type="text" id="sms-phone" placeholder="'+TCm("smsPhonePh")+'" value="'+(state.smsAdminPhone||'')+'"></div>' +
+      '<button class="primary" id="sms-send">'+TCm("smsSendBtn")+'</button>' +
+      '<p class="meta" style="margin-top:8px;font-style:italic;">'+TCm("smsCaveat")+'</p>' +
+      '<p class="error" id="sms-error"></p>' +
+      '</div>';
+
+    el.innerHTML = '<div class="note">'+TCm("mainNote")+'</div>' +
+      syncSection + reportSection + reportsListSection + circularForm + circularsList + smsSection;
+
+    var smsBtn = document.getElementById("sms-send");
+    if (smsBtn) smsBtn.addEventListener("click", function(){
+      var phone = document.getElementById("sms-phone").value.trim();
+      var errEl = document.getElementById("sms-error");
+      if (!phone){ errEl.textContent = TCm("smsNoPhone"); errEl.style.display = "block"; return; }
+      errEl.style.display = "none";
+      state.smsAdminPhone = phone;
+      save();
+      var body = TCm("smsBody")
+        .replace("%DIO%", state.dioceses.length)
+        .replace("%PAR%", state.parishes.length)
+        .replace("%MEM%", state.members.length)
+        .replace("%PEND%", pending);
+      window.location.href = "sms:" + phone + "?body=" + encodeURIComponent(body);
+    });
+
+    var syncBtn = document.getElementById("sync-btn");
+    if (syncBtn) syncBtn.addEventListener("click", function(){
+      var n = state.members.filter(function(m){ return !m.synced; }).length;
+      state.members.forEach(function(m){ m.synced = true; });
+      logAction("act_sync", n + " " + T("memberWord"));
+      save(); renderAll();
+    });
+
+    var repBtn = document.getElementById("rep-send");
+    if (repBtn) repBtn.addEventListener("click", function(){
+      var parishId = document.getElementById("rep-parish").value;
+      var parish = state.parishes.find(function(p){ return p.id === parishId; });
+      if (!parish) return;
+      state.reports.push({
+        id: uid(),
+        parishId: parishId,
+        dioceseId: parish.dioceseId,
+        memberCount: membersOf(parishId).length,
+        date: new Date().toLocaleDateString("en-GB")
+      });
+      logAction("act_report", parish.code + " — " + parish.name);
+      save(); renderAll();
+    });
+
+    var circBtn = document.getElementById("circ-send");
+    if (circBtn) circBtn.addEventListener("click", function(){
+      var title = document.getElementById("circ-title").value.trim();
+      var body = document.getElementById("circ-body").value.trim();
+      if (!title || !body) return;
+      state.circulars.push({ id: uid(), title: title, body: body, date: new Date().toLocaleDateString("en-GB") });
+      logAction("act_circular", title);
+      save(); renderAll();
+    });
+  }
+
+  function roleLabel(r){
+    return { owner: "ባለቤት", admin: "አስተዳዳሪ", collector: "ሰብሳቢ", viewer: "ተመልካች" }[r] || r;
+  }
+
+  // ---------- init ----------
+  load().then(function(){
+    document.getElementById("owner-name").value = state.ownerName || "";
+    document.getElementById("lang-select").value = lang;
+    if (!state.installId){
+      state.installId = generateInstallId();
+      save();
+    }
+    applyLang();
+    renderAll();
+  });
+})();
+</script>
+</body>
+</html>
