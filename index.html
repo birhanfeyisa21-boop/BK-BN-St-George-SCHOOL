@@ -187,6 +187,32 @@
   .db-tl li { position:relative; padding-bottom: 12px; font-size: 13px; }
   .db-tl li:last-child { padding-bottom: 0; }
   .db-tl li::before { content:""; position:absolute; inset-inline-start:-18px; top:7px; width:9px; height:9px; border-radius:50%; background: var(--gold); border: 2px solid var(--card); box-sizing: content-box; margin-inline-start: -1px; }
+  .pin-overlay { position: fixed; inset: 0; background: rgba(30,10,14,.62); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
+  .pin-box { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; width: 100%; max-width: 340px; box-shadow: 0 10px 40px rgba(0,0,0,.35); }
+  .pin-box h3 { font-family: Georgia, "Noto Serif Ethiopic", serif; font-size: 17px; font-weight: normal; margin: 0 0 8px; color: var(--maroon-dark); }
+  .pin-box label { display: block; font-size: 13px; margin: 12px 0 4px; }
+  .pin-box input { width: 100%; box-sizing: border-box; font-size: 22px; letter-spacing: 6px; text-align: center; padding: 10px; border: 1px solid var(--border); border-radius: 10px; background: #fff; }
+  .pin-box .pin-code { font-family: monospace; font-size: 22px; letter-spacing: 2px; text-align: center; background: var(--gold-bg); padding: 14px 8px; border-radius: 10px; margin: 12px 0; user-select: all; word-break: break-all; }
+  .pin-row { display: flex; gap: 8px; margin-top: 16px; }
+  .pin-forgot { background: none; border: none; color: var(--maroon); text-decoration: underline; padding: 0; margin-top: 12px; font-size: 13px; cursor: pointer; }
+  .hp-checks { display: grid; grid-template-columns: 1fr; gap: 2px; }
+  .hp-check { display: flex; align-items: center; gap: 8px; padding: 7px 0; font-size: 14px; border-bottom: 1px solid var(--border); }
+  .hp-check input { width: 18px; height: 18px; flex: none; }
+  .hp-q { border-bottom: 1px solid var(--border); padding: 10px 0; }
+  .hp-q summary { cursor: pointer; font-size: 14px; color: var(--maroon-dark); }
+  .hp-q p { margin: 8px 0 0; font-size: 13px; line-height: 1.6; color: var(--ink); }
+  .hp-btn { display: inline-block; background: var(--maroon); color: #fff; text-decoration: none; padding: 9px 16px; border-radius: 10px; font-size: 14px; margin-top: 4px; }
+  .dept-subs { display: flex; flex-wrap: wrap; gap: 6px; }
+  .dept-sub { font-size: 12px; background: var(--gold-bg); color: var(--maroon-dark); padding: 4px 9px; border-radius: 999px; }
+  #view-lock { position: fixed; inset: 0; z-index: 200; background: var(--maroon-dark); background-image: radial-gradient(circle at 50% 0%, rgba(226,193,112,.12), transparent 60%); display: flex; align-items: center; justify-content: center; padding: 20px; }
+  #view-lock.hidden { display: none; }
+  .vl-card { background: var(--card); border-radius: 18px; padding: 24px 22px; width: 100%; max-width: 360px; box-shadow: 0 12px 44px rgba(0,0,0,.4); text-align: center; }
+  .vl-card h1 { font-family: Georgia, "Noto Serif Ethiopic", serif; font-size: 20px; color: var(--maroon-dark); margin: 0 0 4px; }
+  .vl-card h3 { font-weight: normal; font-size: 15px; color: var(--muted); margin: 0 0 10px; }
+  .vl-card label { display: block; text-align: start; font-size: 13px; margin: 10px 0 4px; }
+  .vl-card select, .vl-card input { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid var(--border); border-radius: 10px; font-size: 15px; }
+  .vl-card input { text-align: center; letter-spacing: 6px; font-size: 22px; }
+  .vl-card button.primary { width: 100%; margin-top: 14px; }
 </style>
 </head>
 <body>
@@ -203,7 +229,7 @@
       <label>ሚና፦
         <select id="role-select">
           <option value="owner">ባለቤት (የደብሩ ሰ/ት/ቤት ጽ/ቤት)</option>
-          <option value="admin">አስተዳዳሪ (የደብሩ ጽሕፈት ቤት)</option>
+          <option value="admin">አስተዳዳሪ (የሰ/ት/ቤቱ ጽሕፈት ቤት)</option>
           <option value="collector">ሰብሳቢ (የሰ/ት/ቤቱ ቁጥጥር ክፍል)</option>
           <option value="viewer">ተመልካች</option>
         </select>
@@ -229,8 +255,9 @@
 
   <nav class="tabs">
     <button data-tab="dashboard" class="active">ዳሽቦርድ</button>
-    <button data-tab="dioceses">የደብሩ ጽሕፈት ቤት</button>
+    <button data-tab="dioceses">የሰ/ት/ቤቱ ጽሕፈት ቤት</button>
     <button data-tab="parishes">የሰ/ት/ቤቱ ቁጥጥር ክፍል</button>
+    <button data-tab="departments">ክፍላት</button>
     <button data-tab="members">አባላት</button>
     <button data-tab="students">ተማሪዎች</button>
     <button data-tab="teachers">መምህራን</button>
@@ -240,6 +267,7 @@
     <button data-tab="cert">ማረጋገጫ ሰነድ</button>
     <button data-tab="io">ውጤት እና ማስመጣት</button>
     <button data-tab="storage">ማከማቻና ምትኬ</button>
+    <button data-tab="help">እገዛና ቅንብሮች</button>
     <button data-tab="audit">ኦዲት ትሬል</button>
     <button data-tab="comms">ግንኙነት / ሪፖርት</button>
   </nav>
@@ -256,6 +284,8 @@
   <div id="tab-cert" class="tab hidden"></div>
   <div id="tab-io" class="tab hidden"></div>
   <div id="tab-storage" class="tab hidden"></div>
+  <div id="tab-help" class="tab hidden"></div>
+  <div id="tab-departments" class="tab hidden"></div>
   <div id="tab-audit" class="tab hidden"></div>
   <div id="tab-comms" class="tab hidden"></div>
 
@@ -272,6 +302,7 @@
 <button id="fb-fab" type="button" style="position:fixed;bottom:18px;right:18px;width:54px;height:54px;border-radius:50%;background:var(--maroon);color:#fff;border:none;font-size:22px;box-shadow:0 3px 10px rgba(0,0,0,0.3);z-index:50;cursor:pointer;">🐛</button>
 
 <div id="toast" role="status"></div>
+<div id="view-lock" class="hidden"></div>
 
 <div id="fb-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:60;">
   <div style="max-width:420px;margin:40px auto;background:var(--bg);border-radius:14px;padding:18px;max-height:85vh;overflow-y:auto;">
@@ -340,19 +371,19 @@
       ar: "متصل", fr: "En ligne", es: "En línea"
     },
     tabs: {
-      dashboard: { am: "ዳሽቦርድ", en: "Dashboard", om: "Gabatee Ijaarsaa", ti: "ዳሽቦርድ", ar: "لوحة التحكم", fr: "Tableau de bord", es: "Panel" },      dioceses:  { am: "የደብሩ ጽሕፈት ቤት", en: "Parish Offices", om: "Waajjira Waldaa", ti: "ቤ/ጽ ኣጥቢያ", ar: "مكاتب الرعايا", fr: "Bureaux paroissiaux", es: "Oficinas parroquiales" },      parishes:  { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍል", en: "Sunday School Control Sections", om: "Kutaa To'annoo Mana Barnoota Sanbataa", ti: "ክፍሊ ቁጽጽር ት/ቤት ሰንበት", ar: "أقسام مراقبة مدرسة الأحد", fr: "Sections de contrôle de l'école du dimanche", es: "Secciones de Control de la Escuela Dominical" },      members:   { am: "አባላት", en: "Members", om: "Miseensota", ti: "ኣባላት", ar: "الأعضاء", fr: "Membres", es: "Miembros" },      students:  { am: "ተማሪዎች", en: "Students", om: "Barattoota", ti: "ተመሃሮ", ar: "الطلاب", fr: "Élèves", es: "Estudiantes" },      teachers:  { am: "መምህራን", en: "Teachers", om: "Barsiisota", ti: "መምህራን", ar: "المعلمون", fr: "Enseignants", es: "Maestros" },      documents: { am: "ደንብ / ሰነድ", en: "Bylaws / Docs", om: "Seera / Ragaa", ti: "ሕጊ / ሰነድ", ar: "اللوائح / الوثائق", fr: "Règlements / Documents", es: "Estatutos / Documentos" },      lessons:   { am: "ትምህርት (ኦዲዮ/ቪዲዮ)", en: "Lessons (Audio/Video)", om: "Barnoota (Sagalee/Viidiyoo)", ti: "ትምህርቲ (ድምጺ/ቪድዮ)", ar: "الدروس (صوت/فيديو)", fr: "Leçons (Audio/Vidéo)", es: "Lecciones (Audio/Video)" },      tools:     { am: "መሳሪያዎች", en: "Tools", om: "Meeshaalee", ti: "መሳርሒታት", ar: "الأدوات", fr: "Outils", es: "Herramientas" },      cert:      { am: "ማረጋገጫ ሰነድ", en: "Certificates", om: "Ragaalee Mirkaneessaa", ti: "ምስክር ወረቐት", ar: "الشهادات", fr: "Certificats", es: "Certificados" },      io:        { am: "ውጤት እና ማስመጣት", en: "Export & Import", om: "Baasuu fi Galchuu", ti: "ምውጻእን ምእታውን", ar: "التصدير والاستيراد", fr: "Exporter et importer", es: "Exportar e importar" },      audit:     { am: "ኦዲትና ኢንስፔክሽን ክፍል", en: "Audit & Inspection Dept.", om: "Kutaa Ilaalchaa fi Sakatta'aa", ti: "ክፍሊ ኦዲትን ኢንስፐክሽንን", ar: "قسم التدقيق والتفتيش", fr: "Département d'audit et d'inspection", es: "Departamento de Auditoría e Inspección" },      comms:     { am: "ህዝብ ግንኙነት / ሪፖርት", en: "Public Relations / Reports", om: "Hawaasa Waliin Hidhata / Gabaasa", ti: "ህዝባዊ ርክብ / ጸብጻብ", ar: "العلاقات العامة / التقارير", fr: "Relations publiques / Rapports", es: "Relaciones Públicas / Informes" }    },
+      dashboard: { am: "ዳሽቦርድ", en: "Dashboard", om: "Gabatee Ijaarsaa", ti: "ዳሽቦርድ", ar: "لوحة التحكم", fr: "Tableau de bord", es: "Panel" },      dioceses:  { am: "የሰ/ት/ቤቱ ጽሕፈት ቤት", en: "Parish Offices", om: "Waajjira Waldaa", ti: "ቤ/ጽ ኣጥቢያ", ar: "مكاتب الرعايا", fr: "Bureaux paroissiaux", es: "Oficinas parroquiales" },      parishes:  { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍል", en: "Sunday School Control Sections", om: "Kutaa To'annoo Mana Barnoota Sanbataa", ti: "ክፍሊ ቁጽጽር ት/ቤት ሰንበት", ar: "أقسام مراقبة مدرسة الأحد", fr: "Sections de contrôle de l'école du dimanche", es: "Secciones de Control de la Escuela Dominical" },      members:   { am: "አባላት", en: "Members", om: "Miseensota", ti: "ኣባላት", ar: "الأعضاء", fr: "Membres", es: "Miembros" },      students:  { am: "ተማሪዎች", en: "Students", om: "Barattoota", ti: "ተመሃሮ", ar: "الطلاب", fr: "Élèves", es: "Estudiantes" },      teachers:  { am: "መምህራን", en: "Teachers", om: "Barsiisota", ti: "መምህራን", ar: "المعلمون", fr: "Enseignants", es: "Maestros" },      documents: { am: "ደንብ / ሰነድ", en: "Bylaws / Docs", om: "Seera / Ragaa", ti: "ሕጊ / ሰነድ", ar: "اللوائح / الوثائق", fr: "Règlements / Documents", es: "Estatutos / Documentos" },      lessons:   { am: "ትምህርት (ኦዲዮ/ቪዲዮ)", en: "Lessons (Audio/Video)", om: "Barnoota (Sagalee/Viidiyoo)", ti: "ትምህርቲ (ድምጺ/ቪድዮ)", ar: "الدروس (صوت/فيديو)", fr: "Leçons (Audio/Vidéo)", es: "Lecciones (Audio/Video)" },      tools:     { am: "መሳሪያዎች", en: "Tools", om: "Meeshaalee", ti: "መሳርሒታት", ar: "الأدوات", fr: "Outils", es: "Herramientas" },      cert:      { am: "ማረጋገጫ ሰነድ", en: "Certificates", om: "Ragaalee Mirkaneessaa", ti: "ምስክር ወረቐት", ar: "الشهادات", fr: "Certificats", es: "Certificados" },      io:        { am: "ውጤት እና ማስመጣት", en: "Export & Import", om: "Baasuu fi Galchuu", ti: "ምውጻእን ምእታውን", ar: "التصدير والاستيراد", fr: "Exporter et importer", es: "Exportar e importar" },      audit:     { am: "ኦዲትና ኢንስፔክሽን ክፍል", en: "Audit & Inspection Dept.", om: "Kutaa Ilaalchaa fi Sakatta'aa", ti: "ክፍሊ ኦዲትን ኢንስፐክሽንን", ar: "قسم التدقيق والتفتيش", fr: "Département d'audit et d'inspection", es: "Departamento de Auditoría e Inspección" },      comms:     { am: "ህዝብ ግንኙነት / ሪፖርት", en: "Public Relations / Reports", om: "Hawaasa Waliin Hidhata / Gabaasa", ti: "ህዝባዊ ርክብ / ጸብጻብ", ar: "العلاقات العامة / التقارير", fr: "Relations publiques / Rapports", es: "Relaciones Públicas / Informes" }    },
     roleOptions: {
       owner:     { am: "ባለቤት (የደብሩ ሰ/ት/ቤት ጽ/ቤት)", en: "Owner (Parish Sunday School Office)", om: "Abbaa Qabeenyaa (Waajjira Mana Barnoota Sanbataa Waldaa)", ti: "ወናኒ (ቤ/ጽ ት/ቤት ሰንበት ኣጥቢያ)", ar: "المالك (مكتب مدرسة الأحد بالرعية)", fr: "Propriétaire (Bureau de l'école du dimanche paroissiale)", es: "Propietario (Oficina de la Escuela Dominical parroquial)" },
-      admin:     { am: "አስተዳዳሪ (የደብሩ ጽሕፈት ቤት)", en: "Admin (Parish Office)", om: "Bulchaa (Waajjira Waldaa)", ti: "ኣመሓዳሪ (ቤ/ጽ ኣጥቢያ)", ar: "المسؤول (مكتب الرعية)", fr: "Administrateur (Bureau paroissial)", es: "Administrador (Oficina parroquial)" },      collector: { am: "የደብሩ ስ/ት/ቤት ጽ/ቤት (ሰብሳቢ/ም-ሰብሳቢ/ጸሐፊ)", en: "Parish Sunday School Office (Chair/Deputy/Secretary)", om: "Waajjira Mana Barnoota Sanbataa Waldaa (Hoogganaa/I.A/Barreessaa)", ti: "ቤ/ጽ ት/ቤት ሰንበት ኣጥቢያ (ሰብሳቢ/ም-ሰብሳቢ/ጸሓፊ)", ar: "مكتب مدرسة الأحد بالرعية (الرئيس/النائب/السكرتير)", fr: "Bureau de l'école du dimanche paroissiale (Président/Adjoint/Secrétaire)", es: "Oficina de la Escuela Dominical parroquial (Presidente/Adjunto/Secretario)" },
+      admin:     { am: "አስተዳዳሪ (የሰ/ት/ቤቱ ጽሕፈት ቤት)", en: "Admin (Parish Office)", om: "Bulchaa (Waajjira Waldaa)", ti: "ኣመሓዳሪ (ቤ/ጽ ኣጥቢያ)", ar: "المسؤول (مكتب الرعية)", fr: "Administrateur (Bureau paroissial)", es: "Administrador (Oficina parroquial)" },      collector: { am: "የደብሩ ስ/ት/ቤት ጽ/ቤት (ሰብሳቢ/ም-ሰብሳቢ/ጸሐፊ)", en: "Parish Sunday School Office (Chair/Deputy/Secretary)", om: "Waajjira Mana Barnoota Sanbataa Waldaa (Hoogganaa/I.A/Barreessaa)", ti: "ቤ/ጽ ት/ቤት ሰንበት ኣጥቢያ (ሰብሳቢ/ም-ሰብሳቢ/ጸሓፊ)", ar: "مكتب مدرسة الأحد بالرعية (الرئيس/النائب/السكرتير)", fr: "Bureau de l'école du dimanche paroissiale (Président/Adjoint/Secrétaire)", es: "Oficina de la Escuela Dominical parroquial (Presidente/Adjunto/Secretario)" },
       viewer:    { am: "ተመልካች", en: "Viewer", om: "Ilaalaa", ti: "ተዓዛቢ", ar: "مشاهد", fr: "Observateur", es: "Observador" }    },
     dash: {
-      summaryNote:   { am: "ይህ ማጠቃለያ ከሁሉም የደብሩ ጽሕፈት ቤት እና የሰ/ት/ቤቱ ቁጥጥር ክፍል የተሰበሰበ ወቅታዊ ድምር ነው። (%ROLE% ሚና ውስጥ ነዎት)", en: "This is a live summary collected from all Parish Offices and Sunday School Control Sections. (You are in the %ROLE% role)", om: "Kun cuunfaa yeroo ammaa Waajjira Waldaa fi Kutaa To'annoo Mana Barnoota Sanbataa hunda irraa walitti qabame. (Gahee %ROLE% keessatti jirtu)", ti: "እዚ ጠቕላላ ድምር ካብ ኩሉ ቤ/ጽ ኣጥቢያን ክፍሊ ቁጽጽር ት/ቤት ሰንበትን ዝተኣከበ እዩ። (ኣብ ግደ %ROLE% ኣሎኻ)", ar: "هذا ملخص حي تم جمعه من جميع مكاتب الرعايا وأقسام مراقبة مدرسة الأحد. (أنت في دور %ROLE%)", fr: "Ceci est un résumé en direct de tous les bureaux paroissiaux et sections de contrôle de l'école du dimanche. (Vous êtes dans le rôle %ROLE%)", es: "Este es un resumen en vivo de todas las oficinas parroquiales y secciones de control de la escuela dominical. (Usted está en el rol %ROLE%)" },      cardTotal:     { am: "ጠቅላላ ሁኔታ", en: "Overall Status", om: "Haala Waliigalaa", ti: "ጠቕላላ ኩነታት", ar: "الحالة العامة", fr: "État général", es: "Estado general" },      dioceseCount:  { am: "የደብሩ ጽሕፈት ቤቶች", en: "Parish Offices", om: "Waajjira Waldaa", ti: "ቤ/ጽ ኣጥቢያታት", ar: "مكاتب الرعايا", fr: "Bureaux paroissiaux", es: "Oficinas parroquiales" },      parishCount:   { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍልዎች", en: "Sunday School Control Sections", om: "Kutaalee To'annoo Mana Barnoota Sanbataa", ti: "ክፍልታት ቁጽጽር ት/ቤት ሰንበት", ar: "أقسام مراقبة مدرسة الأحد", fr: "Sections de contrôle de l'école du dimanche", es: "Secciones de Control de la Escuela Dominical" },      totalMembers:  { am: "ጠቅላላ አባላት", en: "Total Members", om: "Miseensota Waliigalaa", ti: "ጠቕላላ ኣባላት", ar: "إجمالي الأعضاء", fr: "Total des membres", es: "Total de miembros" },      totalStudents: { am: "ጠቅላላ ተማሪዎች", en: "Total Students", om: "Barattoota Waliigalaa", ti: "ጠቕላላ ተመሃሮ", ar: "إجمالي الطلاب", fr: "Total des élèves", es: "Total de estudiantes" },      totalTeachers: { am: "ጠቅላላ መምህራን", en: "Total Teachers", om: "Barsiisota Waliigalaa", ti: "ጠቕላላ መምህራን", ar: "إجمالي المعلمين", fr: "Total des enseignants", es: "Total de maestros" },      maleMembers:   { am: "ወንድ አባላት", en: "Male Members", om: "Miseensota Dhiiraa", ti: "ተባዕታይ ኣባላት", ar: "الأعضاء الذكور", fr: "Membres masculins", es: "Miembros hombres" },      byDiocese:     { am: "በየደብሩ ጽሕፈት ቤት የተከፋፈለ", en: "By Parish Office", om: "Akka Waajjira Waldaatti Qoodame", ti: "ብቤ/ጽ ኣጥቢያ ዝተመቓረሐ", ar: "حسب مكتب الرعية", fr: "Par bureau paroissial", es: "Por oficina parroquial" },      noDiocese:     { am: "እስካሁን የደብሩ ጽሕፈት ቤት አልተመዘገበም", en: "No Parish Office registered yet", om: "Hanga ammaatti Waajjirri Waldaa hin galmoofne", ti: "ክሳብ ሕጂ ቤ/ጽ ኣጥቢያ ኣይተመዝገበን", ar: "لم يتم تسجيل أي مكتب رعية بعد", fr: "Aucun bureau paroissial enregistré pour l'instant", es: "Aún no se ha registrado ninguna oficina parroquial" },      parishWord:    { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍል", en: "control sections", om: "kutaalee to'annoo", ti: "ክፍሊ ቁጽጽር ት/ቤት ሰንበት", ar: "قسم مراقبة مدرسة الأحد", fr: "sections de contrôle de l'école du dimanche", es: "secciones de control de la escuela dominical" },      memberWord:    { am: "አባል", en: "members", om: "miseensa", ti: "ኣባል", ar: "عضو", fr: "membres", es: "miembros" }    },
+      summaryNote:   { am: "ይህ ማጠቃለያ ከሁሉም የሰ/ት/ቤቱ ጽሕፈት ቤት እና የሰ/ት/ቤቱ ቁጥጥር ክፍል የተሰበሰበ ወቅታዊ ድምር ነው። (%ROLE% ሚና ውስጥ ነዎት)", en: "This is a live summary collected from all Parish Offices and Sunday School Control Sections. (You are in the %ROLE% role)", om: "Kun cuunfaa yeroo ammaa Waajjira Waldaa fi Kutaa To'annoo Mana Barnoota Sanbataa hunda irraa walitti qabame. (Gahee %ROLE% keessatti jirtu)", ti: "እዚ ጠቕላላ ድምር ካብ ኩሉ ቤ/ጽ ኣጥቢያን ክፍሊ ቁጽጽር ት/ቤት ሰንበትን ዝተኣከበ እዩ። (ኣብ ግደ %ROLE% ኣሎኻ)", ar: "هذا ملخص حي تم جمعه من جميع مكاتب الرعايا وأقسام مراقبة مدرسة الأحد. (أنت في دور %ROLE%)", fr: "Ceci est un résumé en direct de tous les bureaux paroissiaux et sections de contrôle de l'école du dimanche. (Vous êtes dans le rôle %ROLE%)", es: "Este es un resumen en vivo de todas las oficinas parroquiales y secciones de control de la escuela dominical. (Usted está en el rol %ROLE%)" },      cardTotal:     { am: "ጠቅላላ ሁኔታ", en: "Overall Status", om: "Haala Waliigalaa", ti: "ጠቕላላ ኩነታት", ar: "الحالة العامة", fr: "État général", es: "Estado general" },      dioceseCount:  { am: "የደብሩ ጽሕፈት ቤቶች", en: "Parish Offices", om: "Waajjira Waldaa", ti: "ቤ/ጽ ኣጥቢያታት", ar: "مكاتب الرعايا", fr: "Bureaux paroissiaux", es: "Oficinas parroquiales" },      parishCount:   { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍልዎች", en: "Sunday School Control Sections", om: "Kutaalee To'annoo Mana Barnoota Sanbataa", ti: "ክፍልታት ቁጽጽር ት/ቤት ሰንበት", ar: "أقسام مراقبة مدرسة الأحد", fr: "Sections de contrôle de l'école du dimanche", es: "Secciones de Control de la Escuela Dominical" },      totalMembers:  { am: "ጠቅላላ አባላት", en: "Total Members", om: "Miseensota Waliigalaa", ti: "ጠቕላላ ኣባላት", ar: "إجمالي الأعضاء", fr: "Total des membres", es: "Total de miembros" },      totalStudents: { am: "ጠቅላላ ተማሪዎች", en: "Total Students", om: "Barattoota Waliigalaa", ti: "ጠቕላላ ተመሃሮ", ar: "إجمالي الطلاب", fr: "Total des élèves", es: "Total de estudiantes" },      totalTeachers: { am: "ጠቅላላ መምህራን", en: "Total Teachers", om: "Barsiisota Waliigalaa", ti: "ጠቕላላ መምህራን", ar: "إجمالي المعلمين", fr: "Total des enseignants", es: "Total de maestros" },      maleMembers:   { am: "ወንድ አባላት", en: "Male Members", om: "Miseensota Dhiiraa", ti: "ተባዕታይ ኣባላት", ar: "الأعضاء الذكور", fr: "Membres masculins", es: "Miembros hombres" },      byDiocese:     { am: "በየሰ/ት/ቤቱ ጽሕፈት ቤት የተከፋፈለ", en: "By Parish Office", om: "Akka Waajjira Waldaatti Qoodame", ti: "ብቤ/ጽ ኣጥቢያ ዝተመቓረሐ", ar: "حسب مكتب الرعية", fr: "Par bureau paroissial", es: "Por oficina parroquial" },      noDiocese:     { am: "እስካሁን የሰ/ት/ቤቱ ጽሕፈት ቤት አልተመዘገበም", en: "No Parish Office registered yet", om: "Hanga ammaatti Waajjirri Waldaa hin galmoofne", ti: "ክሳብ ሕጂ ቤ/ጽ ኣጥቢያ ኣይተመዝገበን", ar: "لم يتم تسجيل أي مكتب رعية بعد", fr: "Aucun bureau paroissial enregistré pour l'instant", es: "Aún no se ha registrado ninguna oficina parroquial" },      parishWord:    { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍል", en: "control sections", om: "kutaalee to'annoo", ti: "ክፍሊ ቁጽጽር ት/ቤት ሰንበት", ar: "قسم مراقبة مدرسة الأحد", fr: "sections de contrôle de l'école du dimanche", es: "secciones de control de la escuela dominical" },      memberWord:    { am: "አባል", en: "members", om: "miseensa", ti: "ኣባል", ar: "عضو", fr: "membres", es: "miembros" }    },
     common: {
       save: { am: "መዝግብ", en: "Save", om: "Galmeessi", ti: "መዝግብ", ar: "حفظ", fr: "Enregistrer", es: "Guardar" },      none: { am: "እስካሁን የተመዘገበ የለም", en: "None registered yet", om: "Hanga ammaatti wanti hin galmoofne", ti: "ክሳብ ሕጂ ዝተመዝገበ የለን", ar: "لم يتم تسجيل أي شيء بعد", fr: "Rien n'a encore été enregistré", es: "Aún no se ha registrado nada" },      male: { am: "ወንድ", en: "Male", om: "Dhiira", ti: "ተባዕታይ", ar: "ذكر", fr: "Homme", es: "Hombre" },      female: { am: "ሴት", en: "Female", om: "Dubara", ti: "ኣንስተይቲ", ar: "أنثى", fr: "Femme", es: "Mujer" },      selectPlaceholder: { am: "ይምረጡ", en: "Select", om: "Filadhu", ti: "ምረጹ", ar: "اختر", fr: "Sélectionner", es: "Seleccionar" },      codeLabel: { am: "የመለያ ቁጥር", en: "Registration Code", om: "Lakkoofsa Galmee", ti: "ቁጽሪ ምዝገባ", ar: "رقم التسجيل", fr: "Numéro d'enregistrement", es: "Número de registro" },      synced: { am: "ተልኳል", en: "Synced", om: "Ergameera", ti: "ተልኢኹ", ar: "تمت المزامنة", fr: "Synchronisé", es: "Sincronizado" },      pending: { am: "ያልተላከ", en: "Pending", om: "Hin ergamne", ti: "ዘይተለኣኸ", ar: "قيد الانتظار", fr: "En attente", es: "Pendiente" }    },
     dio: {
-      newTitle:        { am: "አዲስ የደብሩ ጽሕፈት ቤት መዝግብ", en: "Register a New Parish Office", om: "Waajjira Waldaa Haaraa Galmeessi", ti: "ሓድሽ ቤ/ጽ ኣጥቢያ መዝግብ", ar: "تسجيل مكتب رعية جديد", fr: "Enregistrer un nouveau bureau paroissial", es: "Registrar una nueva oficina parroquial" },      nameLabel:       { am: "የየደብሩ ጽሕፈት ቤት ስም", en: "Parish Office Name", om: "Maqaa Waajjira Waldaa", ti: "ስም ቤ/ጽ ኣጥቢያ", ar: "اسم مكتب الرعية", fr: "Nom du bureau paroissial", es: "Nombre de la oficina parroquial" },      namePlaceholder: { am: "የየደብሩ ጽሕፈት ቤቱን ስም ያስገቡ", en: "Enter Parish Office name", om: "Maqaa Waajjira Waldaa galchi", ti: "ስም ቤ/ጽ ኣጥቢያ የእቱ", ar: "أدخل اسم مكتب الرعية", fr: "Entrez le nom du bureau paroissial", es: "Ingrese el nombre de la oficina parroquial" },      nameErr:         { am: "እባክዎ ስም ያስገቡ", en: "Please enter a name", om: "Maaloo maqaa galchaa", ti: "በጃኹም ስም የእትዉ", ar: "الرجاء إدخال الاسم", fr: "Veuillez entrer un nom", es: "Por favor ingrese un nombre" },      lockMsg:         { am: "የ %ROLE% ሚና የደብሩ ጽሕፈት ቤት መመዝገብ አይፈቀድለትም — ይህ የባለቤት (የደብሩ ሰ/ት/ቤት) ስልጣን ብቻ ነው።", en: "The %ROLE% role may not register a Parish Office — this is the Owner's (Parish Sunday School) authority only.", om: "Gaheen %ROLE% Waajjira Waldaa galmeessuu hin danda'u — kun mirga Abbaa Qabeenyaa (Waajjira Waldaa) qofa.", ti: "ግደ %ROLE% ቤ/ጽ ኣጥቢያ ምምዝጋብ ኣይፍቀዶን እዩ — እዚ ናይ ወናኒ (ት/ቤት ሰንበት ኣጥቢያ) ስልጣን ጥራይ እዩ።", ar: "لا يُسمح لدور %ROLE% بتسجيل مكتب رعية — هذه صلاحية المالك (مدرسة الأحد بالرعية) فقط.", fr: "Le rôle %ROLE% n'est pas autorisé à enregistrer un bureau paroissial — prérogative exclusive du Propriétaire (École du dimanche paroissiale).", es: "El rol %ROLE% no puede registrar una oficina parroquial — esto es exclusivo del Propietario (Escuela Dominical parroquial)." },      registeredTitle: { am: "የተመዘገቡ የደብሩ ጽሕፈት ቤቶች", en: "Registered Parish Offices", om: "Waajjira Waldaa Galmaa'an", ti: "ዝተመዝገቡ ቤ/ጽ ኣጥቢያታት", ar: "مكاتب الرعايا المسجلة", fr: "Bureaux paroissiaux enregistrés", es: "Oficinas parroquiales registradas" }    },
+      newTitle:        { am: "አዲስ የሰ/ት/ቤቱ ጽሕፈት ቤት መዝግብ", en: "Register a New Parish Office", om: "Waajjira Waldaa Haaraa Galmeessi", ti: "ሓድሽ ቤ/ጽ ኣጥቢያ መዝግብ", ar: "تسجيل مكتب رعية جديد", fr: "Enregistrer un nouveau bureau paroissial", es: "Registrar una nueva oficina parroquial" },      nameLabel:       { am: "የሰ/ት/ቤቱ ጽሕፈት ቤት ስም", en: "Parish Office Name", om: "Maqaa Waajjira Waldaa", ti: "ስም ቤ/ጽ ኣጥቢያ", ar: "اسم مكتب الرعية", fr: "Nom du bureau paroissial", es: "Nombre de la oficina parroquial" },      namePlaceholder: { am: "የየደብሩ ጽሕፈት ቤቱን ስም ያስገቡ", en: "Enter Parish Office name", om: "Maqaa Waajjira Waldaa galchi", ti: "ስም ቤ/ጽ ኣጥቢያ የእቱ", ar: "أدخل اسم مكتب الرعية", fr: "Entrez le nom du bureau paroissial", es: "Ingrese el nombre de la oficina parroquial" },      nameErr:         { am: "እባክዎ ስም ያስገቡ", en: "Please enter a name", om: "Maaloo maqaa galchaa", ti: "በጃኹም ስም የእትዉ", ar: "الرجاء إدخال الاسم", fr: "Veuillez entrer un nom", es: "Por favor ingrese un nombre" },      lockMsg:         { am: "የ %ROLE% ሚና የሰ/ት/ቤቱ ጽሕፈት ቤት መመዝገብ አይፈቀድለትም — ይህ የባለቤት (የደብሩ ሰ/ት/ቤት) ስልጣን ብቻ ነው።", en: "The %ROLE% role may not register a Parish Office — this is the Owner's (Parish Sunday School) authority only.", om: "Gaheen %ROLE% Waajjira Waldaa galmeessuu hin danda'u — kun mirga Abbaa Qabeenyaa (Waajjira Waldaa) qofa.", ti: "ግደ %ROLE% ቤ/ጽ ኣጥቢያ ምምዝጋብ ኣይፍቀዶን እዩ — እዚ ናይ ወናኒ (ት/ቤት ሰንበት ኣጥቢያ) ስልጣን ጥራይ እዩ።", ar: "لا يُسمح لدور %ROLE% بتسجيل مكتب رعية — هذه صلاحية المالك (مدرسة الأحد بالرعية) فقط.", fr: "Le rôle %ROLE% n'est pas autorisé à enregistrer un bureau paroissial — prérogative exclusive du Propriétaire (École du dimanche paroissiale).", es: "El rol %ROLE% no puede registrar una oficina parroquial — esto es exclusivo del Propietario (Escuela Dominical parroquial)." },      registeredTitle: { am: "የተመዘገቡ የደብሩ ጽሕፈት ቤቶች", en: "Registered Parish Offices", om: "Waajjira Waldaa Galmaa'an", ti: "ዝተመዝገቡ ቤ/ጽ ኣጥቢያታት", ar: "مكاتب الرعايا المسجلة", fr: "Bureaux paroissiaux enregistrés", es: "Oficinas parroquiales registradas" }    },
     par: {
-      needDiocese:     { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍል ከመመዝገብዎ በፊት ቢያንስ አንድ የደብሩ ጽሕፈት ቤት መመዝገብ ያስፈልጋል።", en: "You must register at least one Parish Office before registering a Sunday School Control Section.", om: "Kutaa To'annoo Mana Barnoota Sanbataa galmeessuun dura yoo xiqqaate Waajjira Waldaa tokko galmeessuun dirqama.", ti: "ክፍሊ ቁጽጽር ት/ቤት ሰንበት ቅድሚ ምምዝጋብኩም ብውሑዱ ሓደ ቤ/ጽ ኣጥቢያ ክትምዝግቡ ኣለኩም።", ar: "يجب تسجيل مكتب رعية واحد على الأقل قبل تسجيل قسم مراقبة مدرسة الأحد.", fr: "Vous devez enregistrer au moins un bureau paroissial avant d'enregistrer une section de contrôle de l'école du dimanche.", es: "Debe registrar al menos una oficina parroquial antes de registrar una sección de control de la escuela dominical." },      newTitle:        { am: "አዲስ የሰ/ት/ቤቱ ቁጥጥር ክፍል መዝግብ", en: "Register a New Sunday School Control Section", om: "Kutaa To'annoo Mana Barnoota Sanbataa Haaraa Galmeessi", ti: "ሓድሽ ክፍሊ ቁጽጽር ት/ቤት ሰንበት መዝግብ", ar: "تسجيل قسم مراقبة مدرسة الأحد جديد", fr: "Enregistrer une nouvelle section de contrôle de l'école du dimanche", es: "Registrar una nueva sección de control de la escuela dominical" },      dioceseLabel:    { am: "ንብረት የደብሩ ጽሕፈት ቤት", en: "Belongs to Parish Office", om: "Waajjira Waldaa Keessatti Argamu", ti: "ናይ ቤ/ጽ ኣጥቢያ", ar: "مكتب الرعية التابعة", fr: "Bureau paroissial d'appartenance", es: "Oficina parroquial a la que pertenece" },      nameLabel:       { am: "የየሰ/ት/ቤቱ ቁጥጥር ክፍል ስም", en: "Sunday School Control Section Name", om: "Maqaa Kutaa To'annoo Mana Barnoota Sanbataa", ti: "ስም ክፍሊ ቁጽጽር ት/ቤት ሰንበት", ar: "اسم قسم مراقبة مدرسة الأحد", fr: "Nom de la section de contrôle de l'école du dimanche", es: "Nombre de la sección de control de la escuela dominical" },      namePlaceholder: { am: "የየሰ/ት/ቤቱ ቁጥጥር ክፍልውን ስም ያስገቡ", en: "Enter Sunday School Control Section name", om: "Maqaa Kutaa To'annoo Mana Barnoota Sanbataa galchi", ti: "ስም ክፍሊ ቁጽጽር ት/ቤት ሰንበት የእቱ", ar: "أدخل اسم قسم مراقبة مدرسة الأحد", fr: "Entrez le nom de la section de contrôle de l'école du dimanche", es: "Ingrese el nombre de la sección de control de la escuela dominical" },      titleLabel:      { am: "ልዩ መጠሪያ (አማራጭ)", en: "Special Title (optional)", om: "Maqaa Addaa (filannoo)", ti: "ፍሉይ መጸውዒ (ኣማራጺ)", ar: "لقب خاص (اختياري)", fr: "Titre spécial (facultatif)", es: "Título especial (opcional)" },      titlePlaceholder:{ am: "ካለ ያስገቡ", en: "Enter if any", om: "Yoo jiraate galchi", ti: "እንተሎ የእቱ", ar: "أدخل إن وجد", fr: "Entrez le cas échéant", es: "Ingrese si corresponde" },      foundedLabel:    { am: "የተመሰረተበት ዓመት", en: "Year Founded", om: "Bara Hundeeffame", ti: "ዓመተ ምስረታ", ar: "سنة التأسيس", fr: "Année de fondation", es: "Año de fundación" },      foundedPlaceholder: { am: "ለምሳሌ 1975 ዓ.ም", en: "e.g. 1975 EC", om: "fkn 1975 ALI", ti: "ኣብነት 1975 ዓ.ም", ar: "مثال: 1975 هـ.إ", fr: "ex. 1975 EC", es: "ej. 1975 CE" },      errAll:          { am: "እባክዎ ሁሉንም ያስፈልጋሉ የተባሉ መስኮች ይሙሉ", en: "Please fill in all required fields", om: "Maaloo dirreewwan barbaachisoo hunda guuti", ti: "በጃኹም ኩሎም ዘድልዩ ሜዳታት መልእዎም", ar: "يرجى ملء جميع الحقول المطلوبة", fr: "Veuillez remplir tous les champs requis", es: "Por favor complete todos los campos requeridos" },      lockMsg:         { am: "የ %ROLE% ሚና አዲስ የሰ/ት/ቤቱ ቁጥጥር ክፍል መመዝገብ አይፈቀድለትም።", en: "The %ROLE% role is not allowed to register a new Sunday School Control Section.", om: "Gaheen %ROLE% Kutaa To'annoo Mana Barnoota Sanbataa haaraa galmeessuu hin danda'u.", ti: "ግደ %ROLE% ሓድሽ ክፍሊ ቁጽጽር ት/ቤት ሰንበት ምምዝጋብ ኣይፍቀዶን።", ar: "لا يُسمح لدور %ROLE% بتسجيل قسم مراقبة مدرسة الأحد جديد.", fr: "Le rôle %ROLE% n'est pas autorisé à enregistrer une nouvelle section de contrôle de l'école du dimanche.", es: "El rol %ROLE% no tiene permitido registrar una nueva sección de control de la escuela dominical." },      registeredTitle: { am: "የተመዘገቡ የሰ/ት/ቤቱ ቁጥጥር ክፍልዎች", en: "Registered Sunday School Control Sections", om: "Kutaalee To'annoo Mana Barnoota Sanbataa Galmaa'an", ti: "ዝተመዝገቡ ክፍልታት ቁጽጽር ት/ቤት ሰንበት", ar: "أقسام مراقبة مدرسة الأحد المسجلة", fr: "Sections de contrôle de l'école du dimanche enregistrées", es: "Secciones de Control de la Escuela Dominical registradas" }    },
+      needDiocese:     { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍል ከመመዝገብዎ በፊት ቢያንስ አንድ የሰ/ት/ቤቱ ጽሕፈት ቤት መመዝገብ ያስፈልጋል።", en: "You must register at least one Parish Office before registering a Sunday School Control Section.", om: "Kutaa To'annoo Mana Barnoota Sanbataa galmeessuun dura yoo xiqqaate Waajjira Waldaa tokko galmeessuun dirqama.", ti: "ክፍሊ ቁጽጽር ት/ቤት ሰንበት ቅድሚ ምምዝጋብኩም ብውሑዱ ሓደ ቤ/ጽ ኣጥቢያ ክትምዝግቡ ኣለኩም።", ar: "يجب تسجيل مكتب رعية واحد على الأقل قبل تسجيل قسم مراقبة مدرسة الأحد.", fr: "Vous devez enregistrer au moins un bureau paroissial avant d'enregistrer une section de contrôle de l'école du dimanche.", es: "Debe registrar al menos una oficina parroquial antes de registrar una sección de control de la escuela dominical." },      newTitle:        { am: "አዲስ የሰ/ት/ቤቱ ቁጥጥር ክፍል መዝግብ", en: "Register a New Sunday School Control Section", om: "Kutaa To'annoo Mana Barnoota Sanbataa Haaraa Galmeessi", ti: "ሓድሽ ክፍሊ ቁጽጽር ት/ቤት ሰንበት መዝግብ", ar: "تسجيل قسم مراقبة مدرسة الأحد جديد", fr: "Enregistrer une nouvelle section de contrôle de l'école du dimanche", es: "Registrar una nueva sección de control de la escuela dominical" },      dioceseLabel:    { am: "ንብረት የሰ/ት/ቤቱ ጽሕፈት ቤት", en: "Belongs to Parish Office", om: "Waajjira Waldaa Keessatti Argamu", ti: "ናይ ቤ/ጽ ኣጥቢያ", ar: "مكتب الرعية التابعة", fr: "Bureau paroissial d'appartenance", es: "Oficina parroquial a la que pertenece" },      nameLabel:       { am: "የየሰ/ት/ቤቱ ቁጥጥር ክፍል ስም", en: "Sunday School Control Section Name", om: "Maqaa Kutaa To'annoo Mana Barnoota Sanbataa", ti: "ስም ክፍሊ ቁጽጽር ት/ቤት ሰንበት", ar: "اسم قسم مراقبة مدرسة الأحد", fr: "Nom de la section de contrôle de l'école du dimanche", es: "Nombre de la sección de control de la escuela dominical" },      namePlaceholder: { am: "የየሰ/ት/ቤቱ ቁጥጥር ክፍልውን ስም ያስገቡ", en: "Enter Sunday School Control Section name", om: "Maqaa Kutaa To'annoo Mana Barnoota Sanbataa galchi", ti: "ስም ክፍሊ ቁጽጽር ት/ቤት ሰንበት የእቱ", ar: "أدخل اسم قسم مراقبة مدرسة الأحد", fr: "Entrez le nom de la section de contrôle de l'école du dimanche", es: "Ingrese el nombre de la sección de control de la escuela dominical" },      titleLabel:      { am: "ልዩ መጠሪያ (አማራጭ)", en: "Special Title (optional)", om: "Maqaa Addaa (filannoo)", ti: "ፍሉይ መጸውዒ (ኣማራጺ)", ar: "لقب خاص (اختياري)", fr: "Titre spécial (facultatif)", es: "Título especial (opcional)" },      titlePlaceholder:{ am: "ካለ ያስገቡ", en: "Enter if any", om: "Yoo jiraate galchi", ti: "እንተሎ የእቱ", ar: "أدخل إن وجد", fr: "Entrez le cas échéant", es: "Ingrese si corresponde" },      foundedLabel:    { am: "የተመሰረተበት ዓመት", en: "Year Founded", om: "Bara Hundeeffame", ti: "ዓመተ ምስረታ", ar: "سنة التأسيس", fr: "Année de fondation", es: "Año de fundación" },      foundedPlaceholder: { am: "ለምሳሌ 1975 ዓ.ም", en: "e.g. 1975 EC", om: "fkn 1975 ALI", ti: "ኣብነት 1975 ዓ.ም", ar: "مثال: 1975 هـ.إ", fr: "ex. 1975 EC", es: "ej. 1975 CE" },      errAll:          { am: "እባክዎ ሁሉንም ያስፈልጋሉ የተባሉ መስኮች ይሙሉ", en: "Please fill in all required fields", om: "Maaloo dirreewwan barbaachisoo hunda guuti", ti: "በጃኹም ኩሎም ዘድልዩ ሜዳታት መልእዎም", ar: "يرجى ملء جميع الحقول المطلوبة", fr: "Veuillez remplir tous les champs requis", es: "Por favor complete todos los campos requeridos" },      lockMsg:         { am: "የ %ROLE% ሚና አዲስ የሰ/ት/ቤቱ ቁጥጥር ክፍል መመዝገብ አይፈቀድለትም።", en: "The %ROLE% role is not allowed to register a new Sunday School Control Section.", om: "Gaheen %ROLE% Kutaa To'annoo Mana Barnoota Sanbataa haaraa galmeessuu hin danda'u.", ti: "ግደ %ROLE% ሓድሽ ክፍሊ ቁጽጽር ት/ቤት ሰንበት ምምዝጋብ ኣይፍቀዶን።", ar: "لا يُسمح لدور %ROLE% بتسجيل قسم مراقبة مدرسة الأحد جديد.", fr: "Le rôle %ROLE% n'est pas autorisé à enregistrer une nouvelle section de contrôle de l'école du dimanche.", es: "El rol %ROLE% no tiene permitido registrar una nueva sección de control de la escuela dominical." },      registeredTitle: { am: "የተመዘገቡ የሰ/ት/ቤቱ ቁጥጥር ክፍልዎች", en: "Registered Sunday School Control Sections", om: "Kutaalee To'annoo Mana Barnoota Sanbataa Galmaa'an", ti: "ዝተመዝገቡ ክፍልታት ቁጽጽር ት/ቤት ሰንበት", ar: "أقسام مراقبة مدرسة الأحد المسجلة", fr: "Sections de contrôle de l'école du dimanche enregistrées", es: "Secciones de Control de la Escuela Dominical registradas" }    },
     mem: {
       needParish:      { am: "አባል ከመመዝገብዎ በፊት ቢያንስ አንድ የሰ/ት/ቤቱ ቁጥጥር ክፍል መመዝገብ ያስፈልጋል።", en: "You must register at least one Sunday School Control Section before registering a member.", om: "Miseensa galmeessuun dura yoo xiqqaate Kutaa To'annoo Mana Barnoota Sanbataa tokko galmeessuun dirqama.", ti: "ኣባል ቅድሚ ምምዝጋብኩም ብውሑዱ ሓደ ክፍሊ ቁጽጽር ት/ቤት ሰንበት ክትምዝግቡ ኣለኩም።", ar: "يجب تسجيل قسم مراقبة مدرسة الأحد واحد على الأقل قبل تسجيل عضو.", fr: "Vous devez enregistrer au moins une section de contrôle de l'école du dimanche avant d'enregistrer un membre.", es: "Debe registrar al menos una sección de control de la escuela dominical antes de registrar un miembro." },      newTitle:        { am: "አዲስ አባል መዝግብ", en: "Register a New Member", om: "Miseensa Haaraa Galmeessi", ti: "ሓድሽ ኣባል መዝግብ", ar: "تسجيل عضو جديد", fr: "Enregistrer un nouveau membre", es: "Registrar un nuevo miembro" },      parishLabel:     { am: "ንብረት የሰ/ት/ቤቱ ቁጥጥር ክፍል", en: "Sunday School Control Section", om: "Kutaa To'annoo Mana Barnoota Sanbataa", ti: "ክፍሊ ቁጽጽር ት/ቤት ሰንበት", ar: "قسم مراقبة مدرسة الأحد", fr: "Section de contrôle de l'école du dimanche", es: "Sección de Control de la Escuela Dominical" },      nameLabel:       { am: "ሙሉ ስም", en: "Full Name", om: "Maqaa Guutuu", ti: "ምሉእ ስም", ar: "الاسم الكامل", fr: "Nom complet", es: "Nombre completo" },      genderLabel:     { am: "ጾታ", en: "Gender", om: "Saala", ti: "ጾታ", ar: "الجنس", fr: "Sexe", es: "Sexo" },      residenceLabel:  { am: "የመኖሪያ ስፍራ", en: "Residence", om: "Iddoo Jireenyaa", ti: "ናይ ምንባር ቦታ", ar: "مكان الإقامة", fr: "Lieu de résidence", es: "Lugar de residencia" },      residencePh:     { am: "ቀበሌ/ሰፈር", en: "Kebele/neighborhood", om: "Ganda/Naannoo", ti: "ቀቢሌ/ከባቢ", ar: "الحي", fr: "Quartier", es: "Vecindario" },      educationLabel:  { am: "የትምህርት ደረጃ", en: "Education Level", om: "Sadarkaa Barnootaa", ti: "ደረጃ ትምህርቲ", ar: "المستوى التعليمي", fr: "Niveau d'éducation", es: "Nivel educativo" },      educationPh:     { am: "ለምሳሌ ዲግሪ", en: "e.g. Degree", om: "fkn Digrii", ti: "ኣብነት ዲግሪ", ar: "مثال: درجة جامعية", fr: "ex. Licence", es: "ej. Licenciatura" },      parentEduLabel:  { am: "የወላጅ ትምህርት ደረጃ", en: "Parent's Education Level", om: "Sadarkaa Barnoota Maatii", ti: "ደረጃ ትምህርቲ ወላዲ", ar: "المستوى التعليمي للوالدين", fr: "Niveau d'éducation des parents", es: "Nivel educativo de los padres" },      titleLabel:      { am: "ልዩ መጠሪያ", en: "Special Title", om: "Maqaa Addaa", ti: "ፍሉይ መጸውዒ", ar: "لقب خاص", fr: "Titre spécial", es: "Título especial" },      optional:        { am: "አማራጭ", en: "Optional", om: "Filannoo", ti: "ኣማራጺ", ar: "اختياري", fr: "Facultatif", es: "Opcional" },      joinLabel:       { am: "የገባበት ቀን", en: "Join Date", om: "Guyyaa Seenee", ti: "ዕለት ምእታው", ar: "تاريخ الانضمام", fr: "Date d'adhésion", es: "Fecha de ingreso" },      joinPh:          { am: "ለምሳሌ 2015 ዓ.ም", en: "e.g. 2015 EC", om: "fkn 2015 ALI", ti: "ኣብነት 2015 ዓ.ም", ar: "مثال: 2015 هـ.إ", fr: "ex. 2015 EC", es: "ej. 2015 CE" },      statusLabel:     { am: "ወቅታዊ ሁኔታ", en: "Current Status", om: "Haala Ammaa", ti: "ህሉው ኩነታት", ar: "الحالة الحالية", fr: "Statut actuel", es: "Estado actual" },      statusActive:    { am: "ንቁ አባል", en: "Active Member", om: "Miseensa Hojjetaa", ti: "ንጡፍ ኣባል", ar: "عضو نشط", fr: "Membre actif", es: "Miembro activo" },      statusLeft:      { am: "የወጣ", en: "Left", om: "Ba'e", ti: "ዝወጸ", ar: "غادر", fr: "Parti", es: "Salió" },      statusTransferred: { am: "የተዛወረ", en: "Transferred", om: "Dabarfame", ti: "ዝተሳገረ", ar: "منقول", fr: "Transféré", es: "Transferido" },      errNameGender:   { am: "እባክዎ ስም እና ጾታ ቢያንስ ያስፈልጋሉ", en: "Name and gender are at least required", om: "Maqaa fi saalli yoo xiqqaate barbaachisu", ti: "ስምን ጾታን ብውሑዱ የድልዩ", ar: "الاسم والجنس مطلوبان على الأقل", fr: "Le nom et le sexe sont au moins requis", es: "El nombre y el sexo son al menos obligatorios" },      lockMsg:         { am: "የ %ROLE% ሚና አዲስ አባል መመዝገብ አይፈቀድለትም።", en: "The %ROLE% role is not allowed to register a new member.", om: "Gaheen %ROLE% Miseensa haaraa galmeessuu hin danda'u.", ti: "ግደ %ROLE% ሓድሽ ኣባል ምምዝጋብ ኣይፍቀዶን።", ar: "لا يُسمح لدور %ROLE% بتسجيل عضو جديد.", fr: "Le rôle %ROLE% n'est pas autorisé à enregistrer un nouveau membre.", es: "El rol %ROLE% no tiene permitido registrar un nuevo miembro." },      registeredTitle: { am: "የተመዘገቡ አባላት", en: "Registered Members", om: "Miseensota Galmaa'an", ti: "ዝተመዝገቡ ኣባላት", ar: "الأعضاء المسجلون", fr: "Membres enregistrés", es: "Miembros registrados" }    },
     stu: {
@@ -389,13 +420,13 @@
     fb: {
       btn:          { am: "🐛 አስተያየት ላክ", en: "🐛 Send Feedback", om: "🐛 Yaada Ergi", ti: "🐛 ርእይቶ ላኣኽ", ar: "🐛 إرسال ملاحظات", fr: "🐛 Envoyer un avis", es: "🐛 Enviar comentario" },      panelTitle:   { am: "አስተያየት/ችግር ላክ", en: "Send Feedback / Report Issue", om: "Yaada/Rakkoo Ergi", ti: "ርእይቶ/ጸገም ላኣኽ", ar: "إرسال ملاحظات / إبلاغ عن مشكلة", fr: "Envoyer un avis / signaler un problème", es: "Enviar comentario / reportar problema" },      nameLabel:    { am: "ስምዎ (አማራጭ)", en: "Your name (optional)", om: "Maqaa keessan (filannoo)", ti: "ስምኩም (ኣማራጺ)", ar: "اسمك (اختياري)", fr: "Votre nom (facultatif)", es: "Su nombre (opcional)" },      typeLabel:    { am: "ዓይነት", en: "Type", om: "Gosa", ti: "ዓይነት", ar: "النوع", fr: "Type", es: "Tipo" },      typeBug:      { am: "ስህተት/ችግር", en: "Bug/Problem", om: "Dogoggora/Rakkoo", ti: "ጌጋ/ጸገም", ar: "خطأ/مشكلة", fr: "Bug/Problème", es: "Error/Problema" },      typeConfuse:  { am: "ግራ የሚያጋባ", en: "Confusing", om: "Kan nama jeequ", ti: "ዘደናግር", ar: "مربك", fr: "Déroutant", es: "Confuso" },      typeIdea:     { am: "ሀሳብ/ጥቆማ", en: "Idea/Suggestion", om: "Yaada/Gorsa", ti: "ሓሳብ/ምጥቃም", ar: "فكرة/اقتراح", fr: "Idée/Suggestion", es: "Idea/Sugerencia" },      msgLabel:     { am: "መልዕክት", en: "Message", om: "Ergaa", ti: "መልእኽቲ", ar: "الرسالة", fr: "Message", es: "Mensaje" },      msgPh:        { am: "የገጠመዎትን ችግር ወይም ሀሳብዎን ይግለጹ...", en: "Describe what you ran into or your suggestion...", om: "Rakkina isin mudate ykn yaada keessan ibsaa...", ti: "ዝገጠመኩም ጸገም ወይ ሓሳብኩም ግለጹ...", ar: "صف المشكلة التي واجهتها أو اقتراحك...", fr: "Décrivez ce que vous avez rencontré ou votre suggestion...", es: "Describa lo que encontró o su sugerencia..." },      errMsg:       { am: "እባክዎ መልዕክት ይጻፉ", en: "Please write a message", om: "Maaloo ergaa barreessaa", ti: "በጃኹም መልእኽቲ ጻሑፉ", ar: "يرجى كتابة رسالة", fr: "Veuillez écrire un message", es: "Por favor escriba un mensaje" },      sendBtn:      { am: "ላክ", en: "Send", om: "Ergi", ti: "ላኣኽ", ar: "إرسال", fr: "Envoyer", es: "Enviar" },      thanks:       { am: "አመሰግናለሁ! አስተያየትዎ ተመዝግቧል።", en: "Thank you! Your feedback was recorded.", om: "Galatoomaa! Yaadni keessan galmaa'eera.", ti: "የቐንየለይ! ርእይቶኹም ተመዝጊቡ።", ar: "شكراً لك! تم تسجيل ملاحظاتك.", fr: "Merci ! Votre avis a été enregistré.", es: "¡Gracias! Su comentario fue registrado." },      listTitle:    { am: "የተሰበሰቡ አስተያየቶች", en: "Collected Feedback", om: "Yaadota Walitti Qabaman", ti: "ዝተኣከቡ ርእይቶታት", ar: "الملاحظات المجمعة", fr: "Avis collectés", es: "Comentarios recopilados" },      exportBtn:    { am: "አስተያየቶችን አውርድ (CSV)", en: "Download Feedback (CSV)", om: "Yaadota Buufadhu (CSV)", ti: "ርእይቶታት ኣውርድ (CSV)", ar: "تنزيل الملاحظات (CSV)", fr: "Télécharger les avis (CSV)", es: "Descargar comentarios (CSV)" },      close:        { am: "ዝጋ", en: "Close", om: "Cufi", ti: "ዕጸው", ar: "إغلاق", fr: "Fermer", es: "Cerrar" }    },
     comms: {
-      syncTitle:       { am: "ወደ ላይ የመረጃ ፍሰት (የሰ/ት/ቤቱ ቁጥጥር ክፍል → የደብሩ ጽሕፈት ቤት → የደብሩ ሰ/ት/ቤት)", en: "Upward Data Flow (Sunday School Control Section → Parish Office → Parish Sunday School)", om: "Adeemsa Odeeffannoo Gara Olii (Kutaa To'annoo Mana Barnoota Sanbataa → Waajjira Waldaa → Mana Barnoota Sanbataa Waldaa)", ti: "ንላዕሊ ዝኸይድ ፍሰት ሓበሬታ (ክፍሊ ቁጽጽር ት/ቤት ሰንበት → ቤ/ጽ ኣጥቢያ → ት/ቤት ሰንበት ኣጥቢያ)", ar: "تدفق البيانات إلى الأعلى (قسم مراقبة مدرسة الأحد ← مكتب الرعية ← مدرسة الأحد بالرعية)", fr: "Flux de données ascendant (Section de contrôle de l'école du dimanche → Bureau paroissial → École du dimanche paroissiale)", es: "Flujo de datos ascendente (Sección de Control de la Escuela Dominical → Oficina parroquial → Escuela Dominical parroquial)" },      syncNote: { am: "%N% ያልተላከ መዝገብ (አባላት፣ ተማሪዎች፣ መምህራን) አለ። መስመር ላይ ሲሆኑ ብቻ ወደ ላይኛው እርከን ሊላክ ይችላል።", en: "There are %N% unsent records (members, students, teachers). They can only be sent upward while you are online.", om: "Galmeen %N% hin ergamin (miseensota, barattoota, barsiisota) jira. Yeroo interneetii irra jirtan qofa gara olitti erguu dandeessu.", ti: "%N% ዘይተላእከ መዝገብ (ኣባላት፣ ተመሃሮ፣ መምህራን) ኣሎ። ኣብ ኦንላይን ኣብ ዘለኹምሉ ጥራይ ናብ ላዕሊ ክለኣኽ ይኽእል።", ar: "يوجد %N% سجل غير مرسل (أعضاء، طلاب، معلمون). يمكن إرسالها للأعلى فقط عند الاتصال بالإنترنت.", fr: "Il y a %N% enregistrements non envoyés (membres, élèves, enseignants). Ils ne peuvent être envoyés que lorsque vous êtes en ligne.", es: "Hay %N% registros sin enviar (miembros, estudiantes, maestros). Solo se pueden enviar cuando está en línea." },      syncBtn:         { am: "ሁሉንም አሁን አመሳስል", en: "Sync All Now", om: "Amma Hunda Walsimsiisi", ti: "ሕጂ ኩሉ ኣሳኒ", ar: "مزامنة الكل الآن", fr: "Synchroniser tout maintenant", es: "Sincronizar todo ahora" },      reportTitle:     { am: "የየሰ/ት/ቤቱ ቁጥጥር ክፍል ወቅታዊ ሪፖርት ላክ", en: "Send Sunday School Control Section Periodic Report", om: "Gabaasa Yeroo Kutaa To'annoo Mana Barnoota Sanbataa Ergi", ti: "ናይ ክፍሊ ቁጽጽር ት/ቤት ሰንበት ወቕታዊ ጸብጻብ ላኣኽ", ar: "إرسال تقرير قسم مراقبة مدرسة الأحد الدوري", fr: "Envoyer le rapport périodique de la section de contrôle de l'école du dimanche", es: "Enviar informe periódico de la sección de control de la escuela dominical" },      selectParish:    { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍል ይምረጡ", en: "Select Sunday School Control Section", om: "Kutaa To'annoo Mana Barnoota Sanbataa Filadhaa", ti: "ክፍሊ ቁጽጽር ት/ቤት ሰንበት ምረጹ", ar: "اختر قسم مراقبة مدرسة الأحد", fr: "Sélectionner la section de contrôle de l'école du dimanche", es: "Seleccione la sección de control de la escuela dominical" },      sendReportBtn:   { am: "ሪፖርት ወደ የደብሩ ጽሕፈት ቤት/የደብሩ ሰ/ት/ቤት ላክ", en: "Send Report to Parish Office/Parish Sunday School", om: "Gabaasa gara Waajjira Waldaa/Mana Barnoota Sanbataa Waldaatti Ergi", ti: "ጸብጻብ ናብ ቤ/ጽ ኣጥቢያ/ት/ቤት ሰንበት ኣጥቢያ ላኣኽ", ar: "إرسال التقرير إلى مكتب الرعية/مدرسة الأحد بالرعية", fr: "Envoyer le rapport au bureau paroissial/à l'école du dimanche paroissiale", es: "Enviar informe a la oficina parroquial/Escuela Dominical parroquial" },      onlineToEnable:  { am: "መስመር ላይ ሲሆኑ ንቁ ይሆናል", en: "This will activate when you are online", om: "Yeroo interneetii irra jirtan ni hojjata", ti: "ኣብ ኦንላይን ምስ ኮንኩም ንጡፍ ይኸውን", ar: "سيتم تفعيل هذا عند الاتصال بالإنترنت", fr: "Ceci s'activera lorsque vous serez en ligne", es: "Esto se activará cuando esté en línea" },      reportsRxTitle:  { am: "የደረሱ ሪፖርቶች", en: "Received Reports", om: "Gabaasawwan Dhufan", ti: "ዝበጽሑ ጸብጻባት", ar: "التقارير المستلمة", fr: "Rapports reçus", es: "Informes recibidos" },      noneReceived:    { am: "እስካሁን የደረሰ ሪፖርት የለም", en: "No report received yet", om: "Hanga ammaatti gabaasni hin dhufne", ti: "ክሳብ ሕጂ ዝበጽሐ ጸብጻብ የለን", ar: "لم يتم استلام أي تقرير بعد", fr: "Aucun rapport reçu pour l'instant", es: "Aún no se ha recibido ningún informe" },      circFormTitle:   { am: "ወደ ታች መመሪያ/ማስታወቂያ ላክ (ከየደብሩ ሰ/ት/ቤት ወደ የሰ/ት/ቤቱ ቁጥጥር ክፍል)", en: "Send Directive/Notice Downward (Parish Sunday School to Sunday School Control Section)", om: "Qajeelfama/Beeksisa Gara Gadiitti Ergi (Waajjira Waldaadhaa gara Kutaa To'annoo Mana Barnoota Sanbataatti)", ti: "ንታሕቲ ዝኸይድ መምርሒ/ማስታወቂያ ላኣኽ (ካብ ት/ቤት ሰንበት ኣጥቢያ ናብ ክፍሊ ቁጽጽር ት/ቤት ሰንበት)", ar: "إرسال توجيه/إشعار إلى الأسفل (من مدرسة الأحد بالرعية إلى قسم مراقبة مدرسة الأحد)", fr: "Envoyer une directive/avis vers le bas (de l'École du dimanche paroissiale à la Section de contrôle de l'école du dimanche)", es: "Enviar directiva/aviso hacia abajo (del Escuela Dominical parroquial a la Sección de Control de la Escuela Dominical)" },      circTitleLabel:  { am: "ርዕስ", en: "Title", om: "Mata Duree", ti: "ኣርእስቲ", ar: "العنوان", fr: "Titre", es: "Título" },      circTitlePh:     { am: "ለምሳሌ የበዓል መርሃ ግብር", en: "e.g. Holiday Schedule", om: "fkn Sagantaa Ayyaanaa", ti: "ኣብነት መደብ በዓል", ar: "مثال: جدول العيد", fr: "ex. Programme des fêtes", es: "ej. Calendario de festividades" },      circBodyLabel:   { am: "መልዕክት", en: "Message", om: "Ergaa", ti: "መልእኽቲ", ar: "الرسالة", fr: "Message", es: "Mensaje" },      circBodyPh:      { am: "ዝርዝር መልዕክት...", en: "Detailed message...", om: "Ergaa bal'aa...", ti: "ዝርዝር መልእኽቲ...", ar: "رسالة مفصلة...", fr: "Message détaillé...", es: "Mensaje detallado..." },      circSendBtn:     { am: "መልዕክት ላክ", en: "Send Message", om: "Ergaa Ergi", ti: "መልእኽቲ ላኣኽ", ar: "إرسال الرسالة", fr: "Envoyer le message", es: "Enviar mensaje" },      circListTitle:   { am: "የተላኩ መመሪያዎች", en: "Sent Directives", om: "Qajeelfamoota Ergaman", ti: "ዝተላእኩ መምርሒታት", ar: "التوجيهات المرسلة", fr: "Directives envoyées", es: "Directivas enviadas" },      noneSent:        { am: "እስካሁን የተላከ የለም", en: "None sent yet", om: "Hanga ammaatti wanti hin ergamne", ti: "ክሳብ ሕጂ ዝተላእከ የለን", ar: "لم يتم إرسال أي شيء بعد", fr: "Rien n'a encore été envoyé", es: "Aún no se ha enviado nada" },      mainNote:        { am: "ይህ ክፍል ከየደብሩ ሰ/ት/ቤት እስከ የሰ/ት/ቤቱ ቁጥጥር ክፍል ያለውን ወጥ የሆነ ሁለት-አቅጣጫ የመረጃ ፍሰት ያሳያል፦ ሪፖርት ወደ ላይ፣ መመሪያ ወደ ታች።", en: "This section shows the standardized two-way data flow from Parish Sunday School down to Sunday School Control Section: reports upward, directives downward.", om: "Kutaan kun adeemsa odeeffannoo lamee-kallattii, Waajjira Waldaadhaa hanga Kutaa To'annoo Mana Barnoota Sanbataatti argisiisa: gabaasni gara olii, qajeelfamni gara gadii.", ti: "እዚ ክፍሊ ካብ ት/ቤት ሰንበት ኣጥቢያ ክሳብ ክፍሊ ቁጽጽር ት/ቤት ሰንበት ዘሎ ሚዛናዊ ክልተ-ኣንፈት ፍሰት ሓበሬታ የርኢ፦ ጸብጻብ ንላዕሊ፣ መምርሒ ንታሕቲ።", ar: "يوضح هذا القسم تدفق البيانات ثنائي الاتجاه الموحد من مدرسة الأحد بالرعية إلى قسم مراقبة مدرسة الأحد: تقارير للأعلى وتوجيهات للأسفل.", fr: "Cette section montre le flux de données bidirectionnel standardisé de l'École du dimanche paroissiale à la Section de contrôle de l'école du dimanche : rapports vers le haut, directives vers le bas.", es: "Esta sección muestra el flujo de datos bidireccional estandarizado del Escuela Dominical parroquial a la Sección de Control de la Escuela Dominical: informes hacia arriba, directivas hacia abajo." },      smsTitle:  { am: "📱 ኤስኤምኤስ አማራጭ (ለስማርት ስልክ/ኢንተርኔት ለሌላቸው)", en: "📱 SMS Fallback (for those without a smartphone/internet)", om: "📱 Filannoo SMS (kanneen smartphone/interneetii hin qabneef)", ti: "📱 ኣማራጺ SMS (ንዘይብሎም ስማርት ስልኪ/ኢንተርነት)", ar: "📱 بديل الرسائل النصية (لمن لا يملك هاتفاً ذكياً/إنترنت)", fr: "📱 Solution SMS (pour ceux sans smartphone/internet)", es: "📱 Alternativa SMS (para quienes no tienen smartphone/internet)" },      smsNote:   { am: "ኤስኤምኤስ ኢንተርኔት ስለማይፈልግ፣ ስማርት ስልክ ወይም ዳታ ለሌላቸው ሰብሳቢዎች/አስተዳዳሪዎች አማራጭ የማሳወቂያ መንገድ ሆኖ ያገለግላል።", en: "Since SMS doesn't require internet, it works as an alternative notification method for collectors/admins without a smartphone or data.", om: "SMS interneetii waan hin barbaachifneef, walitti qabaa/bulchaa smartphone ykn daataa hin qabneef karaa beeksisa biraa ta'a.", ti: "SMS ኢንተርነት ስለዘየድልዮ፣ ንዘይብሎም ስማርት ስልኪ ወይ ዳታ ኣኪብቲ/ኣመሓደርቲ ኣማራጺ መገዲ ምልክታ ኮይኑ የገልግል።", ar: "بما أن الرسائل النصية لا تحتاج إلى إنترنت، فإنها توفر وسيلة إشعار بديلة لجامعي البيانات/المسؤولين الذين لا يملكون هاتفاً ذكياً أو بيانات.", fr: "Comme le SMS ne nécessite pas Internet, il offre un moyen de notification alternatif pour les collecteurs/administrateurs sans smartphone ni données.", es: "Como el SMS no requiere internet, sirve como un método de notificación alternativo para recolectores/administradores sin smartphone o datos." },      smsPhoneLabel: { am: "የአስተዳዳሪ ስልክ ቁጥር", en: "Admin Phone Number", om: "Lakkoofsa Bilbilaa Bulchaa", ti: "ቁጽሪ ስልኪ ኣመሓዳሪ", ar: "رقم هاتف المسؤول", fr: "Numéro de téléphone de l'administrateur", es: "Número de teléfono del administrador" },      smsPhonePh:    { am: "ለምሳሌ +251911223344", en: "e.g. +251911223344", om: "fkn +251911223344", ti: "ኣብነት +251911223344", ar: "مثال: +251911223344", fr: "ex. +251911223344", es: "ej. +251911223344" },      smsSendBtn:    { am: "📱 ወቅታዊ ማጠቃለያ በኤስኤምኤስ ላክ", en: "📱 Send Current Summary via SMS", om: "📱 Cuunfaa Ammaa SMS'n Ergi", ti: "📱 ሕጂ ጠቕላላ ብSMS ላኣኽ", ar: "📱 إرسال الملخص الحالي عبر الرسائل النصية", fr: "📱 Envoyer le résumé actuel par SMS", es: "📱 Enviar resumen actual por SMS" },      smsBody:       { am: "BK/B/N ማጠቃለያ፦ %DIO% የደብሩ ጽሕፈት ቤት፣ %PAR% የሰ/ት/ቤቱ ቁጥጥር ክፍል፣ %MEM% ጠቅላላ አባል፣ %PEND% ያልተላከ መዝገብ።", en: "BK/B/N Summary: %DIO% Parish Offices, %PAR% Sunday School Control Sections, %MEM% total members, %PEND% unsent records.", om: "Cuunfaa BK/B/N: Waajjira Waldaa %DIO%, Kutaa To'annoo Mana Barnoota Sanbataa %PAR%, Miseensota %MEM%, Galmee %PEND% hin ergamin.", ti: "ጠቕላላ BK/B/N፦ %DIO% ቤ/ጽ ኣጥቢያ፣ %PAR% ክፍሊ ቁጽጽር ት/ቤት ሰንበት፣ %MEM% ጠቕላላ ኣባል፣ %PEND% ዘይተላእከ መዝገብ።", ar: "ملخص BK/B/N: %DIO% مكتب رعية، %PAR% قسم مراقبة مدرسة الأحد، %MEM% إجمالي الأعضاء، %PEND% سجل غير مرسل.", fr: "Résumé BK/B/N : %DIO% bureaux paroissiaux, %PAR% sections de contrôle de l'école du dimanche, %MEM% membres au total, %PEND% enregistrements non envoyés.", es: "Resumen BK/B/N: %DIO% oficinas parroquiales, %PAR% secciones de control de la escuela dominical, %MEM% miembros totales, %PEND% registros sin enviar." },      smsNoPhone:    { am: "እባክዎ የስልክ ቁጥር ያስገቡ", en: "Please enter a phone number", om: "Maaloo lakkoofsa bilbilaa galchaa", ti: "በጃኹም ቁጽሪ ስልኪ የእትዉ", ar: "يرجى إدخال رقم الهاتف", fr: "Veuillez entrer un numéro de téléphone", es: "Por favor ingrese un número de teléfono" },      smsCaveat:     { am: "ማሳሰቢያ፦ ይህ የስልክዎን ነባሪ SMS መተግበሪያ ይከፍታል፤ በአንዳንድ ስልኮች ላይ አሠራሩ ትንሽ ሊለያይ ይችላል።", en: "Note: this opens your phone's default SMS app; behavior may vary slightly by device.", om: "Yaadachiisa: kun app SMS durtii bilbila keessanii bana; haala isaa bilbila garaagaraatti xiqqoo garaagara ta'uu danda'a.", ti: "ማሳሰቢያ፦ እዚ ናይ ንቡር SMS ኣፕ ስልክኹም ይኸፍት፤ ኣብ ገሊኡ ስልኪ ኣገባቡ ቁሩብ ክፈላለ ይኽእል።", ar: "ملاحظة: يفتح هذا تطبيق الرسائل النصية الافتراضي في هاتفك؛ قد يختلف السلوك قليلاً حسب الجهاز.", fr: "Remarque : ceci ouvre l'application SMS par défaut de votre téléphone ; le comportement peut varier légèrement selon l'appareil.", es: "Nota: esto abre la aplicación de SMS predeterminada de su teléfono; el comportamiento puede variar ligeramente según el dispositivo." }    },
+      syncTitle:       { am: "ወደ ላይ የመረጃ ፍሰት (የሰ/ት/ቤቱ ቁጥጥር ክፍል → የሰ/ት/ቤቱ ጽሕፈት ቤት → የደብሩ ሰ/ት/ቤት)", en: "Upward Data Flow (Sunday School Control Section → Parish Office → Parish Sunday School)", om: "Adeemsa Odeeffannoo Gara Olii (Kutaa To'annoo Mana Barnoota Sanbataa → Waajjira Waldaa → Mana Barnoota Sanbataa Waldaa)", ti: "ንላዕሊ ዝኸይድ ፍሰት ሓበሬታ (ክፍሊ ቁጽጽር ት/ቤት ሰንበት → ቤ/ጽ ኣጥቢያ → ት/ቤት ሰንበት ኣጥቢያ)", ar: "تدفق البيانات إلى الأعلى (قسم مراقبة مدرسة الأحد ← مكتب الرعية ← مدرسة الأحد بالرعية)", fr: "Flux de données ascendant (Section de contrôle de l'école du dimanche → Bureau paroissial → École du dimanche paroissiale)", es: "Flujo de datos ascendente (Sección de Control de la Escuela Dominical → Oficina parroquial → Escuela Dominical parroquial)" },      syncNote: { am: "%N% ያልተላከ መዝገብ (አባላት፣ ተማሪዎች፣ መምህራን) አለ። መስመር ላይ ሲሆኑ ብቻ ወደ ላይኛው እርከን ሊላክ ይችላል።", en: "There are %N% unsent records (members, students, teachers). They can only be sent upward while you are online.", om: "Galmeen %N% hin ergamin (miseensota, barattoota, barsiisota) jira. Yeroo interneetii irra jirtan qofa gara olitti erguu dandeessu.", ti: "%N% ዘይተላእከ መዝገብ (ኣባላት፣ ተመሃሮ፣ መምህራን) ኣሎ። ኣብ ኦንላይን ኣብ ዘለኹምሉ ጥራይ ናብ ላዕሊ ክለኣኽ ይኽእል።", ar: "يوجد %N% سجل غير مرسل (أعضاء، طلاب، معلمون). يمكن إرسالها للأعلى فقط عند الاتصال بالإنترنت.", fr: "Il y a %N% enregistrements non envoyés (membres, élèves, enseignants). Ils ne peuvent être envoyés que lorsque vous êtes en ligne.", es: "Hay %N% registros sin enviar (miembros, estudiantes, maestros). Solo se pueden enviar cuando está en línea." },      syncBtn:         { am: "ሁሉንም አሁን አመሳስል", en: "Sync All Now", om: "Amma Hunda Walsimsiisi", ti: "ሕጂ ኩሉ ኣሳኒ", ar: "مزامنة الكل الآن", fr: "Synchroniser tout maintenant", es: "Sincronizar todo ahora" },      reportTitle:     { am: "የየሰ/ት/ቤቱ ቁጥጥር ክፍል ወቅታዊ ሪፖርት ላክ", en: "Send Sunday School Control Section Periodic Report", om: "Gabaasa Yeroo Kutaa To'annoo Mana Barnoota Sanbataa Ergi", ti: "ናይ ክፍሊ ቁጽጽር ት/ቤት ሰንበት ወቕታዊ ጸብጻብ ላኣኽ", ar: "إرسال تقرير قسم مراقبة مدرسة الأحد الدوري", fr: "Envoyer le rapport périodique de la section de contrôle de l'école du dimanche", es: "Enviar informe periódico de la sección de control de la escuela dominical" },      selectParish:    { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍል ይምረጡ", en: "Select Sunday School Control Section", om: "Kutaa To'annoo Mana Barnoota Sanbataa Filadhaa", ti: "ክፍሊ ቁጽጽር ት/ቤት ሰንበት ምረጹ", ar: "اختر قسم مراقبة مدرسة الأحد", fr: "Sélectionner la section de contrôle de l'école du dimanche", es: "Seleccione la sección de control de la escuela dominical" },      sendReportBtn:   { am: "ሪፖርት ወደ የሰ/ት/ቤቱ ጽሕፈት ቤት/የደብሩ ሰ/ት/ቤት ላክ", en: "Send Report to Parish Office/Parish Sunday School", om: "Gabaasa gara Waajjira Waldaa/Mana Barnoota Sanbataa Waldaatti Ergi", ti: "ጸብጻብ ናብ ቤ/ጽ ኣጥቢያ/ት/ቤት ሰንበት ኣጥቢያ ላኣኽ", ar: "إرسال التقرير إلى مكتب الرعية/مدرسة الأحد بالرعية", fr: "Envoyer le rapport au bureau paroissial/à l'école du dimanche paroissiale", es: "Enviar informe a la oficina parroquial/Escuela Dominical parroquial" },      onlineToEnable:  { am: "መስመር ላይ ሲሆኑ ንቁ ይሆናል", en: "This will activate when you are online", om: "Yeroo interneetii irra jirtan ni hojjata", ti: "ኣብ ኦንላይን ምስ ኮንኩም ንጡፍ ይኸውን", ar: "سيتم تفعيل هذا عند الاتصال بالإنترنت", fr: "Ceci s'activera lorsque vous serez en ligne", es: "Esto se activará cuando esté en línea" },      reportsRxTitle:  { am: "የደረሱ ሪፖርቶች", en: "Received Reports", om: "Gabaasawwan Dhufan", ti: "ዝበጽሑ ጸብጻባት", ar: "التقارير المستلمة", fr: "Rapports reçus", es: "Informes recibidos" },      noneReceived:    { am: "እስካሁን የደረሰ ሪፖርት የለም", en: "No report received yet", om: "Hanga ammaatti gabaasni hin dhufne", ti: "ክሳብ ሕጂ ዝበጽሐ ጸብጻብ የለን", ar: "لم يتم استلام أي تقرير بعد", fr: "Aucun rapport reçu pour l'instant", es: "Aún no se ha recibido ningún informe" },      circFormTitle:   { am: "ወደ ታች መመሪያ/ማስታወቂያ ላክ (ከየደብሩ ሰ/ት/ቤት ወደ የሰ/ት/ቤቱ ቁጥጥር ክፍል)", en: "Send Directive/Notice Downward (Parish Sunday School to Sunday School Control Section)", om: "Qajeelfama/Beeksisa Gara Gadiitti Ergi (Waajjira Waldaadhaa gara Kutaa To'annoo Mana Barnoota Sanbataatti)", ti: "ንታሕቲ ዝኸይድ መምርሒ/ማስታወቂያ ላኣኽ (ካብ ት/ቤት ሰንበት ኣጥቢያ ናብ ክፍሊ ቁጽጽር ት/ቤት ሰንበት)", ar: "إرسال توجيه/إشعار إلى الأسفل (من مدرسة الأحد بالرعية إلى قسم مراقبة مدرسة الأحد)", fr: "Envoyer une directive/avis vers le bas (de l'École du dimanche paroissiale à la Section de contrôle de l'école du dimanche)", es: "Enviar directiva/aviso hacia abajo (del Escuela Dominical parroquial a la Sección de Control de la Escuela Dominical)" },      circTitleLabel:  { am: "ርዕስ", en: "Title", om: "Mata Duree", ti: "ኣርእስቲ", ar: "العنوان", fr: "Titre", es: "Título" },      circTitlePh:     { am: "ለምሳሌ የበዓል መርሃ ግብር", en: "e.g. Holiday Schedule", om: "fkn Sagantaa Ayyaanaa", ti: "ኣብነት መደብ በዓል", ar: "مثال: جدول العيد", fr: "ex. Programme des fêtes", es: "ej. Calendario de festividades" },      circBodyLabel:   { am: "መልዕክት", en: "Message", om: "Ergaa", ti: "መልእኽቲ", ar: "الرسالة", fr: "Message", es: "Mensaje" },      circBodyPh:      { am: "ዝርዝር መልዕክት...", en: "Detailed message...", om: "Ergaa bal'aa...", ti: "ዝርዝር መልእኽቲ...", ar: "رسالة مفصلة...", fr: "Message détaillé...", es: "Mensaje detallado..." },      circSendBtn:     { am: "መልዕክት ላክ", en: "Send Message", om: "Ergaa Ergi", ti: "መልእኽቲ ላኣኽ", ar: "إرسال الرسالة", fr: "Envoyer le message", es: "Enviar mensaje" },      circListTitle:   { am: "የተላኩ መመሪያዎች", en: "Sent Directives", om: "Qajeelfamoota Ergaman", ti: "ዝተላእኩ መምርሒታት", ar: "التوجيهات المرسلة", fr: "Directives envoyées", es: "Directivas enviadas" },      noneSent:        { am: "እስካሁን የተላከ የለም", en: "None sent yet", om: "Hanga ammaatti wanti hin ergamne", ti: "ክሳብ ሕጂ ዝተላእከ የለን", ar: "لم يتم إرسال أي شيء بعد", fr: "Rien n'a encore été envoyé", es: "Aún no se ha enviado nada" },      mainNote:        { am: "ይህ ክፍል ከየደብሩ ሰ/ት/ቤት እስከ የሰ/ት/ቤቱ ቁጥጥር ክፍል ያለውን ወጥ የሆነ ሁለት-አቅጣጫ የመረጃ ፍሰት ያሳያል፦ ሪፖርት ወደ ላይ፣ መመሪያ ወደ ታች።", en: "This section shows the standardized two-way data flow from Parish Sunday School down to Sunday School Control Section: reports upward, directives downward.", om: "Kutaan kun adeemsa odeeffannoo lamee-kallattii, Waajjira Waldaadhaa hanga Kutaa To'annoo Mana Barnoota Sanbataatti argisiisa: gabaasni gara olii, qajeelfamni gara gadii.", ti: "እዚ ክፍሊ ካብ ት/ቤት ሰንበት ኣጥቢያ ክሳብ ክፍሊ ቁጽጽር ት/ቤት ሰንበት ዘሎ ሚዛናዊ ክልተ-ኣንፈት ፍሰት ሓበሬታ የርኢ፦ ጸብጻብ ንላዕሊ፣ መምርሒ ንታሕቲ።", ar: "يوضح هذا القسم تدفق البيانات ثنائي الاتجاه الموحد من مدرسة الأحد بالرعية إلى قسم مراقبة مدرسة الأحد: تقارير للأعلى وتوجيهات للأسفل.", fr: "Cette section montre le flux de données bidirectionnel standardisé de l'École du dimanche paroissiale à la Section de contrôle de l'école du dimanche : rapports vers le haut, directives vers le bas.", es: "Esta sección muestra el flujo de datos bidireccional estandarizado del Escuela Dominical parroquial a la Sección de Control de la Escuela Dominical: informes hacia arriba, directivas hacia abajo." },      smsTitle:  { am: "📱 ኤስኤምኤስ አማራጭ (ለስማርት ስልክ/ኢንተርኔት ለሌላቸው)", en: "📱 SMS Fallback (for those without a smartphone/internet)", om: "📱 Filannoo SMS (kanneen smartphone/interneetii hin qabneef)", ti: "📱 ኣማራጺ SMS (ንዘይብሎም ስማርት ስልኪ/ኢንተርነት)", ar: "📱 بديل الرسائل النصية (لمن لا يملك هاتفاً ذكياً/إنترنت)", fr: "📱 Solution SMS (pour ceux sans smartphone/internet)", es: "📱 Alternativa SMS (para quienes no tienen smartphone/internet)" },      smsNote:   { am: "ኤስኤምኤስ ኢንተርኔት ስለማይፈልግ፣ ስማርት ስልክ ወይም ዳታ ለሌላቸው ሰብሳቢዎች/አስተዳዳሪዎች አማራጭ የማሳወቂያ መንገድ ሆኖ ያገለግላል።", en: "Since SMS doesn't require internet, it works as an alternative notification method for collectors/admins without a smartphone or data.", om: "SMS interneetii waan hin barbaachifneef, walitti qabaa/bulchaa smartphone ykn daataa hin qabneef karaa beeksisa biraa ta'a.", ti: "SMS ኢንተርነት ስለዘየድልዮ፣ ንዘይብሎም ስማርት ስልኪ ወይ ዳታ ኣኪብቲ/ኣመሓደርቲ ኣማራጺ መገዲ ምልክታ ኮይኑ የገልግል።", ar: "بما أن الرسائل النصية لا تحتاج إلى إنترنت، فإنها توفر وسيلة إشعار بديلة لجامعي البيانات/المسؤولين الذين لا يملكون هاتفاً ذكياً أو بيانات.", fr: "Comme le SMS ne nécessite pas Internet, il offre un moyen de notification alternatif pour les collecteurs/administrateurs sans smartphone ni données.", es: "Como el SMS no requiere internet, sirve como un método de notificación alternativo para recolectores/administradores sin smartphone o datos." },      smsPhoneLabel: { am: "የአስተዳዳሪ ስልክ ቁጥር", en: "Admin Phone Number", om: "Lakkoofsa Bilbilaa Bulchaa", ti: "ቁጽሪ ስልኪ ኣመሓዳሪ", ar: "رقم هاتف المسؤول", fr: "Numéro de téléphone de l'administrateur", es: "Número de teléfono del administrador" },      smsPhonePh:    { am: "ለምሳሌ +251911223344", en: "e.g. +251911223344", om: "fkn +251911223344", ti: "ኣብነት +251911223344", ar: "مثال: +251911223344", fr: "ex. +251911223344", es: "ej. +251911223344" },      smsSendBtn:    { am: "📱 ወቅታዊ ማጠቃለያ በኤስኤምኤስ ላክ", en: "📱 Send Current Summary via SMS", om: "📱 Cuunfaa Ammaa SMS'n Ergi", ti: "📱 ሕጂ ጠቕላላ ብSMS ላኣኽ", ar: "📱 إرسال الملخص الحالي عبر الرسائل النصية", fr: "📱 Envoyer le résumé actuel par SMS", es: "📱 Enviar resumen actual por SMS" },      smsBody:       { am: "BK/B/N ማጠቃለያ፦ %DIO% የሰ/ት/ቤቱ ጽሕፈት ቤት፣ %PAR% የሰ/ት/ቤቱ ቁጥጥር ክፍል፣ %MEM% ጠቅላላ አባል፣ %PEND% ያልተላከ መዝገብ።", en: "BK/B/N Summary: %DIO% Parish Offices, %PAR% Sunday School Control Sections, %MEM% total members, %PEND% unsent records.", om: "Cuunfaa BK/B/N: Waajjira Waldaa %DIO%, Kutaa To'annoo Mana Barnoota Sanbataa %PAR%, Miseensota %MEM%, Galmee %PEND% hin ergamin.", ti: "ጠቕላላ BK/B/N፦ %DIO% ቤ/ጽ ኣጥቢያ፣ %PAR% ክፍሊ ቁጽጽር ት/ቤት ሰንበት፣ %MEM% ጠቕላላ ኣባል፣ %PEND% ዘይተላእከ መዝገብ።", ar: "ملخص BK/B/N: %DIO% مكتب رعية، %PAR% قسم مراقبة مدرسة الأحد، %MEM% إجمالي الأعضاء، %PEND% سجل غير مرسل.", fr: "Résumé BK/B/N : %DIO% bureaux paroissiaux, %PAR% sections de contrôle de l'école du dimanche, %MEM% membres au total, %PEND% enregistrements non envoyés.", es: "Resumen BK/B/N: %DIO% oficinas parroquiales, %PAR% secciones de control de la escuela dominical, %MEM% miembros totales, %PEND% registros sin enviar." },      smsNoPhone:    { am: "እባክዎ የስልክ ቁጥር ያስገቡ", en: "Please enter a phone number", om: "Maaloo lakkoofsa bilbilaa galchaa", ti: "በጃኹም ቁጽሪ ስልኪ የእትዉ", ar: "يرجى إدخال رقم الهاتف", fr: "Veuillez entrer un numéro de téléphone", es: "Por favor ingrese un número de teléfono" },      smsCaveat:     { am: "ማሳሰቢያ፦ ይህ የስልክዎን ነባሪ SMS መተግበሪያ ይከፍታል፤ በአንዳንድ ስልኮች ላይ አሠራሩ ትንሽ ሊለያይ ይችላል።", en: "Note: this opens your phone's default SMS app; behavior may vary slightly by device.", om: "Yaadachiisa: kun app SMS durtii bilbila keessanii bana; haala isaa bilbila garaagaraatti xiqqoo garaagara ta'uu danda'a.", ti: "ማሳሰቢያ፦ እዚ ናይ ንቡር SMS ኣፕ ስልክኹም ይኸፍት፤ ኣብ ገሊኡ ስልኪ ኣገባቡ ቁሩብ ክፈላለ ይኽእል።", ar: "ملاحظة: يفتح هذا تطبيق الرسائل النصية الافتراضي في هاتفك؛ قد يختلف السلوك قليلاً حسب الجهاز.", fr: "Remarque : ceci ouvre l'application SMS par défaut de votre téléphone ; le comportement peut varier légèrement selon l'appareil.", es: "Nota: esto abre la aplicación de SMS predeterminada de su teléfono; el comportamiento puede variar ligeramente según el dispositivo." }    },
     cert: {
       tabNote:       { am: "ይህ ክፍል ለአባላት እና ለተመረቁ ተማሪዎች ኦፊሴላዊ፣ ሊታተሙ የሚችሉ ሰነዶች እንዲያመነጩ ያስችላል።", en: "This section lets you generate official, printable documents for members and graduated students.", om: "Kutaan kun ragaalee ashaakiloo, kan maxxanfaman miseensotaa fi barattoota eebbifamaniif akka uumtan isin dandeessisa.", ti: "እዚ ክፍሊ ንኣባላትን ንዝተመረቑ ተመሃሮን ወግዓዊ፣ ክሕተሙ ዝኽእሉ ሰነዳት ንኽትፈጥሩ ዘኽእል እዩ።", ar: "يتيح لك هذا القسم إنشاء وثائق رسمية قابلة للطباعة للأعضاء والطلاب الخريجين.", fr: "Cette section vous permet de générer des documents officiels imprimables pour les membres et les élèves diplômés.", es: "Esta sección le permite generar documentos oficiales imprimibles para miembros y estudiantes graduados." },      typeLabel:     { am: "የሰነድ አይነት", en: "Document Type", om: "Gosa Ragaa", ti: "ዓይነት ሰነድ", ar: "نوع الوثيقة", fr: "Type de document", es: "Tipo de documento" },      typeMembership:{ am: "የአባልነት ማረጋገጫ", en: "Membership Confirmation", om: "Mirkaneessa Miseensummaa", ti: "ምርግጋጽ ኣባልነት", ar: "تأكيد العضوية", fr: "Confirmation d'adhésion", es: "Confirmación de membresía" },      typeGraduation:{ am: "የምረቃ የምስክር ወረቀት", en: "Graduation Certificate", om: "Waraqaa Ragaa Eebba", ti: "ናይ ምረቓ ምስክር ወረቐት", ar: "شهادة التخرج", fr: "Certificat de fin d'études", es: "Certificado de graduación" },      personLabel:   { am: "ሰው ይምረጡ", en: "Select Person", om: "Nama Filadhu", ti: "ሰብ ምረጹ", ar: "اختر الشخص", fr: "Sélectionner la personne", es: "Seleccionar persona" },      noPeople:      { am: "ለዚህ አይነት ሰነድ የሚያስፈልግ ተመዝጋቢ የለም", en: "No eligible registrant for this document type", om: "Galmeessituu gosa ragaa kanaaf ta'u hin jiru", ti: "ንዚ ዓይነት ሰነድ ዝበቅዕ ተመዝጋቢ የለን", ar: "لا يوجد مسجل مؤهل لهذا النوع من الوثائق", fr: "Aucun inscrit éligible pour ce type de document", es: "No hay ningún inscrito elegible para este tipo de documento" },      generateBtn:   { am: "ሰነድ አመንጭ", en: "Generate Document", om: "Ragaa Uumi", ti: "ሰነድ ኣፍሪ", ar: "إنشاء الوثيقة", fr: "Générer le document", es: "Generar documento" },      printBtn:      { am: "🖨 አትም", en: "🖨 Print", om: "🖨 Maxxansi", ti: "🖨 ሕተም", ar: "🖨 طباعة", fr: "🖨 Imprimer", es: "🖨 Imprimir" },      titleMembership:{ am: "የአባልነት ማረጋገጫ ደብዳቤ", en: "Membership Confirmation Letter", om: "Xalayaa Mirkaneessa Miseensummaa", ti: "ደብዳበ ምርግጋጽ ኣባልነት", ar: "خطاب تأكيد العضوية", fr: "Lettre de confirmation d'adhésion", es: "Carta de confirmación de membresía" },      bodyMembership:{ am: "እኛ ከዚህ በታች የተፈረምነው የ%PARISH% (%DIOCESE%) የሰንበት ት/ቤት ኃላፊዎች፣ አቶ/ወ/ሮ/ወ/ት %NAME% በመዝገባችን ቁጥር %CODE% ስር በሕጋዊ መንገድ የተመዘገቡ ንቁ አባል መሆናቸውን በዚህ ደብዳቤ እናረጋግጣለን። ይህ ሰነድ በ%DATE% የተዘጋጀ ነው።", en: "We, the undersigned officials of the Sunday School of %PARISH% (%DIOCESE%), hereby confirm that %NAME%, registered under record number %CODE%, is a duly registered active member. This document was issued on %DATE%.", om: "Nuti qondaaltota Mana Barnoota Sanbataa %PARISH% (%DIOCESE%) mallatteessine, %NAME% lakkoofsa galmee %CODE% jalatti seeraan galmaa'e miseensa hojjataa ta'uu isaanii xalayaa kanaan mirkaneessina. Ragaan kun guyyaa %DATE% qophaa'e.", ti: "ንሕና ትሕቲ እዚ ዝፈረምና ሓለፍቲ ናይ ት/ቤት ሰንበት %PARISH% (%DIOCESE%)፣ %NAME% ብቁጽሪ መዝገብ %CODE% ብሕጋዊ መንገዲ ዝተመዝገቡ ንጡፍ ኣባል ምዃኖም በዚ ደብዳበ ነረጋግጽ። እዚ ሰነድ ኣብ %DATE% ተዳልዩ እዩ።", ar: "نحن الموقعون أدناه، مسؤولو مدرسة الأحد في %PARISH% (%DIOCESE%)، نؤكد بموجب هذا الخطاب أن %NAME%، المسجل تحت رقم السجل %CODE%، هو عضو نشط مسجل حسب الأصول. صدرت هذه الوثيقة بتاريخ %DATE%.", fr: "Nous, responsables soussignés de l'école du dimanche de %PARISH% (%DIOCESE%), confirmons par la présente que %NAME%, enregistré sous le numéro %CODE%, est un membre actif dûment enregistré. Ce document a été délivré le %DATE%.", es: "Nosotros, los funcionarios abajo firmantes de la Escuela Dominical de %PARISH% (%DIOCESE%), confirmamos que %NAME%, registrado bajo el número %CODE%, es un miembro activo debidamente registrado. Este documento fue emitido el %DATE%." },      titleGraduation:{ am: "የምረቃ የምስክር ወረቀት", en: "Certificate of Graduation", om: "Waraqaa Ragaa Eebba", ti: "ናይ ምረቓ ምስክር ወረቐት", ar: "شهادة التخرج", fr: "Certificat de fin d'études", es: "Certificado de graduación" },      bodyGraduation:{ am: "ይህ የምስክር ወረቀት %NAME% በ%PARISH% ሰንበት ትምህርት ቤት በ%LEVEL% ደረጃ የ«%COURSE%» ትምህርትን በሚገባ አጠናቅቀው በ%GRADYEAR% ዓ.ም መመረቃቸውን ያረጋግጣል።", en: "This certificate confirms that %NAME% has successfully completed the course \"%COURSE%\" at the %LEVEL% level of the Sunday School of %PARISH%, and graduated in %GRADYEAR%.", om: "Ragaan kun %NAME% koorsii \"%COURSE%\" sadarkaa %LEVEL% Mana Barnoota Sanbataa %PARISH% keessatti milkaa'inaan xumuranii bara %GRADYEAR% eebbifamuu isaanii ni mirkaneessa.", ti: "እዚ ምስክር ወረቐት %NAME% ኣብ %PARISH% ት/ቤት ሰንበት ብደረጃ %LEVEL% ትምህርቲ «%COURSE%» ብዕቱብ ወዲኦም ብ%GRADYEAR% ዓ.ም ከምዝተመረቑ የረጋግጽ።", ar: "تؤكد هذه الشهادة أن %NAME% قد أكمل بنجاح مقرر \"%COURSE%\" في مستوى %LEVEL% بمدرسة الأحد في %PARISH%، وتخرج في عام %GRADYEAR%.", fr: "Ce certificat confirme que %NAME% a terminé avec succès le cours « %COURSE% » au niveau %LEVEL% de l'école du dimanche de %PARISH%, et a obtenu son diplôme en %GRADYEAR%.", es: "Este certificado confirma que %NAME% completó con éxito el curso «%COURSE%» en el nivel %LEVEL% de la Escuela Dominical de %PARISH%, y se graduó en %GRADYEAR%." },      signOff1:      { am: "ፊርማ (የሰ/ት/ቤቱ ሰብሳቢ)", en: "Signature (Sunday School Head)", om: "Mallattoo (Hoogganaa Mana Barnootaa)", ti: "ፊርማ (ሓላፊ ት/ቤት ሰንበት)", ar: "التوقيع (رئيس مدرسة الأحد)", fr: "Signature (Responsable de l'école du dimanche)", es: "Firma (Responsable de la Escuela Dominical)" },      signOff2:      { am: "ማህተም እና ቀን", en: "Seal and Date", om: "Chaappaa fi Guyyaa", ti: "ማሕተምን ዕለትን", ar: "الختم والتاريخ", fr: "Cachet et date", es: "Sello y fecha" }    },
     io: {
       exportTitle:    { am: "ውሂብ ማውጫ (Export)", en: "Data Export", om: "Baasuu Ragaa", ti: "ምውጻእ ሓበሬታ", ar: "تصدير البيانات", fr: "Exportation des données", es: "Exportación de datos" },      exportNote:     { am: "ውሂብዎን ወደ CSV ፋይል (በExcel ሊከፈት የሚችል) ማውረድ ይችላሉ።", en: "You can download your data as a CSV file (openable in Excel).", om: "Ragaa keessan akka faayilii CSV (Excel keessatti banamuu danda'u) buufachuu dandeessu.", ti: "ሓበሬታኹም ከም CSV ፋይል (ብExcel ክኽፈት ዝኽእል) ከተውርዱ ትኽእሉ።", ar: "يمكنك تنزيل بياناتك كملف CSV (يمكن فتحه في Excel).", fr: "Vous pouvez télécharger vos données sous forme de fichier CSV (ouvrable dans Excel).", es: "Puede descargar sus datos como un archivo CSV (que se puede abrir en Excel)." },      exportMembers:  { am: "አባላትን አውርድ (CSV)", en: "Download Members (CSV)", om: "Miseensota Buufadhu (CSV)", ti: "ኣባላት ኣውርድ (CSV)", ar: "تنزيل الأعضاء (CSV)", fr: "Télécharger les membres (CSV)", es: "Descargar miembros (CSV)" },      exportStudents: { am: "ተማሪዎችን አውርድ (CSV)", en: "Download Students (CSV)", om: "Barattoota Buufadhu (CSV)", ti: "ተመሃሮ ኣውርድ (CSV)", ar: "تنزيل الطلاب (CSV)", fr: "Télécharger les élèves (CSV)", es: "Descargar estudiantes (CSV)" },      exportTeachers: { am: "መምህራንን አውርድ (CSV)", en: "Download Teachers (CSV)", om: "Barsiisota Buufadhu (CSV)", ti: "መምህራን ኣውርድ (CSV)", ar: "تنزيل المعلمين (CSV)", fr: "Télécharger les enseignants (CSV)", es: "Descargar maestros (CSV)" },      exportParishes: { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍልዎችን አውርድ (CSV)", en: "Download Sunday School Control Sections (CSV)", om: "Kutaalee To'annoo Mana Barnoota Sanbataa Buufadhu (CSV)", ti: "ክፍልታት ቁጽጽር ት/ቤት ሰንበት ኣውርድ (CSV)", ar: "تنزيل أقسام مراقبة مدرسة الأحد (CSV)", fr: "Télécharger les sections de contrôle de l'école du dimanche (CSV)", es: "Descargar secciones de control de la escuela dominical (CSV)" },      printReportBtn: { am: "🖨 ሙሉ ማጠቃለያ ሪፖርት አትም / እንደ PDF አስቀምጥ", en: "🖨 Print Full Summary / Save as PDF", om: "🖨 Gabaasa Guutuu Maxxansi / Akka PDF Olkaa'i", ti: "🖨 ምሉእ ጸብጻብ ሕተም / ከም PDF ኣቐምጥ", ar: "🖨 طباعة التقرير الكامل / حفظ كـPDF", fr: "🖨 Imprimer le rapport complet / Enregistrer en PDF", es: "🖨 Imprimir informe completo / Guardar como PDF" },      importTitle:    { am: "ውሂብ ማስመጣት (Bulk Import)", en: "Bulk Data Import", om: "Ragaa Baay'ee Galchuu", ti: "ብዙሕ ሓበሬታ ምእታው", ar: "استيراد البيانات بالجملة", fr: "Importation groupée de données", es: "Importación masiva de datos" },      importNote: { am: "ነባር የአባላት፣ የተማሪዎች ወይም የመምህራን ዝርዝር (ከExcel/CSV) በአንድ ጊዜ ማስገባት ይችላሉ። የመዝገቡን ዓይነት ይምረጡ፣ የናሙና ፋይሉን አውርደው ቅርጸቱን ይከተሉ።", en: "You can import an existing list of members, students or teachers (from Excel/CSV) all at once. Choose the record type, download the sample file and follow its format.", om: "Tarreeffama miseensotaa, barattootaa ykn barsiisotaa kan jiru (Excel/CSV irraa) yeroo tokkotti galchuu dandeessu. Gosa galmee filadhaa, faayilii fakkeenyaa buufadhaatii bifa isaa hordofaa.", ti: "ዘሎ ዝርዝር ኣባላት፣ ተመሃሮ ወይ መምህራን (ካብ Excel/CSV) ብሓደ ግዜ ከተእትዉ ትኽእሉ። ዓይነት መዝገብ ምረጹ፣ ናይ ኣብነት ፋይል ኣውርዱ ቅርጺኡ ተኸተሉ።", ar: "يمكنك استيراد قائمة حالية من الأعضاء أو الطلاب أو المعلمين (من Excel/CSV) دفعة واحدة. اختر نوع السجل ثم نزّل الملف النموذجي واتبع تنسيقه.", fr: "Vous pouvez importer en une seule fois une liste existante de membres, d'élèves ou d'enseignants (depuis Excel/CSV). Choisissez le type d'enregistrement, téléchargez le fichier exemple et suivez son format.", es: "Puede importar de una vez una lista existente de miembros, estudiantes o maestros (desde Excel/CSV). Elija el tipo de registro, descargue el archivo de ejemplo y siga su formato." },      downloadTemplate:{ am: "የናሙና CSV ፋይል አውርድ", en: "Download Sample CSV Template", om: "Fakkeenya Faayilii CSV Buufadhu", ti: "ናይ ኣብነት CSV ፋይል ኣውርድ", ar: "تنزيل نموذج ملف CSV", fr: "Télécharger le modèle CSV", es: "Descargar plantilla CSV de ejemplo" },      fileLabel:      { am: "ፋይል ይምረጡ", en: "Choose a file", om: "Faayilii filadhu", ti: "ፋይል ምረጹ", ar: "اختر ملفاً", fr: "Choisissez un fichier", es: "Elija un archivo" },      pasteLabel:     { am: "ወይም የCSV ጽሁፍ ይለጥፉ", en: "Or paste CSV text", om: "Yookiin barreeffama CSV maxxansi", ti: "ወይ ጽሑፍ CSV ለጥፉ", ar: "أو الصق نص CSV", fr: "Ou collez le texte CSV", es: "O pegue el texto CSV" },      pasteAreaPh:    { am: "የCSV ይዘት እዚህ ይለጥፉ...", en: "Paste CSV content here...", om: "Qabiyyee CSV asitti maxxansi...", ti: "ትሕዝቶ CSV ኣብዚ ለጥፉ...", ar: "الصق محتوى CSV هنا...", fr: "Collez le contenu CSV ici...", es: "Pegue el contenido CSV aquí..." },      importBtn:      { am: "አስመጣ", en: "Import", om: "Galchi", ti: "ኣእትው", ar: "استيراد", fr: "Importer", es: "Importar" },      importAdded:    { am: "%N% መዝገብ በተሳካ ሁኔታ ገብቷል።", en: "%N% records were imported successfully.", om: "Galmeen %N% milkaa'inaan galfame.", ti: "%N% መዝገብ ብዓወት ኣትዩ።", ar: "تم استيراد %N% سجل بنجاح.", fr: "%N% enregistrements ont été importés avec succès.", es: "%N% registros se importaron con éxito." },      importSkipped: { am: "%N% መዝገብ ተዘሏል (የሰ/ት/ቤቱ ቁጥጥር ክፍል ኮድ ስላልተገኘ፣ ስም ባዶ ስለሆነ ወይም ደረጃ/ዓመት ልክ ስላልሆነ)።", en: "%N% records were skipped (Sunday School Control Section code not found, name missing, or invalid level/year).", om: "Galmeen %N% darbame (koodiin Kutaa To'annoo hin argamne, maqaan hin jiru, ykn sadarkaan/baraan sirrii miti).", ti: "%N% መዝገብ ተዝሊሉ (ኮድ ክፍሊ ቁጽጽር ት/ቤት ሰንበት ስለዘይተረኸበ፣ ስም ስለዘየለ ወይ ደረጃ/ዓመት ቅኑዕ ስለዘይኮነ)።", ar: "تم تخطي %N% سجل (لم يتم العثور على رمز قسم مراقبة مدرسة الأحد، أو الاسم مفقود، أو المستوى/السنة غير صالح).", fr: "%N% enregistrements ont été ignorés (code de section de contrôle introuvable, nom manquant ou niveau/année invalide).", es: "%N% registros fueron omitidos (código de sección de control no encontrado, nombre faltante o nivel/año no válido)." },      noInput:        { am: "እባክዎ ፋይል ይምረጡ ወይም ጽሁፍ ይለጥፉ", en: "Please choose a file or paste text", om: "Maaloo faayilii filadhaa ykn barreeffama maxxansaa", ti: "በጃኹም ፋይል ምረጹ ወይ ጽሑፍ ለጥፉ", ar: "يرجى اختيار ملف أو لصق نص", fr: "Veuillez choisir un fichier ou coller du texte", es: "Por favor elija un archivo o pegue texto" }    },
     audit: {
-      noteText:   { am: "ይህ ክፍል በስርዓቱ ውስጥ የተደረገውን ማንኛውንም ለውጥ ማን መቼ እንዳደረገው ሙሉ ታሪክ ይመዘግባል።", en: "This section keeps a full history of who did what and when across the system.", om: "Kutaan kun seenaa guutuu eenyu maal akka raawwatee fi yoom akka raawwate sirna kana keessatti ni galmeessa.", ti: "እዚ ክፍሊ መን እንታይ መዓስ ከምዝገበረ ምሉእ ታሪኽ ኣብ ዙርያ ስርዓት የመዝግብ።", ar: "يحتفظ هذا القسم بسجل كامل لمن قام بماذا ومتى في النظام.", fr: "Cette section conserve un historique complet de qui a fait quoi et quand dans le système.", es: "Esta sección mantiene un historial completo de quién hizo qué y cuándo en el sistema." },      act_diocese: { am: "የደብሩ ጽሕፈት ቤት ተመዘገበ", en: "Parish Office registered", om: "Waajjirri Waldaa galmaa'e", ti: "ቤ/ጽ ኣጥቢያ ተመዝጊቡ", ar: "تم تسجيل مكتب الرعية", fr: "Bureau paroissial enregistré", es: "Oficina parroquial registrada" },      act_parish:  { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍል ተመዘገበ", en: "Sunday School Control Section registered", om: "Kutaan To'annoo Mana Barnoota Sanbataa galmaa'e", ti: "ክፍሊ ቁጽጽር ት/ቤት ሰንበት ተመዝጊቡ", ar: "تم تسجيل قسم مراقبة مدرسة الأحد", fr: "Section de contrôle de l'école du dimanche enregistrée", es: "Sección de Control de la Escuela Dominical registrada" },      act_member:  { am: "አባል ተመዘገበ", en: "Member registered", om: "Miseensi galmaa'e", ti: "ኣባል ተመዝጊቡ", ar: "تم تسجيل العضو", fr: "Membre enregistré", es: "Miembro registrado" },      act_student: { am: "ተማሪ ተመዘገበ", en: "Student registered", om: "Barataan galmaa'e", ti: "ተመሃራይ ተመዝጊቡ", ar: "تم تسجيل الطالب", fr: "Élève enregistré", es: "Estudiante registrado" },      act_teacher: { am: "የመምህር ምደባ ተመዘገበ", en: "Teacher assignment registered", om: "Ramaddiin barsiisaa galmaa'e", ti: "ምድባ መምህር ተመዝጊቡ", ar: "تم تسجيل تعيين المعلم", fr: "Affectation d'enseignant enregistrée", es: "Asignación de maestro registrada" },      act_document:{ am: "ሰነድ/ደንብ ታክሏል", en: "Document/bylaw added", om: "Ragaan/Seerri dabalame", ti: "ሰነድ/ሕጊ ተወሲኹ", ar: "تمت إضافة وثيقة/لائحة", fr: "Document/règlement ajouté", es: "Documento/estatuto agregado" },      act_lesson:  { am: "የትምህርት ይዘት ታክሏል", en: "Lesson content added", om: "Qabiyyeen barnootaa dabalame", ti: "ትሕዝቶ ትምህርቲ ተወሲኹ", ar: "تمت إضافة محتوى الدرس", fr: "Contenu de leçon ajouté", es: "Contenido de lección agregado" },      act_circular:{ am: "መመሪያ ተልኳል", en: "Directive sent", om: "Qajeelfamni ergame", ti: "መምርሒ ተላኢኹ", ar: "تم إرسال التوجيه", fr: "Directive envoyée", es: "Directiva enviada" },      act_report:  { am: "ሪፖርት ተልኳል", en: "Report sent", om: "Gabaasni ergame", ti: "ጸብጻብ ተላኢኹ", ar: "تم إرسال التقرير", fr: "Rapport envoyé", es: "Informe enviado" },      act_sync:    { am: "ውሂብ ተመሳስሏል", en: "Data synced", om: "Ragaan walsimsiifame", ti: "ሓበሬታ ተሰኒዩ", ar: "تمت مزامنة البيانات", fr: "Données synchronisées", es: "Datos sincronizados" },      act_import:  { am: "የጅምላ ማስመጣት ተከናውኗል", en: "Bulk import performed", om: "Galuun baay'inaan raawwatame", ti: "ብዙሕ ምእታው ተፈጺሙ", ar: "تم تنفيذ الاستيراد بالجملة", fr: "Importation groupée effectuée", es: "Importación masiva realizada" },      act_cert:    { am: "ኦፊሴላዊ ሰነድ ተፈጥሯል", en: "Official document generated", om: "Ragaan ashaakiloo uumame", ti: "ወግዓዊ ሰነድ ተፈጢሩ", ar: "تم إنشاء وثيقة رسمية", fr: "Document officiel généré", es: "Documento oficial generado" }    }
+      noteText:   { am: "ይህ ክፍል በስርዓቱ ውስጥ የተደረገውን ማንኛውንም ለውጥ ማን መቼ እንዳደረገው ሙሉ ታሪክ ይመዘግባል።", en: "This section keeps a full history of who did what and when across the system.", om: "Kutaan kun seenaa guutuu eenyu maal akka raawwatee fi yoom akka raawwate sirna kana keessatti ni galmeessa.", ti: "እዚ ክፍሊ መን እንታይ መዓስ ከምዝገበረ ምሉእ ታሪኽ ኣብ ዙርያ ስርዓት የመዝግብ።", ar: "يحتفظ هذا القسم بسجل كامل لمن قام بماذا ومتى في النظام.", fr: "Cette section conserve un historique complet de qui a fait quoi et quand dans le système.", es: "Esta sección mantiene un historial completo de quién hizo qué y cuándo en el sistema." },      act_diocese: { am: "የሰ/ት/ቤቱ ጽሕፈት ቤት ተመዘገበ", en: "Parish Office registered", om: "Waajjirri Waldaa galmaa'e", ti: "ቤ/ጽ ኣጥቢያ ተመዝጊቡ", ar: "تم تسجيل مكتب الرعية", fr: "Bureau paroissial enregistré", es: "Oficina parroquial registrada" },      act_parish:  { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍል ተመዘገበ", en: "Sunday School Control Section registered", om: "Kutaan To'annoo Mana Barnoota Sanbataa galmaa'e", ti: "ክፍሊ ቁጽጽር ት/ቤት ሰንበት ተመዝጊቡ", ar: "تم تسجيل قسم مراقبة مدرسة الأحد", fr: "Section de contrôle de l'école du dimanche enregistrée", es: "Sección de Control de la Escuela Dominical registrada" },      act_member:  { am: "አባል ተመዘገበ", en: "Member registered", om: "Miseensi galmaa'e", ti: "ኣባል ተመዝጊቡ", ar: "تم تسجيل العضو", fr: "Membre enregistré", es: "Miembro registrado" },      act_student: { am: "ተማሪ ተመዘገበ", en: "Student registered", om: "Barataan galmaa'e", ti: "ተመሃራይ ተመዝጊቡ", ar: "تم تسجيل الطالب", fr: "Élève enregistré", es: "Estudiante registrado" },      act_teacher: { am: "የመምህር ምደባ ተመዘገበ", en: "Teacher assignment registered", om: "Ramaddiin barsiisaa galmaa'e", ti: "ምድባ መምህር ተመዝጊቡ", ar: "تم تسجيل تعيين المعلم", fr: "Affectation d'enseignant enregistrée", es: "Asignación de maestro registrada" },      act_document:{ am: "ሰነድ/ደንብ ታክሏል", en: "Document/bylaw added", om: "Ragaan/Seerri dabalame", ti: "ሰነድ/ሕጊ ተወሲኹ", ar: "تمت إضافة وثيقة/لائحة", fr: "Document/règlement ajouté", es: "Documento/estatuto agregado" },      act_lesson:  { am: "የትምህርት ይዘት ታክሏል", en: "Lesson content added", om: "Qabiyyeen barnootaa dabalame", ti: "ትሕዝቶ ትምህርቲ ተወሲኹ", ar: "تمت إضافة محتوى الدرس", fr: "Contenu de leçon ajouté", es: "Contenido de lección agregado" },      act_circular:{ am: "መመሪያ ተልኳል", en: "Directive sent", om: "Qajeelfamni ergame", ti: "መምርሒ ተላኢኹ", ar: "تم إرسال التوجيه", fr: "Directive envoyée", es: "Directiva enviada" },      act_report:  { am: "ሪፖርት ተልኳል", en: "Report sent", om: "Gabaasni ergame", ti: "ጸብጻብ ተላኢኹ", ar: "تم إرسال التقرير", fr: "Rapport envoyé", es: "Informe enviado" },      act_sync:    { am: "ውሂብ ተመሳስሏል", en: "Data synced", om: "Ragaan walsimsiifame", ti: "ሓበሬታ ተሰኒዩ", ar: "تمت مزامنة البيانات", fr: "Données synchronisées", es: "Datos sincronizados" },      act_import:  { am: "የጅምላ ማስመጣት ተከናውኗል", en: "Bulk import performed", om: "Galuun baay'inaan raawwatame", ti: "ብዙሕ ምእታው ተፈጺሙ", ar: "تم تنفيذ الاستيراد بالجملة", fr: "Importation groupée effectuée", es: "Importación masiva realizada" },      act_cert:    { am: "ኦፊሴላዊ ሰነድ ተፈጥሯል", en: "Official document generated", om: "Ragaan ashaakiloo uumame", ti: "ወግዓዊ ሰነድ ተፈጢሩ", ar: "تم إنشاء وثيقة رسمية", fr: "Document officiel généré", es: "Documento oficial generado" }    }
   };
 
   // ---------- additional strings (edit/delete, import, safety) ----------
@@ -408,7 +439,7 @@
     editing: { am: "በማስተካከል ላይ፦ %NAME%", en: "Editing: %NAME%", om: "Gulaalamaa jira: %NAME%", ti: "ይስተኻኸል ኣሎ፦ %NAME%", ar: "قيد التعديل: %NAME%", fr: "Modification : %NAME%", es: "Editando: %NAME%" },
     deleted: { am: "ተሰርዟል", en: "Deleted", om: "Haqameera", ti: "ተሰሪዙ", ar: "تم الحذف", fr: "Supprimé", es: "Eliminado" },
     updated: { am: "ተዘምኗል", en: "Updated", om: "Haaromfameera", ti: "ተሓዲሱ", ar: "تم التحديث", fr: "Mis à jour", es: "Actualizado" },
-    cantDelDiocese: { am: "ይህ የደብሩ ጽሕፈት ቤት የሰ/ት/ቤቱ ቁጥጥር ክፍልዎች ስላሉት መሰረዝ አይቻልም። መጀመሪያ እነሱን ይሰርዙ።", en: "This Parish Office still has Sunday School Control Sections and can't be deleted. Delete them first.", om: "Waajjirri Waldaa kun Kutaalee To'annoo Mana Barnoota Sanbataa qaba; haquun hin danda'amu. Dura isaan haqaa.", ti: "እዚ ቤ/ጽ ኣጥቢያ ክፍልታት ቁጽጽር ት/ቤት ሰንበት ስለዘለዉዎ ክጠፍእ ኣይክእልን። ቅድም ንዕኦም ስረዙ።", ar: "لا يمكن حذف مكتب الرعية هذا لأنه يحتوي على أقسام مراقبة مدرسة الأحد. احذفها أولاً.", fr: "Ce bureau paroissial contient encore des sections de contrôle de l'école du dimanche et ne peut pas être supprimé. Supprimez-les d'abord.", es: "Esta oficina parroquial aún tiene secciones de control de la escuela dominical y no se puede eliminar. Elimínelas primero." },
+    cantDelDiocese: { am: "ይህ የሰ/ት/ቤቱ ጽሕፈት ቤት የሰ/ት/ቤቱ ቁጥጥር ክፍልዎች ስላሉት መሰረዝ አይቻልም። መጀመሪያ እነሱን ይሰርዙ።", en: "This Parish Office still has Sunday School Control Sections and can't be deleted. Delete them first.", om: "Waajjirri Waldaa kun Kutaalee To'annoo Mana Barnoota Sanbataa qaba; haquun hin danda'amu. Dura isaan haqaa.", ti: "እዚ ቤ/ጽ ኣጥቢያ ክፍልታት ቁጽጽር ት/ቤት ሰንበት ስለዘለዉዎ ክጠፍእ ኣይክእልን። ቅድም ንዕኦም ስረዙ።", ar: "لا يمكن حذف مكتب الرعية هذا لأنه يحتوي على أقسام مراقبة مدرسة الأحد. احذفها أولاً.", fr: "Ce bureau paroissial contient encore des sections de contrôle de l'école du dimanche et ne peut pas être supprimé. Supprimez-les d'abord.", es: "Esta oficina parroquial aún tiene secciones de control de la escuela dominical y no se puede eliminar. Elimínelas primero." },
     cantDelParish: { am: "ይህ የሰ/ት/ቤቱ ቁጥጥር ክፍል አባላት፣ ተማሪዎች ወይም መምህራን ስላሉት መሰረዝ አይቻልም። መጀመሪያ እነሱን ይሰርዙ።", en: "This Sunday School Control Section still has members, students or teachers and can't be deleted. Delete them first.", om: "Kutaan To'annoo Mana Barnoota Sanbataa kun miseensota, barattoota ykn barsiisota qaba; haquun hin danda'amu. Dura isaan haqaa.", ti: "እዚ ክፍሊ ቁጽጽር ት/ቤት ሰንበት ኣባላት፣ ተመሃሮ ወይ መምህራን ስለዘለዉዎ ክጠፍእ ኣይክእልን። ቅድም ንዕኦም ስረዙ።", ar: "لا يمكن حذف قسم مراقبة مدرسة الأحد هذا لأنه يحتوي على أعضاء أو طلاب أو معلمين. احذفهم أولاً.", fr: "Cette section de contrôle de l'école du dimanche contient encore des membres, des élèves ou des enseignants et ne peut pas être supprimée. Supprimez-les d'abord.", es: "Esta sección de control de la escuela dominical aún tiene miembros, estudiantes o maestros y no se puede eliminar. Elimínelos primero." },
     studentWord: { am: "ተማሪ", en: "students", om: "barattoota", ti: "ተመሃሮ", ar: "طالب", fr: "élèves", es: "estudiantes" },
     teacherWord: { am: "መምህር", en: "teachers", om: "barsiisota", ti: "መምህራን", ar: "معلم", fr: "enseignants", es: "maestros" },
@@ -497,6 +528,127 @@
   STRINGS.les.noteText = { am: "ተማሪዎች ትምህርትን በኦዲዮ እና ቪዲዮ መልክ በደረጃቸው ተከፋፍሎ እዚህ ማግኘት ይችላሉ። ማገናኛ መጨመር ወይም ከስልክ/ኮምፒውተር ፋይል መጫን ይቻላል።", en: "Students can find lessons here in audio and video form, organized by level. You can add a link or upload a file from your phone or computer.", om: "Barattoonni barnoota sagalee fi viidiyoodhaan sadarkaa isaaniitiin as argachuu danda'u. Hidhannoo dabaluu ykn faayilii bilbila/kompiitara irraa fe'uu dandeessu.", ti: "ተመሃሮ ትምህርቲ ብድምጺን ቪድዮን ብደረጃኦም ተመቓቒሉ ኣብዚ ክረኽቡ ይኽእሉ። ማላገጺ ምውሳኽ ወይ ካብ ተሌፎን/ኮምፒተር ፋይል ምጽዓን ይከኣል።", ar: "يمكن للطلاب العثور على الدروس هنا بالصوت والفيديو مرتبة حسب مستواهم. يمكنك إضافة رابط أو رفع ملف من الهاتف أو الحاسوب.", fr: "Les élèves trouvent ici les leçons en audio et vidéo, classées par niveau. Vous pouvez ajouter un lien ou téléverser un fichier depuis le téléphone ou l'ordinateur.", es: "Los estudiantes encuentran aquí las lecciones en audio y vídeo, por nivel. Puede añadir un enlace o subir un archivo desde el teléfono o el ordenador." };
   STRINGS.doc.noteText = { am: "ይህ ክፍል የሰ/ት/ቤቱን ውስጠ ደንብ፣ መመሪያዎች እና ሌላ ማንኛውም ማጣቀሻ ሰነድ/መረጃ ለሁሉም ተጠቃሚዎች ክፍት አድርጎ የሚያቀርብ ማህደር (archive) ነው። ጽሑፍ መጻፍ ወይም ፋይል (PDF፣ Word፣ ምስል…) ማያያዝ ይቻላል።", en: "This section is an archive offering the Sunday school's bylaws, directives, and any other reference document/info to all users. You can write text or attach a file (PDF, Word, image…).", om: "Kutaan kun kuusaa sanada seera-keessaa, qajeelfamootaa fi odeeffannoo biroo fayyadamtoota hundaaf saaqu dha. Barreeffama barreessuu ykn faayilii (PDF, Word, suuraa…) maxxansuu dandeessu.", ti: "እዚ ክፋል ውሽጠ ደንቢ፣ መምርሒታትን ካልኦት ናይ ጠቓሽነት ሰነዳትን ንኩሎም ተጠቀምቲ ዘቕርብ መዝገብ እዩ። ጽሑፍ ምጽሓፍ ወይ ፋይል (PDF፣ Word፣ ስእሊ…) ምጥባቕ ይከኣል።", ar: "هذا القسم أرشيف يعرض لوائح مدرسة الأحد وتوجيهاتها وأي وثيقة مرجعية أخرى لجميع المستخدمين. يمكنك كتابة نص أو إرفاق ملف (PDF أو Word أو صورة…).", fr: "Cette section est une archive qui met à disposition de tous le règlement, les directives et tout autre document de référence de l'école du dimanche. Vous pouvez écrire du texte ou joindre un fichier (PDF, Word, image…).", es: "Esta sección es un archivo que ofrece a todos el reglamento, las directrices y cualquier otro documento de referencia de la escuela dominical. Puede escribir texto o adjuntar un archivo (PDF, Word, imagen…)." };
 
+  // ---------- strings for the PIN security ----------
+  STRINGS.pin = {
+    ok: { am: "እሺ", en: "OK", om: "Tole", ti: "ሕራይ", ar: "موافق", fr: "OK", es: "Aceptar" },
+    pinLabel: { am: "PIN (4–6 አኃዝ)", en: "PIN (4–6 digits)", om: "PIN (lakkoofsa 4–6)", ti: "PIN (4–6 ቁጽሪ)", ar: "PIN (4–6 أرقام)", fr: "PIN (4 à 6 chiffres)", es: "PIN (4–6 dígitos)" },
+    confirmLabel: { am: "PIN እንደገና ያስገቡ", en: "Enter the PIN again", om: "PIN irra deebi'ii galchi", ti: "PIN ደጊም የእትዉ", ar: "أعد إدخال PIN", fr: "Saisissez à nouveau le PIN", es: "Introduzca el PIN otra vez" },
+    enterFor: { am: "የ%ROLE% PIN ያስገቡ", en: "Enter the PIN for %ROLE%", om: "PIN %ROLE% galchi", ti: "PIN ናይ %ROLE% የእትዉ", ar: "أدخل PIN لـ %ROLE%", fr: "Saisissez le PIN pour %ROLE%", es: "Introduzca el PIN de %ROLE%" },
+    deleteTitle: { am: "ለመሰረዝ PIN ያስገቡ", en: "Enter your PIN to delete", om: "Haquuf PIN galchi", ti: "ንምድምሳስ PIN የእትዉ", ar: "أدخل PIN للحذف", fr: "Saisissez votre PIN pour supprimer", es: "Introduzca su PIN para eliminar" },
+    createTitle: { am: "ለ%ROLE% PIN ይፍጠሩ", en: "Create a PIN for %ROLE%", om: "%ROLE%f PIN uumi", ti: "ን%ROLE% PIN ፍጠሩ", ar: "أنشئ PIN لـ %ROLE%", fr: "Créez un PIN pour %ROLE%", es: "Cree un PIN para %ROLE%" },
+    createNote: { am: "ከ4 እስከ 6 አኃዝ ይምረጡ። ለሌላ ሰው አይንገሩ።", en: "Choose 4 to 6 digits. Don't share it with anyone.", om: "Lakkoofsa 4 hanga 6 filadhu. Nama kamiyyuu hin himin.", ti: "ካብ 4 ክሳብ 6 ቁጽሪ ምረጹ። ንካልእ ሰብ ኣይትንገሩ።", ar: "اختر من 4 إلى 6 أرقام ولا تشاركها مع أحد.", fr: "Choisissez 4 à 6 chiffres. Ne le partagez avec personne.", es: "Elija de 4 a 6 dígitos. No lo comparta con nadie." },
+    wrong: { am: "PIN ትክክል አይደለም", en: "Wrong PIN", om: "PIN sirrii miti", ti: "PIN ቅኑዕ ኣይኮነን", ar: "PIN غير صحيح", fr: "PIN incorrect", es: "PIN incorrecto" },
+    locked: { am: "ብዙ ጊዜ ተሳስተዋል። ከ%S% ሰከንድ በኋላ ይሞክሩ።", en: "Too many wrong attempts. Try again in %S% seconds.", om: "Yeroo hedduu dogoggore. Sekondii %S% booda yaali.", ti: "ብዙሕ ግዜ ጌጋ ኮይኑ። ድሕሪ %S% ሰከንድ ፈትኑ።", ar: "محاولات خاطئة كثيرة. حاول بعد %S% ثانية.", fr: "Trop d'essais erronés. Réessayez dans %S% secondes.", es: "Demasiados intentos fallidos. Inténtelo en %S% segundos." },
+    mismatch: { am: "ሁለቱ PIN አይመሳሰሉም", en: "The two PINs don't match", om: "PIN lamaan wal hin fakkaatan", ti: "እቶም ክልተ PIN ኣይመሳሰሉን", ar: "الـ PIN غير متطابقين", fr: "Les deux PIN ne correspondent pas", es: "Los dos PIN no coinciden" },
+    badFormat: { am: "PIN ከ4 እስከ 6 አኃዝ መሆን አለበት", en: "The PIN must be 4 to 6 digits", om: "PIN lakkoofsa 4 hanga 6 ta'uu qaba", ti: "PIN ካብ 4 ክሳብ 6 ቁጽሪ ክኸውን ኣለዎ", ar: "يجب أن يتكون PIN من 4 إلى 6 أرقام", fr: "Le PIN doit comporter 4 à 6 chiffres", es: "El PIN debe tener de 4 a 6 dígitos" },
+    ownerNeeded: { am: "ይህን ለማድረግ የባለቤቱ PIN ያስፈልጋል", en: "The Owner's PIN is needed for this", om: "Kanaaf PIN abbaa qabeenyaa barbaachisa", ti: "ነዚ ንምግባር PIN ናይ ባዕልቲ ቤት የድሊ", ar: "يلزم PIN المالك لهذا", fr: "Le PIN du propriétaire est nécessaire", es: "Se necesita el PIN del propietario" },
+    forgot: { am: "PIN ረሱ?", en: "Forgot PIN?", om: "PIN irraanfattee?", ti: "PIN ረሲዕኩም?", ar: "نسيت PIN؟", fr: "PIN oublié ?", es: "¿Olvidó el PIN?" },
+    recoveryEnter: { am: "የመመለሻ ኮድ ያስገቡ", en: "Enter the recovery code", om: "Koodii deebisuu galchi", ti: "ኮድ መመለሲ የእትዉ", ar: "أدخل رمز الاستعادة", fr: "Saisissez le code de récupération", es: "Introduzca el código de recuperación" },
+    recoveryBad: { am: "ኮዱ ትክክል አይደለም", en: "The code is not correct", om: "Koodiin sirrii miti", ti: "እቲ ኮድ ቅኑዕ ኣይኮነን", ar: "الرمز غير صحيح", fr: "Le code n'est pas correct", es: "El código no es correcto" },
+    noRecovery: { am: "የመመለሻ ኮድ አልተዘጋጀም", en: "No recovery code has been created", om: "Koodiin deebisuu hin uumamne", ti: "ኮድ መመለሲ ኣይተዳልወን", ar: "لم يتم إنشاء رمز استعادة", fr: "Aucun code de récupération n'a été créé", es: "No se ha creado un código de recuperación" },
+    codeTitle: { am: "የመመለሻ ኮድዎ", en: "Your recovery code", om: "Koodii deebisuu keessan", ti: "ኮድ መመለሲኹም", ar: "رمز الاستعادة الخاص بك", fr: "Votre code de récupération", es: "Su código de recuperación" },
+    codeNote: { am: "ይህን ኮድ አሁን ይጻፉት፤ እንደገና አይታይም። PIN ከረሱ ይህ ብቻ ይረዳል።", en: "Write this code down now — it will not be shown again. If you forget the PIN, only this code can help.", om: "Koodii kana amma barreessaa; ammas hin mul'atu. PIN yoo irraanfattan kun qofa isin gargaara.", ti: "ነዚ ኮድ ሕጂ ጸሓፉዎ፤ ደጊም ኣይርአይን። PIN እንተ ረሲዕኩም እዚ ጥራይ የሕግዝ።", ar: "اكتب هذا الرمز الآن — لن يظهر مرة أخرى. إذا نسيت PIN فهذا الرمز وحده ينفعك.", fr: "Notez ce code maintenant — il ne sera plus affiché. Si vous oubliez le PIN, seul ce code peut aider.", es: "Anote este código ahora: no se volverá a mostrar. Si olvida el PIN, solo este código puede ayudar." },
+    codeDone: { am: "ጽፌዋለሁ", en: "I wrote it down", om: "Barreesseera", ti: "ጽሒፈዮ", ar: "كتبته", fr: "Je l'ai noté", es: "Lo he anotado" },
+    saved: { am: "PIN ተቀምጧል", en: "PIN saved", om: "PIN kuufameera", ti: "PIN ተዓቂቡ", ar: "تم حفظ PIN", fr: "PIN enregistré", es: "PIN guardado" },
+    secTitle: { am: "ደህንነት (PIN)", en: "Security (PIN)", om: "Nageenya (PIN)", ti: "ድሕንነት (PIN)", ar: "الأمان (PIN)", fr: "Sécurité (PIN)", es: "Seguridad (PIN)" },
+    secNote: { am: "PIN ሲዘጋጅ መተግበሪያው በ«ተመልካች» ሁኔታ ይከፈታል፤ ለማስተካከል ሚናዎን መርጠው PIN ያስገባሉ። ማንኛውንም ነገር መሰረዝም PIN ይጠይቃል። ይህ የስልክ መቆለፊያ ዓይነት ጥበቃ ነው።", en: "Once a PIN is set, the app opens in view-only mode; to make changes you choose your role and enter its PIN. Deleting anything also asks for the PIN. This is a phone-lock style protection.", om: "PIN yoo qophaa'e, appiin haala ilaaluu qofaan banama; jijjiiruuf gahee keessan filatanii PIN galchitu. Waan hunda haquun PIN gaafata. Kun eegumsa kan cufaa bilbilaa fakkaata.", ti: "PIN ምስ ዝዳለው እቲ ኣፕሊኬሽን ብ«ተዓዛቢ» ኩነታት ይኸፈት፤ ንምእራም ግደኹም መሪጽኩም PIN የእትዉ። ዝኾነ ነገር ምድምሳስ እውን PIN የድሊ። እዚ ከም መዕጸዊ ተሌፎን ዝኣመሰለ ሓለዋ እዩ።", ar: "بعد تعيين PIN يُفتح التطبيق في وضع العرض فقط؛ لإجراء تغييرات تختار دورك وتدخل PIN الخاص به. وحذف أي شيء يطلب PIN أيضًا. هذه حماية بأسلوب قفل الهاتف.", fr: "Une fois un PIN défini, l'application s'ouvre en lecture seule ; pour modifier, choisissez votre rôle et saisissez son PIN. Toute suppression demande aussi le PIN. C'est une protection de type verrouillage de téléphone.", es: "Una vez definido un PIN, la aplicación se abre en modo solo lectura; para hacer cambios elija su rol e introduzca su PIN. Eliminar algo también pide el PIN. Es una protección del tipo bloqueo de teléfono." },
+    statusSet: { am: "ተዘጋጅቷል", en: "Set", om: "Qophaa'eera", ti: "ተዳልዩ", ar: "مُعيَّن", fr: "Défini", es: "Definido" },
+    statusNotSet: { am: "ገና አልተዘጋጀም", en: "Not set yet", om: "Hin qophaa'ne", ti: "ገና ኣይተዳልወን", ar: "غير معيَّن بعد", fr: "Pas encore défini", es: "Aún sin definir" },
+    setBtn: { am: "PIN ፍጠር", en: "Create PIN", om: "PIN uumi", ti: "PIN ፍጠር", ar: "إنشاء PIN", fr: "Créer un PIN", es: "Crear PIN" },
+    changeBtn: { am: "PIN ቀይር", en: "Change PIN", om: "PIN jijjiiri", ti: "PIN ቀይር", ar: "تغيير PIN", fr: "Changer le PIN", es: "Cambiar PIN" },
+    clearBtn: { am: "PIN አጽዳ", en: "Clear PIN", om: "PIN haqi", ti: "PIN ኣጽሪ", ar: "مسح PIN", fr: "Effacer le PIN", es: "Borrar PIN" },
+    currentPin: { am: "አሁን ያለውን PIN ያስገቡ", en: "Enter the current PIN", om: "PIN amma jiru galchi", ti: "ሕጂ ዘሎ PIN የእትዉ", ar: "أدخل PIN الحالي", fr: "Saisissez le PIN actuel", es: "Introduzca el PIN actual" },
+    recoveryBtn: { am: "አዲስ የመመለሻ ኮድ ፍጠር", en: "Create a new recovery code", om: "Koodii deebisuu haaraa uumi", ti: "ሓዲሽ ኮድ መመለሲ ፍጠር", ar: "إنشاء رمز استعادة جديد", fr: "Créer un nouveau code de récupération", es: "Crear un nuevo código de recuperación" },
+    nudgeTitle: { am: "መረጃዎን በPIN ይጠብቁ", en: "Protect your data with a PIN", om: "Odeeffannoo keessan PIN'n eegaa", ti: "ሓበሬታኹም ብ PIN ሓልዉ", ar: "احمِ بياناتك بـ PIN", fr: "Protégez vos données avec un PIN", es: "Proteja sus datos con un PIN" },
+    nudgeText: { am: "ሰው ስልክዎን ቢይዝ በስህተትም ሆነ በፈቃድ ማስተካከልና መሰረዝ እንዳይችል PIN ይፍጠሩ።", en: "Create a PIN so no one who picks up your phone can change or delete anything.", om: "PIN uumaa; namni bilbila keessan qabate homaa jijjiiruu ykn haquu akka hin dandeenye.", ti: "ሰብ ተሌፎንኩም እንተ ኣሕዘ ዝኾነ ነገር ከይቐይር ወይ ከየጥፍእ PIN ፍጠሩ።", ar: "أنشئ PIN حتى لا يستطيع أي شخص يمسك هاتفك تغيير أو حذف أي شيء.", fr: "Créez un PIN pour que personne ne puisse rien modifier ni supprimer avec votre téléphone.", es: "Cree un PIN para que nadie que tome su teléfono pueda cambiar o eliminar nada." },
+    viewerNote: { am: "አሁን «ተመልካች» ሁኔታ ላይ ነዎት፤ ማየት ብቻ ይችላሉ። ለማስተካከል ከላይ ሚናዎን ይምረጡ።", en: "You are in view-only mode. To make changes, choose your role at the top.", om: "Amma haala ilaaluu qofa irra jirtu. Jijjiiruuf gahee keessan olitti filadhu.", ti: "ሕጂ ኣብ «ተዓዛቢ» ኩነታት ኢኹም፤ ምርኣይ ጥራይ ትኽእሉ። ንምእራም ግድኹም ኣብ ላዕሊ ምረጹ።", ar: "أنت في وضع العرض فقط. لإجراء تغييرات اختر دورك من الأعلى.", fr: "Vous êtes en lecture seule. Pour modifier, choisissez votre rôle en haut.", es: "Está en modo solo lectura. Para hacer cambios, elija su rol arriba." },
+    autoLocked: { am: "ለደህንነት ወደ «ተመልካች» ተመልሷል", en: "Locked to view-only for safety", om: "Nageenyaaf gara ilaaluu qofaatti deebi'e", ti: "ንድሕንነት ናብ «ተዓዛቢ» ተመሊሱ", ar: "تم القفل إلى وضع العرض للأمان", fr: "Verrouillé en lecture seule par sécurité", es: "Bloqueado en solo lectura por seguridad" },
+  };
+
+  // ---------- strings for help, settings and sharing ----------
+  STRINGS.hp = {
+    prefTitle: { am: "ቅንብሮች", en: "Settings", om: "Qindaa'ina", ti: "ቅጥዕታት", ar: "الإعدادات", fr: "Paramètres", es: "Ajustes" },
+    textSize: { am: "የጽሑፍ መጠን", en: "Text size", om: "Guddina barreeffamaa", ti: "ዓቐን ጽሑፍ", ar: "حجم النص", fr: "Taille du texte", es: "Tamaño del texto" },
+    sizeNormal: { am: "መደበኛ", en: "Normal", om: "Idilee", ti: "ንቡር", ar: "عادي", fr: "Normale", es: "Normal" },
+    sizeLarge: { am: "ትልቅ", en: "Large", om: "Guddaa", ti: "ዓቢ", ar: "كبير", fr: "Grande", es: "Grande" },
+    sizeXl: { am: "እጅግ ትልቅ", en: "Extra large", om: "Baayʼee guddaa", ti: "ኣዝዩ ዓቢ", ar: "كبير جدًا", fr: "Très grand", es: "Muy grande" },
+    tabsTitle: { am: "የሚታዩ ትሮች", en: "Visible tabs", om: "Gabatee mul'atan", ti: "ዝረኣዩ ትሮታት", ar: "التبويبات المرئية", fr: "Onglets visibles", es: "Pestañas visibles" },
+    tabsNote: { am: "የማይጠቀሙባቸውን ትሮች ምልክቱን በማንሳት ይደብቁ። ዳሽቦርድ፣ ማከማቻና ምትኬ እና እገዛ ሁልጊዜ ይታያሉ።", en: "Untick the tabs you don't use to hide them. Dashboard, Storage & Backup and Help are always shown.", om: "Gabatee hin fayyadamne mallattoo irraa buusuun dhoksi. Gabatee Ijaarsaa, Kuusaa fi Waraabbii, fi Gargaarsi yeroo hundaa ni mul'atu.", ti: "ዘይትጥቀሙሎም ትሮታት ምልክቱ ብምውሳድ ሕብኡ። ዳሽቦርድ፣ ማኽዘንን ምትኬን ሓገዝን ወትሩ ይረኣዩ።", ar: "ألغِ تحديد التبويبات التي لا تستخدمها لإخفائها. تظهر دائمًا لوحة التحكم والتخزين والنسخ الاحتياطي والمساعدة.", fr: "Décochez les onglets inutilisés pour les masquer. Tableau de bord, Stockage et sauvegarde et Aide restent toujours visibles.", es: "Desmarque las pestañas que no use para ocultarlas. Panel, Almacenamiento y copias y Ayuda siempre se muestran." },
+    showAll: { am: "ሁሉንም አሳይ", en: "Show all", om: "Hunda agarsiisi", ti: "ኩሉ ኣርኢ", ar: "إظهار الكل", fr: "Tout afficher", es: "Mostrar todo" },
+    aboutTitle: { am: "ስለ መተግበሪያው", en: "About the app", om: "Waa'ee appii", ti: "ብዛዕባ እቲ ኣፕሊኬሽን", ar: "حول التطبيق", fr: "À propos de l'application", es: "Acerca de la aplicación" },
+    versionLine: { am: "ስሪት %V%", en: "Version %V%", om: "Gulaalata %V%", ti: "እትመት %V%", ar: "الإصدار %V%", fr: "Version %V%", es: "Versión %V%" },
+    modeInstalled: { am: "እንደ መተግበሪያ ተጭኗል", en: "Installed as an app", om: "Akka appiitti kaa'ameera", ti: "ከም ኣፕሊኬሽን ተጎሚዱ", ar: "مثبّت كتطبيق", fr: "Installée comme application", es: "Instalada como aplicación" },
+    modeBrowser: { am: "በአሳሽ ውስጥ እየተከፈተ ነው", en: "Running in the browser", om: "Biraawzarii keessatti banameera", ti: "ኣብ ብሮውዘር ይኽፈት ኣሎ", ar: "يعمل في المتصفح", fr: "S'exécute dans le navigateur", es: "Ejecutándose en el navegador" },
+    checkBtn: { am: "ዝማኔ ፈልግ", en: "Check for updates", om: "Haaromsa barbaadi", ti: "ምሕዳስ ድለይ", ar: "التحقق من التحديثات", fr: "Rechercher des mises à jour", es: "Buscar actualizaciones" },
+    checking: { am: "በመፈተሽ ላይ…", en: "Checking…", om: "Ilaalaa jira…", ti: "ይፍትሽ ኣሎ…", ar: "جارٍ التحقق…", fr: "Vérification…", es: "Comprobando…" },
+    upToDate: { am: "የመጨረሻው ስሪት አለዎት ✓", en: "You have the latest version ✓", om: "Gulaalata dhumaa qabdu ✓", ti: "እቲ ናይ መወዳእታ እትመት ኣለኩም ✓", ar: "لديك أحدث إصدار ✓", fr: "Vous avez la dernière version ✓", es: "Tiene la última versión ✓" },
+    newVersion: { am: "አዲስ ስሪት (%V%) አለ", en: "A new version (%V%) is available", om: "Gulaalatni haaraan (%V%) jira", ti: "ሓድሽ እትመት (%V%) ኣሎ", ar: "يتوفر إصدار جديد (%V%)", fr: "Une nouvelle version (%V%) est disponible", es: "Hay una nueva versión (%V%)" },
+    updateNow: { am: "አሁን አዘምን", en: "Update now", om: "Amma haaromsi", ti: "ሕጂ ኣሐድስ", ar: "حدّث الآن", fr: "Mettre à jour maintenant", es: "Actualizar ahora" },
+    checkFail: { am: "መፈተሽ አልተቻለም፤ ኢንተርኔት ይፈትሹ", en: "Couldn't check — is the internet on?", om: "Ilaaluu hin dandeenye; interneetii ilaali", ti: "ምፍታሽ ኣይተኻእለን፤ ኢንተርነት ርኣዩ", ar: "تعذر التحقق — هل الإنترنت يعمل؟", fr: "Vérification impossible — Internet est-il actif ?", es: "No se pudo comprobar: ¿hay Internet?" },
+    contactTitle: { am: "ጥያቄ ይላኩ", en: "Ask a question", om: "Gaaffii ergi", ti: "ሕቶ ስደዱ", ar: "اطرح سؤالًا", fr: "Poser une question", es: "Hacer una pregunta" },
+    contactNote: { am: "ጥያቄ ወይም ችግር ካለ በቴሌግራም ይላኩ።", en: "Send a question or a problem on Telegram.", om: "Gaaffii ykn rakkoo Telegramiin ergaa.", ti: "ሕቶ ወይ ጸገም ብቴሌግራም ስደዱ።", ar: "أرسل سؤالًا أو مشكلة عبر تيليجرام.", fr: "Envoyez une question ou un problème sur Telegram.", es: "Envíe una pregunta o un problema por Telegram." },
+    contactBtn: { am: "በቴሌግራም ላክ", en: "Message on Telegram", om: "Telegramiin ergi", ti: "ብቴሌግራም ስደድ", ar: "راسل عبر تيليجرام", fr: "Écrire sur Telegram", es: "Escribir por Telegram" },
+    contactSet: { am: "የቴሌግራም ስም (ለምሳሌ birhan_abc)", en: "Telegram username (e.g. birhan_abc)", om: "Maqaa Telegram (fkn birhan_abc)", ti: "ስም ቴሌግራም (ንኣብነት birhan_abc)", ar: "اسم مستخدم تيليجرام (مثل birhan_abc)", fr: "Nom d'utilisateur Telegram (ex. birhan_abc)", es: "Usuario de Telegram (p. ej. birhan_abc)" },
+    contactBad: { am: "ስሙ ትክክል አይደለም (ፊደል፣ ቁጥር ወይም _ ብቻ፣ 4–32)", en: "Invalid username (letters, digits or _ only, 4–32)", om: "Maqaan sirrii miti (qubee, lakkoofsa ykn _ qofa, 4–32)", ti: "ስሙ ቅኑዕ ኣይኮነን (ፊደል፣ ቁጽሪ ወይ _ ጥራይ፣ 4–32)", ar: "اسم غير صالح (أحرف أو أرقام أو _ فقط، 4–32)", fr: "Nom invalide (lettres, chiffres ou _ uniquement, 4–32)", es: "Usuario no válido (solo letras, dígitos o _, 4–32)" },
+    faqTitle: { am: "የተለመዱ ጥያቄዎች", en: "Frequently asked questions", om: "Gaaffilee yeroo baayʼee gaafataman", ti: "ዝበዝሑ ሕቶታት", ar: "الأسئلة الشائعة", fr: "Questions fréquentes", es: "Preguntas frecuentes" },
+    shareBtn: { am: "ምትኬ ላክ (ቴሌግራም ወዘተ)", en: "Send backup (Telegram, etc.)", om: "Waraabbii ergi (Telegram fi kkf)", ti: "ምትኬ ስደድ (ቴሌግራም ወዘተ)", ar: "إرسال النسخة (تيليجرام وغيره)", fr: "Envoyer la sauvegarde (Telegram, etc.)", es: "Enviar copia (Telegram, etc.)" },
+    shareFail: { am: "መላክ አልተቻለም፤ ፋይሉ ወርዷል", en: "Sharing wasn't possible; the file was downloaded instead", om: "Erguun hin danda'amne; faayiliin buufameera", ti: "ምስዳድ ኣይተኻእለን፤ እቲ ፋይል ወሪዱ", ar: "تعذرت المشاركة؛ تم تنزيل الملف بدلًا من ذلك", fr: "Partage impossible ; le fichier a été téléchargé", es: "No se pudo compartir; se descargó el archivo" },
+    q1: { am: "እንደ መተግበሪያ እንዴት እጭናለሁ?", en: "How do I install it as an app?", om: "Akka appiitti akkamitti kaa'a?", ti: "ከም ኣፕሊኬሽን ብኸመይ እጎሚድ?", ar: "كيف أثبّته كتطبيق؟", fr: "Comment l'installer comme application ?", es: "¿Cómo la instalo como aplicación?" },
+    a1: { am: "በChrome ከላይ ቀኝ ⋮ ምናሌ → «Install app» ይንኩ (ወይም «Add to Home screen» → «Install»)። «Create shortcut» አይምረጡ።", en: "In Chrome tap ⋮ (top right) → “Install app” (or “Add to Home screen” → “Install”). Don't choose “Create shortcut”.", om: "Chrome keessatti ⋮ (gubbaa mirga) → “Install app” tuqi (ykn “Add to Home screen” → “Install”). “Create shortcut” hin filatin.", ti: "ኣብ Chrome ⋮ (ላዕሊ የማን) → “Install app” ጠውቑ (ወይ “Add to Home screen” → “Install”)። “Create shortcut” ኣይትምረጹ።", ar: "في Chrome اضغط ⋮ (أعلى اليمين) ← «Install app» (أو «Add to Home screen» ثم «Install»). لا تختر «Create shortcut».", fr: "Dans Chrome, touchez ⋮ (en haut à droite) → « Install app » (ou « Add to Home screen » → « Install »). Ne choisissez pas « Create shortcut ».", es: "En Chrome toque ⋮ (arriba a la derecha) → «Install app» (o «Add to Home screen» → «Install»). No elija «Create shortcut»." },
+    q2: { am: "መረጃዬ እንዳይጠፋ ምን ላድርግ?", en: "How do I keep my data safe?", om: "Odeeffannoon koo akka hin badne maal godha?", ti: "ሓበሬታይ ከይጠፍእ እንታይ ኣገብር?", ar: "كيف أحمي بياناتي من الضياع؟", fr: "Comment éviter de perdre mes données ?", es: "¿Cómo evito perder mis datos?" },
+    a2: { am: "በ«ማከማቻና ምትኬ» ትር «ምትኬ አውርድ» (ወይም «ምትኬ ላክ») ይንኩ፤ በየሳምንቱ ይድገሙት። ፋይሉን በቴሌግራም ወይም በሌላ ቦታ ያስቀምጡ።", en: "In the “Storage & Backup” tab tap “Download backup” (or “Send backup”) every week, and keep the file in Telegram or another safe place.", om: "Gabatee “Kuusaa fi Waraabbii” keessatti “Waraabbii buufadhu” (ykn “Waraabbii ergi”) torbaan torbaan tuqi; faayilicha Telegram ykn iddoo amansiisaa kaa'i.", ti: "ኣብ ትሮ “ማኽዘንን ምትኬን” “ምትኬ ኣውርድ” (ወይ “ምትኬ ስደድ”) ሰሙናዊ ጠውቑ፤ እቲ ፋይል ኣብ ቴሌግራም ወይ ካልእ ውሑስ ቦታ ሓዙ።", ar: "في تبويب «التخزين والنسخ الاحتياطي» اضغط «تنزيل النسخة الاحتياطية» (أو «إرسال النسخة») كل أسبوع واحفظ الملف في تيليجرام أو مكان آمن.", fr: "Dans l'onglet « Stockage et sauvegarde », touchez « Télécharger la sauvegarde » (ou « Envoyer la sauvegarde ») chaque semaine et gardez le fichier dans Telegram ou ailleurs.", es: "En la pestaña «Almacenamiento y copias» pulse «Descargar copia» (o «Enviar copia») cada semana y guarde el archivo en Telegram u otro lugar seguro." },
+    q3: { am: "PIN ምን ያደርጋል? ከረሳሁስ?", en: "What does the PIN do? What if I forget it?", om: "PIN maal godha? Yoo irraanfadhe?", ti: "PIN እንታይ ይገብር? እንተ ረሲዐዮስ?", ar: "ماذا يفعل PIN؟ وماذا لو نسيته؟", fr: "À quoi sert le PIN ? Et si je l'oublie ?", es: "¿Para qué sirve el PIN? ¿Y si lo olvido?" },
+    a3: { am: "PIN ያለ ፈቃድ ማስተካከልና መሰረዝን ይከላከላል። ከረሱ በPIN መስኮት «PIN ረሱ?» ይንኩና የመመለሻ ኮዱን ያስገቡ።", en: "The PIN stops others from changing or deleting data. If you forget it, tap “Forgot PIN?” in the PIN box and enter your recovery code.", om: "PIN namni hayyama malee jijjiiruu ykn haquu ni dhorka. Yoo irraanfatte, foddaa PIN keessatti “PIN irraanfattee?” tuqii koodii deebisuu galchi.", ti: "PIN ብዘይ ፍቓድ ምእራምን ምድምሳስን ይከላኸል። እንተ ረሲዕኩሞ ኣብ መስኮት PIN “PIN ረሲዕኩም?” ጠዊቕኩም ኮድ መመለሲ የእትዉ።", ar: "يمنع PIN الآخرين من تعديل البيانات أو حذفها. إذا نسيته اضغط «نسيت PIN؟» في نافذة PIN وأدخل رمز الاستعادة.", fr: "Le PIN empêche les autres de modifier ou supprimer les données. Si vous l'oubliez, touchez « PIN oublié ? » dans la fenêtre du PIN et saisissez votre code de récupération.", es: "El PIN evita que otros cambien o eliminen datos. Si lo olvida, pulse «¿Olvidó el PIN?» en la ventana del PIN e introduzca su código de recuperación." },
+    q4: { am: "መረጃዬ የት ይቀመጣል? ማንስ ያየዋል?", en: "Where is my data stored? Who can see it?", om: "Odeeffannoon koo eessa kuufama? Eenyutu argaa?", ti: "ሓበሬታይ ኣበይ ይዕቀብ? መን ይርእዮ?", ar: "أين تُخزَّن بياناتي؟ ومن يراها؟", fr: "Où sont stockées mes données ? Qui peut les voir ?", es: "¿Dónde se guardan mis datos? ¿Quién puede verlos?" },
+    a4: { am: "በዚህ ስልክ ላይ ብቻ ይቀመጣል። መተግበሪያው ወደ ማንኛውም ሰርቨር አይልክም፤ ምትኬና ፋይሎችን የሚልኩት እርስዎ ብቻ ነዎት።", en: "Only on this phone. The app does not send it to any server; only you decide when to share a backup or a file.", om: "Bilbila kana irratti qofa. Appiin sarvarii kamiifuu hin erguu; waraabbii ykn faayilii yeroo itti qooddan isin qofatu murteessa.", ti: "ኣብዚ ተሌፎን ጥራይ። እቲ ኣፕሊኬሽን ናብ ዝኾነ ሰርቨር ኣይልእክን፤ ምትኬን ፋይላትን ዝሰድዱ ንስኻትኩም ጥራይ ኢኹም።", ar: "على هذا الهاتف فقط. لا يرسل التطبيق شيئًا إلى أي خادم؛ أنت وحدك تقرر متى تشارك نسخة احتياطية أو ملفًا.", fr: "Uniquement sur ce téléphone. L'application n'envoie rien à un serveur ; vous seul décidez quand partager une sauvegarde ou un fichier.", es: "Solo en este teléfono. La aplicación no envía nada a ningún servidor; solo usted decide cuándo compartir una copia o un archivo." },
+    q5: { am: "ኦዲዮ፣ ቪዲዮና ሰነድ እንዴት እጨምራለሁ?", en: "How do I add audio, video and documents?", om: "Sagalee, viidiyoo fi sanada akkamitti dabala?", ti: "ድምጺ፣ ቪድዮን ሰነድን ብኸመይ ኣወስኽ?", ar: "كيف أضيف الصوت والفيديو والمستندات؟", fr: "Comment ajouter audio, vidéo et documents ?", es: "¿Cómo añado audio, vídeo y documentos?" },
+    a5: { am: "በ«ትምህርት» ወይም «ደንብ / ሰነድ» ትር ውስጥ ፋይል ይምረጡ። ብዙ ፋይሎችን በአንድ ጊዜ ለመጨመር «ብዙ ፋይሎችን በአንድ ጊዜ ጨምር» ካርድን ይጠቀሙ።", en: "In the “Lessons” or “Bylaws / Docs” tab choose a file. To add many at once use the “Add several files at once” card.", om: "Gabatee “Barnoota” ykn “Seera/Sanada” keessatti faayilii filadhu. Baayʼee yeroo tokkoon dabaluuf kaardii “Faayilii baayʼee yeroo tokkoon dabali” fayyadami.", ti: "ኣብ ትሮ “ትምህርቲ” ወይ “ደንቢ / ሰነድ” ፋይል ምረጹ። ብዙሕ ብሓደ ግዜ ንምውሳኽ ካርድ “ብዙሕ ፋይላት ብሓደ ጊዜ ወስኽ” ተጠቐሙ።", ar: "في تبويب «الدروس» أو «اللوائح / الوثائق» اختر ملفًا. ولإضافة عدة ملفات دفعة واحدة استخدم بطاقة «إضافة عدة ملفات دفعة واحدة».", fr: "Dans l'onglet « Leçons » ou « Règlement / Documents », choisissez un fichier. Pour en ajouter plusieurs d'un coup, utilisez la carte « Ajouter plusieurs fichiers d'un coup ».", es: "En la pestaña «Lecciones» o «Reglamento / Documentos» elija un archivo. Para añadir varios a la vez use la tarjeta «Añadir varios archivos a la vez»." },
+    q6: { am: "አዲስ ስሪት እንዴት አገኛለሁ?", en: "How do I get the newest version?", om: "Gulaalata haaraa akkamitti argadha?", ti: "ሓድሽ እትመት ብኸመይ ይረክብ?", ar: "كيف أحصل على أحدث إصدار؟", fr: "Comment obtenir la dernière version ?", es: "¿Cómo obtengo la última versión?" },
+    a6: { am: "በዚህ ገጽ ላይ «ዝማኔ ፈልግ» ይንኩ። ኢንተርኔት ሲኖር መተግበሪያው በራሱም ይዘምናል።", en: "Tap “Check for updates” on this page. The app also updates by itself when there is internet.", om: "Fuula kana irratti “Haaromsa barbaadi” tuqi. Interneetiin yoo jiraate appiin ofumaanuu ni haaromfama.", ti: "ኣብዚ ገጽ “ምሕዳስ ድለይ” ጠውቑ። ኢንተርነት እንተ ሃልዩ እቲ ኣፕሊኬሽን ባዕሉ እውን የሐድስ።", ar: "اضغط «التحقق من التحديثات» في هذه الصفحة. كما يتحدث التطبيق تلقائيًا عند توفر الإنترنت.", fr: "Touchez « Rechercher des mises à jour » sur cette page. L'application se met aussi à jour seule lorsqu'Internet est disponible.", es: "Pulse «Buscar actualizaciones» en esta página. La aplicación también se actualiza sola cuando hay Internet." },
+  };
+  STRINGS.tabs.help = { am: "እገዛና ቅንብሮች", en: "Help & Settings", om: "Gargaarsaa fi Qindaa'ina", ti: "ሓገዝን ቅጥዕታትን", ar: "المساعدة والإعدادات", fr: "Aide et paramètres", es: "Ayuda y ajustes" };
+
+  // ---------- strings for departments and app-lock ----------
+  STRINGS.dept = {
+    tabName: { am: "ክፍላት", en: "Departments", om: "Kutaalee", ti: "ክፍልታት", ar: "الأقسام", fr: "Départements", es: "Departamentos" },
+    note: { am: "ከውስጠ ደንቡ የተወሰዱ 7ቱ ዋና ክፍሎች እዚህ አሉ። ኃላፊና ጸሐፊ ከአባላት ዝርዝር ይመድቡ። ንዑሳን ክፍሎች ስማቸው በዋናው ሰነድ ቋንቋ (አማርኛ) ይታያል።", en: "The 7 main departments from the bylaw are listed here. Assign a head and a secretary from the members list. Sub-department names are shown in the original document's language (Amharic).", om: "Kutaaleen 7 ijoo seera keessaa kan fudhataman as jiru. Hoogganaa fi barreessaa tarree miseensotaa keessaa filadhu. Maqaan kutaalee xixiqqaa afaan sanada jalqabaatiin (Afaan Amaaraa) mul'ata.", ti: "7ቲ ቀንዲ ክፍልታት ካብ ደንቢ እተውጽአ ኣብዚ ኣሎ። ሓላፊን ጸሓፍን ካብ ዝርዝር ኣባላት ምደቡ። ስም ንኡሳን ክፍልታት ብቋንቋ ናይቲ በዅሪ ሰነድ (ኣምሓርኛ) ይረኣይ።", ar: "الأقسام الرئيسية السبعة من اللائحة مدرجة هنا. عيّن رئيسًا وأمينًا من قائمة الأعضاء. تظهر أسماء الأقسام الفرعية بلغة الوثيقة الأصلية (الأمهرية).", fr: "Les 7 départements principaux du règlement sont listés ici. Désignez un responsable et un secrétaire parmi les membres. Les noms des sous-départements apparaissent dans la langue du document original (amharique).", es: "Los 7 departamentos principales del reglamento se listan aquí. Asigne un responsable y un secretario de la lista de miembros. Los nombres de subdepartamentos aparecen en el idioma del documento original (amárico)." },
+    headRole: { am: "ኃላፊ", en: "Head", om: "Hoogganaa", ti: "ሓላፊ", ar: "الرئيس", fr: "Responsable", es: "Responsable" },
+    secRole: { am: "ጸሐፊ", en: "Secretary", om: "Barreessaa", ti: "ጸሓፊ", ar: "الأمين", fr: "Secrétaire", es: "Secretario" },
+    none: { am: "አልተመደበም", en: "Not assigned", om: "Hin ramadamne", ti: "ኣይተመደበን", ar: "لم يُعيَّن", fr: "Non désigné", es: "Sin asignar" },
+    choose: { am: "ይምረጡ…", en: "Choose…", om: "Filadhu…", ti: "ምረጹ…", ar: "اختر…", fr: "Choisir…", es: "Elegir…" },
+    needMembers: { am: "ኃላፊ ለመመደብ መጀመሪያ በ«አባላት» ትር ውስጥ ሰዎችን ያስመዝግቡ።", en: "To assign a head, first register people in the “Members” tab.", om: "Hoogganaa ramaduuf dura gabatee “Miseensota” keessatti namoota galmeessi.", ti: "ሓላፊ ንምምዳብ ቅድም ኣብ ትሮ “ኣባላት” ሰባት መዝግቡ።", ar: "لتعيين رئيس، سجّل الأشخاص أولاً في تبويب «الأعضاء».", fr: "Pour désigner un responsable, inscrivez d'abord des personnes dans l'onglet « Membres ».", es: "Para asignar un responsable, primero registre personas en la pestaña «Miembros»." },
+    subsLabel: { am: "ንዑሳን ክፍሎች", en: "Sub-departments", om: "Kutaalee xixiqqaa", ti: "ንኡሳን ክፍልታት", ar: "الأقسام الفرعية", fr: "Sous-départements", es: "Subdepartamentos" },
+    dashTitle: { am: "ክፍላት", en: "Departments", om: "Kutaalee", ti: "ክፍልታት", ar: "الأقسام", fr: "Départements", es: "Departamentos" },
+    dashLine: { am: "%N% ከ 7 ክፍሎች ኃላፊ ተመድቦላቸዋል", en: "%N% of 7 departments have a head assigned", om: "Kutaalee 7 keessaa %N% hoogganaa qabu", ti: "%N% ካብ 7 ክፍልታት ሓላፊ ተመዲብሎም", ar: "%N% من أصل 7 أقسام لها رئيس معيَّن", fr: "%N% des 7 départements ont un responsable désigné", es: "%N% de los 7 departamentos tienen un responsable asignado" },
+    assigned: { am: "ተመድቧል", en: "Assigned", om: "Ramadameera", ti: "ተመዲቡ", ar: "تم التعيين", fr: "Désigné", es: "Asignado" },
+  };
+  STRINGS.dp = {
+    edu: { am: "ትምህርት እና ሐዋርያዊ አገልግሎት", en: "Education & Evangelism", om: "Barnootaa fi Tajaajila Wangeelaa", ti: "ትምህርትን ሓዋርያዊ ኣገልግሎትን", ar: "التعليم والخدمة التبشيرية", fr: "Enseignement et service évangélique", es: "Educación y servicio evangelístico" },
+    edu_d: { am: "የትምህርት ስርዓት፣ የመምህራን ስልጠናና ምደባ፣ ቤተ መጻሕፍትና ሚዲያ ይመራል።", en: "Leads the curriculum, teacher training and assignment, library and media.", om: "Sirna barnootaa, leenjii fi ramaddii barsiisotaa, mana kitaabaa fi miidiyaa geggeessa.", ti: "ስርዓት ትምህርቲ፣ ስልጠናን ምድባን መምህራን፣ ቤተ መጻሕፍትን ሚድያን ይመርሕ።", ar: "يقود المنهج الدراسي وتدريب وتوزيع المعلمين والمكتبة والإعلام.", fr: "Dirige le programme, la formation et l'affectation des enseignants, la bibliothèque et les médias.", es: "Dirige el currículo, la formación y asignación de maestros, la biblioteca y los medios." },
+    choir: { am: "መዝሙር እና ኪነ ጥበብ", en: "Choir & Arts", om: "Faarfannaa fi Ogbarruu", ti: "ደርፍን ስነ ጥበብን", ar: "الترانيم والفنون", fr: "Chorale et arts", es: "Coro y artes" },
+    choir_d: { am: "መዝሙርና ኪነ ጥበብ አገልግሎቶችን ያስተባብራል፣ ይቆጣጠራል።", en: "Coordinates and oversees the choir and arts services.", om: "Tajaajila faarfannaa fi ogbarruu qindeessa, to'ata.", ti: "ኣገልግሎት ደርፍን ስነ ጥበብን ይውሃህድ፣ ይቈጻጸር።", ar: "ينسق ويشرف على خدمات الترانيم والفنون.", fr: "Coordonne et supervise les services de chorale et d'arts.", es: "Coordina y supervisa los servicios de coro y artes." },
+    members: { am: "የአባላት አስተዳደር እና ክትትል", en: "Member Administration & Follow-up", om: "Bulchiinsaa fi Hordoffii Miseensotaa", ti: "ምምሕዳርን ክትትልን ኣባላት", ar: "إدارة ومتابعة الأعضاء", fr: "Administration et suivi des membres", es: "Administración y seguimiento de miembros" },
+    members_d: { am: "የአባላት መረጃ፣ ምደባ፣ መንፈሳዊ ድጋፍና ህዝብ ግንኙነት ይመራል።", en: "Leads member records, assignment, spiritual support and public relations.", om: "Galmee, ramaddii, deggersa hafuuraa fi hariiroo ummataa miseensotaa geggeessa.", ti: "መዝገብ፣ ምድባ፣ መንፈሳዊ ደገፍን ህዝባዊ ርክብን ኣባላት ይመርሕ።", ar: "يقود سجلات الأعضاء وتوزيعهم والدعم الروحي والعلاقات العامة.", fr: "Dirige les dossiers des membres, leur affectation, le soutien spirituel et les relations publiques.", es: "Dirige los registros de miembros, su asignación, el apoyo espiritual y las relaciones públicas." },
+    finance: { am: "ሂሳብ እና ንብረት አስተዳደር", en: "Finance & Property Administration", om: "Bulchiinsa Herregaa fi Qabeenyaa", ti: "ምምሕዳር ሕሳብን ንብረትን", ar: "إدارة الحسابات والممتلكات", fr: "Administration financière et des biens", es: "Administración de finanzas y bienes" },
+    finance_d: { am: "ሂሳብ፣ በጀትና ንብረት አያያዝን ይመራል፣ ይቆጣጠራል።", en: "Leads and oversees accounts, budget and property.", om: "Herrega, baajataa fi qabeenya to'achuu geggeessa, to'ata.", ti: "ሕሳብ፣ በጀትን ኣተሓሕዛ ንብረትን ይመርሕ፣ ይቈጻጸር።", ar: "يقود ويشرف على الحسابات والميزانية والممتلكات.", fr: "Dirige et supervise les comptes, le budget et les biens.", es: "Dirige y supervisa las cuentas, el presupuesto y los bienes." },
+    dev: { am: "ልማት፣ ሙያ አገልግሎትና በጎ አድራጎት", en: "Development, Vocational Service & Charity", om: "Misoomaa, Tajaajila Ogummaa fi Tola-oolummaa", ti: "ልምዓት፣ ኣገልግሎት ሞያን ሰናይ ግብርን", ar: "التنمية والخدمة المهنية والأعمال الخيرية", fr: "Développement, service professionnel et bienfaisance", es: "Desarrollo, servicio vocacional y caridad" },
+    dev_d: { am: "የገቢ ማስገኛ፣ ማህበራዊ ድጋፍና በጎ አድራጎት ስራዎችን ያስተባብራል።", en: "Coordinates income-generating, social-support and charity work.", om: "Hojii galii horachuu, deggersa hawaasaa fi tola-oolummaa qindeessa.", ti: "ስራሕቲ መእተዊ ገንዘብ፣ ደገፍ ሕብረተሰብን ሰናይ ግብርን ይውሃህድ።", ar: "ينسق أعمال توليد الدخل والدعم الاجتماعي والأعمال الخيرية.", fr: "Coordonne les activités génératrices de revenus, le soutien social et les œuvres caritatives.", es: "Coordina las actividades generadoras de ingresos, el apoyo social y las obras de caridad." },
+    plan: { am: "ዕቅድ፣ ሥልጠናና ጥናት ምርምር", en: "Planning, Training & Research", om: "Karoora, Leenjii fi Qorannoo", ti: "ውጥን፣ ስልጠናን መጽናዕትን", ar: "التخطيط والتدريب والبحث", fr: "Planification, formation et recherche", es: "Planificación, formación e investigación" },
+    plan_d: { am: "አመታዊ ዕቅድ ዝግጅት፣ ስልጠናና ጥናት ምርምር ይመራል።", en: "Leads annual planning, training and research.", om: "Karoora waggaa, leenjii fi qorannoo qopheessuu geggeessa.", ti: "ኣዳላውቲ ውጥን ዓመታዊ፣ ስልጠናን መጽናዕትን ይመርሕ።", ar: "يقود التخطيط السنوي والتدريب والبحث.", fr: "Dirige la planification annuelle, la formation et la recherche.", es: "Dirige la planificación anual, la formación y la investigación." },
+    audit: { am: "ኦዲትና ኢንስፔክሽን", en: "Audit & Inspection", om: "Odiitii fi Ilaalcha", ti: "ኦዲትን ምርመራን", ar: "التدقيق والتفتيش", fr: "Audit et inspection", es: "Auditoría e inspección" },
+    audit_d: { am: "የሂሳብና ንብረት ምርመራ እንዲሁም የስራ ክትትል ያከናውናል።", en: "Carries out financial/property audits and work-process oversight.", om: "Herregaa fi qabeenya qorachuu fi hojii to'achuu raawwata.", ti: "ምርመራ ሕሳብን ንብረትን ከምኡውን ክትትል ስራሕ የካይድ።", ar: "يجري تدقيق الحسابات والممتلكات ومراقبة سير العمل.", fr: "Réalise des audits financiers/immobiliers et supervise les processus de travail.", es: "Realiza auditorías financieras/de bienes y supervisa los procesos de trabajo." },
+  };
+  STRINGS.vl = {
+    title: { am: "የመተግበሪያው መዝጊያ", en: "App lock", om: "Cufaa Appii", ti: "መዕጸዊ ኣፕሊኬሽን", ar: "قفل التطبيق", fr: "Verrouillage de l'application", es: "Bloqueo de la aplicación" },
+    note: { am: "ይህን መተግበሪያ ለመክፈት PIN ያስፈልጋል። ሚናዎን ይምረጡና PIN ያስገቡ።", en: "A PIN is needed to open this app. Choose your role and enter its PIN.", om: "Appii kana banuuf PIN barbaachisa. Gahee keessan filadhaatii PIN galchaa.", ti: "ነዚ ኣፕሊኬሽን ንምኽፋት PIN የድሊ። ግድኹም ምረጹን PIN ኣእትዉን።", ar: "يلزم PIN لفتح هذا التطبيق. اختر دورك وأدخل PIN الخاص به.", fr: "Un PIN est nécessaire pour ouvrir cette application. Choisissez votre rôle et saisissez son PIN.", es: "Se necesita un PIN para abrir esta aplicación. Elija su rol e introduzca su PIN." },
+    roleLabel: { am: "ሚና", en: "Role", om: "Gahee", ti: "ግደ", ar: "الدور", fr: "Rôle", es: "Rol" },
+    enter: { am: "ክፈት", en: "Unlock", om: "Bani", ti: "ክፈት", ar: "فتح", fr: "Déverrouiller", es: "Desbloquear" },
+    toggleLabel: { am: "ገጹን ከመክፈት በፊት PIN ጠይቅ", en: "Ask for a PIN before opening the app", om: "Appii banuu dura PIN gaafadhu", ti: "ቅድሚ ምኽፋት ገጽ PIN ሕተት", ar: "اطلب PIN قبل فتح التطبيق", fr: "Demander un PIN avant d'ouvrir l'application", es: "Pedir un PIN antes de abrir la aplicación" },
+    toggleNote: { am: "ይህ ካበሩ፣ PIN የተዘጋጀላቸው ሚናዎች ብቻ መተግበሪያውን መክፈት ይችላሉ፤ ያለ PIN ዕይታ ሙሉ በሙሉ ይዘጋል።", en: "When on, only roles with a PIN can open the app at all — even viewing is closed without one.", om: "Yoo banamee, geggeessitoota PIN qaban qofatu appii banuu danda'a; PIN malee ilaaluunis cufaadha.", ti: "እዚ እንተ ተኸፊቱ፣ PIN ዘለዎም ግደታት ጥራይ ኣፕሊኬሽን ክኸፍቱ ይኽእሉ፤ ብዘይ PIN ምርኣይ እውን ይዕጾ።", ar: "عند التفعيل، فقط الأدوار التي لها PIN يمكنها فتح التطبيق إطلاقًا — حتى العرض مغلق بدونه.", fr: "Une fois activé, seuls les rôles ayant un PIN peuvent ouvrir l'application — même la consultation est fermée sans PIN.", es: "Al activarlo, solo los roles con PIN pueden abrir la aplicación; incluso la vista queda cerrada sin uno." },
+    needOwnerFirst: { am: "በመጀመሪያ የባለቤቱን PIN ይፍጠሩ", en: "Create the Owner's PIN first", om: "Dura PIN abbaa qabeenyaa uumi", ti: "ቅድም PIN ናይ ባዕልቲ ቤት ፍጠሩ", ar: "أنشئ PIN المالك أولاً", fr: "Créez d'abord le PIN du propriétaire", es: "Cree primero el PIN del propietario" },
+  };
+  STRINGS.audit.act_dept = { am: "ክፍል ኃላፊ/ጸሐፊ ተመድቧል", en: "Department head/secretary assigned", om: "Hoogganaa/barreessaa kutaa ramadame", ti: "ሓላፊ/ጸሓፊ ክፍሊ ተመዲቡ", ar: "تم تعيين رئيس/أمين القسم", fr: "Responsable/secrétaire de département désigné", es: "Responsable/secretario de departamento asignado" };
+  STRINGS.tabs.departments = { am: "ክፍላት", en: "Departments", om: "Kutaalee", ti: "ክፍልታት", ar: "الأقسام", fr: "Départements", es: "Departamentos" };
   function T(key){ return (STRINGS.dash[key] && STRINGS.dash[key][lang]) || (STRINGS.common[key] && STRINGS.common[key][lang]) || key; }
   function TD(key){ return (STRINGS.dio[key] && STRINGS.dio[key][lang]) || key; }
   function TP(key){ return (STRINGS.par[key] && STRINGS.par[key][lang]) || key; }
@@ -613,7 +765,7 @@
       ownerName: "", dioceses: [], parishes: [], members: [], students: [], teachers: [],
       documents: [], lessons: [], circulars: [], reports: [], auditLog: [],
       smsAdminPhone: "", installId: "", feedback: [], seq: {}, files: [],
-      lastBackupAt: 0, savedAt: 0
+      lastBackupAt: 0, savedAt: 0, security: { pins: {}, recovery: null }, prefs: {}, departments: {}
     };
     if (!state || typeof state !== "object" || Array.isArray(state)) state = {};
     Object.keys(defaults).forEach(function(k){
@@ -799,6 +951,8 @@
     return takeSnapshot("rRestore").then(function(){
       var cur = state, next = obj;
       next.installId = cur.installId;                       // this device keeps its own identity
+      next.security = cur.security;                         // ...and its own PINs (they never travel in a backup)
+      next.prefs = cur.prefs;                               // ...and its own settings (language, text size, tabs)
       next.files = Array.isArray(next.files) ? next.files : [];
       var have = {};
       next.files.forEach(function(f){ have[f.id] = true; });
@@ -954,13 +1108,13 @@
         "add-diocese","add-parish","add-member","add-student","add-teacher","add-document","add-lesson",
         "edit-diocese","edit-parish","edit-member","edit-student","edit-teacher","edit-document","edit-lesson",
         "delete-diocese","delete-parish","delete-member","delete-student","delete-teacher","delete-document","delete-lesson",
-        "send-circular","send-report","sync","manage-files","backup","restore"
+        "send-circular","send-report","sync","manage-files","backup","restore","manage-departments"
       ],
       admin: [
         "add-parish","add-member","add-student","add-teacher","add-document","add-lesson",
         "edit-parish","edit-member","edit-student","edit-teacher","edit-document","edit-lesson",
         "delete-parish","delete-member","delete-student","delete-teacher","delete-document","delete-lesson",
-        "send-report","sync","manage-files","backup"
+        "send-report","sync","manage-files","backup","manage-departments"
       ],
       collector: ["add-member","add-student","add-teacher","edit-member","edit-student","edit-teacher","send-report"],
       viewer: []
@@ -1152,26 +1306,32 @@
     }
     if (act === "del"){
       if (!can("delete-" + type)) return;
-      armThen(btn, function(){ deleteRecord(type, id); });
+      armThen(btn, function(){ requirePin().then(function(ok){ if (ok) deleteRecord(type, id); }); });
       return;
     }
     if (act === "dl"){ downloadStoredFile(id); return; }
     if (act === "delfile"){
       if (!can("manage-files")) return;
       armThen(btn, function(){
-        fileRefs(id).forEach(function(r){ r.rec.fileId = ""; });   // detach from lessons/documents
-        removeFile(id).then(function(){ save(); renderAll(); showToast(TAct("deleted")); });
+        requirePin().then(function(ok){
+          if (!ok) return;
+          fileRefs(id).forEach(function(r){ r.rec.fileId = ""; });   // detach from lessons/documents
+          removeFile(id).then(function(){ save(); renderAll(); showToast(TAct("deleted")); });
+        });
       });
       return;
     }
     if (act === "snap-restore"){
       if (!can("restore")) return;
       armThen(btn, function(){
-        listSnapshots().then(function(rows){
-          var snap = rows.filter(function(r){ return r.id === id; })[0];
-          var data = null;
-          try { data = snap ? JSON.parse(snap.data) : null; } catch(err){}
-          applyRestore(data).then(function(ok){ showToast(ok ? TSt("restoreOk") : TSt("restoreBad")); });
+        requirePin().then(function(pinOk){
+          if (!pinOk) return;
+          listSnapshots().then(function(rows){
+            var snap = rows.filter(function(r){ return r.id === id; })[0];
+            var data = null;
+            try { data = snap ? JSON.parse(snap.data) : null; } catch(err){}
+            applyRestore(data).then(function(ok){ showToast(ok ? TSt("restoreOk") : TSt("restoreBad")); });
+          });
         });
       });
       return;
@@ -1197,11 +1357,6 @@
     save();
   });
 
-  document.getElementById("role-select").addEventListener("change", function(){
-    role = this.value;
-    resetEditing();
-    renderAll();
-  });
   document.getElementById("online-toggle").addEventListener("change", function(){
     online = this.checked;
     var b = document.getElementById("conn-badge");
@@ -1211,6 +1366,8 @@
   });
   document.getElementById("lang-select").addEventListener("change", function(){
     lang = this.value;
+    prefs().lang = lang;
+    save();
     applyLang();
     renderAll();
   });
@@ -1285,6 +1442,8 @@
     if (activeTab === "cert") renderCert();
     if (activeTab === "io") renderIO();
     if (activeTab === "storage") renderStorage();
+    if (activeTab === "help") renderHelp();
+    if (activeTab === "departments") renderDepartments();
     if (activeTab === "audit") renderAudit();
     if (activeTab === "comms") renderComms();
   }
@@ -1453,7 +1612,13 @@
         }).join('') + '</ol>' : '<div class="empty">' + T("none") + '</div>') +
       '</section>';
 
-    el.innerHTML = hero + kpis + dataCard + quickCard + genderCard + levelCard + officeCard + activityCard;
+
+    var deptDone = deptAssignedCount();
+    var deptCard = '<section class="db-card"><h2>' + esc(TDept("dashTitle")) + '</h2>' +
+      '<div class="db-off"><div class="db-off-top"><span>' + esc(fillTpl(TDept("dashLine"), { N: deptDone }, false)) + '</span></div>' +
+      '<div class="db-bar"><i style="width:' + pct(deptDone, 7) + '%"></i></div></div>' +
+      '<button type="button" class="ghost" data-goto="departments" style="margin-top:8px;">' + esc(TDept("tabName")) + '</button></section>';
+    el.innerHTML = hero + secBanner() + kpis + dataCard + deptCard + quickCard + genderCard + levelCard + officeCard + activityCard;
   }
   function stat(num, label){
     return '<div class="stat"><div class="num">' + esc(num) + '</div><div class="label">' + label + '</div></div>';
@@ -2786,10 +2951,683 @@
     });
   }
 
+  // ---------- help & settings ----------
+  var APP_VERSION = "2.2 · 2026-09-21";   // keep this exact form: the update check reads it from the newest index.html
+  var ALWAYS_TABS = ["dashboard", "storage", "help"];
+  function THp(key){ return (STRINGS.hp[key] && STRINGS.hp[key][lang]) || key; }
+
+  function prefs(){
+    if (!state.prefs || typeof state.prefs !== "object" || Array.isArray(state.prefs)) state.prefs = {};
+    return state.prefs;
+  }
+  // text size (zoom on the app) and hidden tabs live in the data, so they survive reloads
+  function applyPrefs(){
+    var p = prefs();
+    var z = parseFloat(p.fontScale) || 1;
+    var app = document.querySelector(".app");
+    if (app) app.style.zoom = z === 1 ? "" : String(z);
+    var hidden = Array.isArray(p.hiddenTabs) ? p.hiddenTabs : [];
+    document.querySelectorAll("nav.tabs button").forEach(function(b){
+      var k = b.getAttribute("data-tab");
+      b.style.display = (hidden.indexOf(k) !== -1 && ALWAYS_TABS.indexOf(k) === -1) ? "none" : "";
+    });
+  }
+  function isInstalledApp(){
+    try {
+      return (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
+    } catch(e){ return false; }
+  }
+  function cleanTelegram(v){
+    v = String(v || "").trim().replace(/^@/, "").replace(/^https?:\/\/t\.me\//i, "");
+    return /^[A-Za-z0-9_]{4,32}$/.test(v) ? v : "";
+  }
+
+  function renderHelp(){
+    var el = document.getElementById("tab-help");
+    var p = prefs();
+    var hidden = Array.isArray(p.hiddenTabs) ? p.hiddenTabs : [];
+    var navTabs = Array.prototype.map.call(document.querySelectorAll("nav.tabs button"), function(b){ return b.getAttribute("data-tab"); })
+      .filter(function(k){ return ALWAYS_TABS.indexOf(k) === -1; });
+    var scale = String(parseFloat(p.fontScale) || 1);
+    var tg = cleanTelegram(p.supportTelegram);
+
+    var tabsHtml = navTabs.map(function(k){
+      var checked = hidden.indexOf(k) === -1;
+      return '<label class="hp-check"><input type="checkbox" data-hp-tab="' + esc(k) + '"' + (checked ? ' checked' : '') + '> <span>' + esc(STRINGS.tabs[k][lang]) + '</span></label>';
+    }).join('');
+
+    var faq = [1, 2, 3, 4, 5, 6].map(function(n){
+      return '<details class="hp-q"><summary>' + esc(THp("q" + n)) + '</summary><p>' + esc(THp("a" + n)) + '</p></details>';
+    }).join('');
+
+    var contactHtml = '<p class="meta">' + esc(THp("contactNote")) + '</p>' +
+      (tg ? '<a class="hp-btn" href="https://t.me/' + esc(tg) + '" target="_blank" rel="noopener noreferrer">' + esc(THp("contactBtn")) + '</a>' : '') +
+      (role === "owner" ?
+        '<div class="field" style="margin-top:12px;"><label>' + esc(THp("contactSet")) + '</label>' +
+        '<input type="text" id="hp-tg" value="' + esc(tg) + '" placeholder="birhan_abc" autocomplete="off">' +
+        '<p class="error" id="hp-tg-err">' + esc(THp("contactBad")) + '</p>' +
+        '<button type="button" class="ghost" id="hp-tg-save">' + esc(T("save")) + '</button></div>' : '');
+
+    el.innerHTML =
+      '<div class="card"><h2>' + esc(THp("prefTitle")) + '</h2>' +
+        '<div class="field"><label>' + esc(THp("textSize")) + '</label><select id="hp-size">' +
+          '<option value="1">' + esc(THp("sizeNormal")) + '</option>' +
+          '<option value="1.15">' + esc(THp("sizeLarge")) + '</option>' +
+          '<option value="1.3">' + esc(THp("sizeXl")) + '</option></select></div>' +
+        '<h2 style="margin-top:16px;">' + esc(THp("tabsTitle")) + '</h2>' +
+        '<p class="meta">' + esc(THp("tabsNote")) + '</p>' +
+        '<div class="hp-checks">' + tabsHtml + '</div>' +
+        '<button type="button" class="ghost" id="hp-showall" style="margin-top:10px;">' + esc(THp("showAll")) + '</button>' +
+      '</div>' +
+
+      '<div class="card"><h2>' + esc(THp("aboutTitle")) + '</h2>' +
+        '<p style="margin:0 0 4px;"><strong>' + esc(STRINGS.appTitle[lang]) + '</strong></p>' +
+        '<p class="meta" style="margin:0;">' + esc(fillTpl(THp("versionLine"), { V: APP_VERSION }, false)) + ' &middot; ' + esc(isInstalledApp() ? THp("modeInstalled") : THp("modeBrowser")) + '</p>' +
+        '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">' +
+          '<button type="button" class="ghost" id="hp-check">' + esc(THp("checkBtn")) + '</button>' +
+          '<button type="button" class="primary" id="hp-update" style="display:none;">' + esc(THp("updateNow")) + '</button>' +
+        '</div>' +
+        '<p class="meta" id="hp-check-msg" style="margin-top:8px;"></p>' +
+      '</div>' +
+
+      '<div class="card"><h2>' + esc(THp("contactTitle")) + '</h2>' + contactHtml + '</div>' +
+      '<div class="card"><h2>' + esc(THp("faqTitle")) + '</h2>' + faq + '</div>';
+
+    // ---- text size ----
+    var sizeSel = document.getElementById("hp-size");
+    sizeSel.value = ["1", "1.15", "1.3"].indexOf(scale) !== -1 ? scale : "1";
+    sizeSel.addEventListener("change", function(){
+      prefs().fontScale = sizeSel.value;
+      save();
+      applyPrefs();
+    });
+
+    // ---- visible tabs ----
+    el.querySelectorAll("[data-hp-tab]").forEach(function(cb){
+      cb.addEventListener("change", function(){
+        var list = [];
+        el.querySelectorAll("[data-hp-tab]").forEach(function(x){ if (!x.checked) list.push(x.getAttribute("data-hp-tab")); });
+        prefs().hiddenTabs = list;
+        save();
+        applyPrefs();
+      });
+    });
+    document.getElementById("hp-showall").addEventListener("click", function(){
+      prefs().hiddenTabs = [];
+      save();
+      applyPrefs();
+      renderAll();
+    });
+
+    // ---- update check: compare with the newest index.html on the server ----
+    var msg = document.getElementById("hp-check-msg");
+    var upBtn = document.getElementById("hp-update");
+    document.getElementById("hp-check").addEventListener("click", function(){
+      msg.textContent = THp("checking");
+      upBtn.style.display = "none";
+      var url = location.href.split("#")[0].split("?")[0] + "?v=" + Date.now();
+      fetch(url, { cache: "no-store" }).then(function(r){
+        if (!r.ok) throw new Error("http");
+        return r.text();
+      }).then(function(txt){
+        var m = txt.match(new RegExp("APP_VERSION" + " = \"([^\"]+)\""));
+        if (m && m[1] !== APP_VERSION){
+          msg.textContent = fillTpl(THp("newVersion"), { V: m[1] }, false);
+          upBtn.style.display = "inline-block";
+        } else {
+          msg.textContent = THp("upToDate");
+        }
+      }).catch(function(){ msg.textContent = THp("checkFail"); });
+    });
+    upBtn.addEventListener("click", function(){
+      save();
+      var done = function(){ location.reload(); };
+      try {
+        if (window.caches && caches.keys){
+          caches.keys().then(function(keys){ return Promise.all(keys.map(function(k){ return caches.delete(k); })); }).then(done, done);
+        } else { done(); }
+      } catch(e){ done(); }
+    });
+
+    // ---- Telegram contact (the Owner sets it once) ----
+    var tgSave = document.getElementById("hp-tg-save");
+    if (tgSave) tgSave.addEventListener("click", function(){
+      var raw = document.getElementById("hp-tg").value.trim();
+      var err = document.getElementById("hp-tg-err");
+      var clean = cleanTelegram(raw);
+      if (raw && !clean){ err.style.display = "block"; return; }
+      err.style.display = "none";
+      prefs().supportTelegram = clean;
+      save();
+      renderAll();
+    });
+  }
+
+  // ---------- security: PINs (a phone-lock style protection) ----------
+  var PIN_ROLES = ["owner", "admin", "collector"];
+  var PIN_GRACE_MS = 2 * 60 * 1000;        // after a correct PIN, deleting stays unlocked for 2 minutes
+  var AUTOLOCK_MS = 10 * 60 * 1000;        // back to view-only after 10 minutes in the background
+  var pinUnlockedUntil = 0;
+  var pinFails = 0, pinLockUntil = 0;
+  var hiddenAt = 0;
+  function TPin(key){ return (STRINGS.pin[key] && STRINGS.pin[key][lang]) || key; }
+
+  function secState(){
+    if (!state.security || typeof state.security !== "object" || Array.isArray(state.security)) state.security = { pins: {}, recovery: null, viewLock: false };
+    if (!state.security.pins || typeof state.security.pins !== "object") state.security.pins = {};
+    return state.security;
+  }
+  function securityOn(){
+    var p = secState().pins;
+    return !!(p.owner || p.admin || p.collector);
+  }
+  function hasPin(r){ return !!secState().pins[r]; }
+
+  // ---- hashing (PBKDF2 with a random salt; the PIN itself is never stored) ----
+  function bytesToHex(buf){
+    return Array.prototype.map.call(new Uint8Array(buf), function(b){ return ("0" + b.toString(16)).slice(-2); }).join("");
+  }
+  function randomBytes(n){
+    var a = new Uint8Array(n);
+    if (window.crypto && window.crypto.getRandomValues) window.crypto.getRandomValues(a);
+    else for (var i = 0; i < n; i++) a[i] = Math.floor(Math.random() * 256);
+    return a;
+  }
+  function randomSalt(){ return bytesToHex(randomBytes(16)); }
+  function hashPin(pin, salt){
+    if (window.crypto && window.crypto.subtle && window.crypto.subtle.importKey && window.TextEncoder){
+      var enc = new TextEncoder();
+      return window.crypto.subtle.importKey("raw", enc.encode(pin), "PBKDF2", false, ["deriveBits"]).then(function(key){
+        return window.crypto.subtle.deriveBits({ name: "PBKDF2", salt: enc.encode(salt), iterations: 150000, hash: "SHA-256" }, key, 256);
+      }).then(bytesToHex);
+    }
+    // fallback for very old browsers
+    var h = 2166136261, str = salt + ":" + pin;
+    for (var i = 0; i < 20000; i++){
+      for (var j = 0; j < str.length; j++){ h ^= str.charCodeAt(j); h = Math.imul(h, 16777619); }
+      str = String(h);
+    }
+    return Promise.resolve(String(h >>> 0));
+  }
+  function verifyAgainst(entry, secret){
+    if (!entry) return Promise.resolve(false);
+    return hashPin(secret, entry.s).then(function(h){ return h === entry.h; });
+  }
+
+  // ---- wrong-attempt lock (kept in the browser so a reload does not reset it) ----
+  function loadLock(){
+    try {
+      var o = JSON.parse(window.localStorage.getItem("bkbn_lock") || "{}");
+      pinFails = o.f || 0; pinLockUntil = o.u || 0;
+    } catch(e){}
+  }
+  function saveLock(){
+    try { window.localStorage.setItem("bkbn_lock", JSON.stringify({ f: pinFails, u: pinLockUntil })); } catch(e){}
+  }
+  function lockRemaining(){ return Math.max(0, Math.ceil((pinLockUntil - Date.now()) / 1000)); }
+  function noteFail(){
+    pinFails++;
+    if (pinFails >= 5){ pinFails = 0; pinLockUntil = Date.now() + 60000; }
+    saveLock();
+  }
+  function lockedMsg(){ return fillTpl(TPin("locked"), { S: lockRemaining() }, false); }
+
+  // ---- the dialog ----
+  // opts: { title, note, fields:[{label,text}], forgot, okLabel, hideCancel, code, check(vals)->Promise<errorText|null> }
+  // resolves: the entered values on success, {forgot:true}, or null when cancelled
+  function pinDialog(opts){
+    return new Promise(function(resolve){
+      var ov = document.createElement("div");
+      ov.className = "pin-overlay";
+      var box = document.createElement("div");
+      box.className = "pin-box";
+      box.setAttribute("role", "dialog");
+      box.setAttribute("aria-modal", "true");
+      var h = document.createElement("h3");
+      h.textContent = opts.title;
+      box.appendChild(h);
+      if (opts.note){
+        var n = document.createElement("p");
+        n.className = "meta";
+        n.textContent = opts.note;
+        box.appendChild(n);
+      }
+      if (opts.code){
+        var c = document.createElement("div");
+        c.className = "pin-code";
+        c.textContent = opts.code;
+        box.appendChild(c);
+      }
+      var inputs = [];
+      (opts.fields || []).forEach(function(f){
+        var lab = document.createElement("label");
+        lab.textContent = f.label;
+        box.appendChild(lab);
+        var inp = document.createElement("input");
+        inp.autocomplete = "off";
+        if (f.text){ inp.type = "text"; inp.maxLength = 24; inp.style.letterSpacing = "2px"; inp.style.textTransform = "uppercase"; }
+        else {
+          inp.type = "password"; inp.inputMode = "numeric"; inp.maxLength = 6;
+          inp.addEventListener("input", function(){ inp.value = inp.value.replace(/\D/g, ""); });
+        }
+        box.appendChild(inp);
+        inputs.push(inp);
+      });
+      var err = document.createElement("p");
+      err.className = "error";
+      err.style.display = "none";
+      box.appendChild(err);
+      var row = document.createElement("div");
+      row.className = "pin-row";
+      var ok = document.createElement("button");
+      ok.type = "button"; ok.className = "primary"; ok.textContent = opts.okLabel || TPin("ok");
+      row.appendChild(ok);
+      var cancel = null;
+      if (!opts.hideCancel){
+        cancel = document.createElement("button");
+        cancel.type = "button"; cancel.className = "ghost"; cancel.textContent = TAct("cancel");
+        row.appendChild(cancel);
+      }
+      box.appendChild(row);
+      if (opts.forgot){
+        var fg = document.createElement("button");
+        fg.type = "button"; fg.className = "pin-forgot"; fg.textContent = TPin("forgot");
+        fg.addEventListener("click", function(){ close({ forgot: true }); });
+        box.appendChild(fg);
+      }
+      ov.appendChild(box);
+      document.body.appendChild(ov);
+      if (inputs[0]) setTimeout(function(){ inputs[0].focus(); }, 30);
+
+      var busy = false;
+      function close(val){
+        if (ov.parentNode) ov.parentNode.removeChild(ov);
+        document.removeEventListener("keydown", onKey, true);
+        resolve(val);
+      }
+      function submit(){
+        if (busy) return;
+        var vals = inputs.map(function(i){ return i.value.trim(); });
+        if (!opts.check){ close(vals); return; }
+        busy = true; ok.disabled = true;
+        Promise.resolve(opts.check(vals)).then(function(msg){
+          busy = false; ok.disabled = false;
+          if (msg){
+            err.textContent = msg; err.style.display = "block";
+            inputs.forEach(function(i){ i.value = ""; });
+            if (inputs[0]) inputs[0].focus();
+          } else { close(vals); }
+        }, function(){ busy = false; ok.disabled = false; err.textContent = TFl("storeFail"); err.style.display = "block"; });
+      }
+      function onKey(e){
+        if (e.key === "Enter"){ e.preventDefault(); submit(); }
+        else if (e.key === "Escape" && cancel){ e.preventDefault(); close(null); }
+      }
+      document.addEventListener("keydown", onKey, true);
+      ok.addEventListener("click", submit);
+      if (cancel) cancel.addEventListener("click", function(){ close(null); });
+    });
+  }
+
+  // ---- building blocks ----
+  function askVerify(r, title){
+    return pinDialog({
+      title: title, fields: [{ label: TPin("pinLabel") }], forgot: true,
+      check: function(vals){
+        if (lockRemaining() > 0) return Promise.resolve(lockedMsg());
+        if (!/^\d{4,6}$/.test(vals[0])) return Promise.resolve(TPin("badFormat"));
+        return verifyAgainst(secState().pins[r], vals[0]).then(function(good){
+          if (good){ pinFails = 0; saveLock(); return null; }
+          noteFail();
+          return lockRemaining() > 0 ? lockedMsg() : TPin("wrong");
+        });
+      }
+    }).then(function(res){
+      if (res && res.forgot) return recoverPin(r);
+      return !!res;
+    });
+  }
+  function normCode(s){ return String(s || "").replace(/[^A-Za-z0-9]/g, "").toUpperCase(); }
+  function newRecoveryCode(){
+    var chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789", a = randomBytes(12), s = "";
+    for (var i = 0; i < 12; i++){ s += chars[a[i] % chars.length]; if (i % 4 === 3 && i < 11) s += "-"; }
+    return s;
+  }
+  function showRecoveryCode(code){
+    return pinDialog({ title: TPin("codeTitle"), note: TPin("codeNote"), code: code, okLabel: TPin("codeDone"), hideCancel: true });
+  }
+  function makeRecovery(){
+    var code = newRecoveryCode(), salt = randomSalt();
+    return hashPin(normCode(code), salt).then(function(h){
+      secState().recovery = { s: salt, h: h };
+      save();
+      return showRecoveryCode(code);
+    });
+  }
+  function ensureRecovery(){ return secState().recovery ? Promise.resolve() : makeRecovery(); }
+
+  function createPin(r){
+    return pinDialog({
+      title: fillTpl(TPin("createTitle"), { ROLE: roleName(r) }, false), note: TPin("createNote"),
+      fields: [{ label: TPin("pinLabel") }, { label: TPin("confirmLabel") }],
+      check: function(v){
+        if (!/^\d{4,6}$/.test(v[0])) return Promise.resolve(TPin("badFormat"));
+        if (v[0] !== v[1]) return Promise.resolve(TPin("mismatch"));
+        return Promise.resolve(null);
+      }
+    }).then(function(vals){
+      if (!vals) return false;
+      var salt = randomSalt();
+      return hashPin(vals[0], salt).then(function(h){
+        secState().pins[r] = { s: salt, h: h };
+        save();
+        return ensureRecovery();
+      }).then(function(){ showToast(TPin("saved")); return true; });
+    });
+  }
+  function recoverPin(r){
+    if (!secState().recovery){ showToast(TPin("noRecovery")); return Promise.resolve(false); }
+    return pinDialog({
+      title: TPin("recoveryEnter"), fields: [{ label: "XXXX-XXXX-XXXX", text: true }],
+      check: function(vals){
+        if (lockRemaining() > 0) return Promise.resolve(lockedMsg());
+        return verifyAgainst(secState().recovery, normCode(vals[0])).then(function(good){
+          if (good){ pinFails = 0; saveLock(); return null; }
+          noteFail();
+          return lockRemaining() > 0 ? lockedMsg() : TPin("recoveryBad");
+        });
+      }
+    }).then(function(vals){ return vals ? createPin(r) : false; });
+  }
+
+
+  // ---- app lock: require a PIN before the app opens at all (not just before editing) ----
+  function TVl(key){ return (STRINGS.vl[key] && STRINGS.vl[key][lang]) || key; }
+  function viewLockOn(){ return securityOn() && !!secState().viewLock; }
+  function pinRoles(){ return PIN_ROLES.filter(function(r){ return hasPin(r); }); }
+
+  function toggleViewLock(checked){
+    var run = function(){
+      secState().viewLock = checked;
+      save();
+    };
+    if (checked){
+      run();
+    } else {
+      requirePin().then(function(ok){ if (ok) run(); else renderAll(); });
+    }
+  }
+
+  // Shows a full-screen lock; calls onOpen() once the correct PIN for some role is entered.
+  function showAppLock(onOpen){
+    var box = document.getElementById("view-lock");
+    var roles = pinRoles();
+    function paint(){
+      box.innerHTML =
+        '<div class="vl-card">' +
+          '<h1>' + esc(STRINGS.appTitle[lang]) + '</h1>' +
+          '<h3>' + esc(TVl("title")) + '</h3>' +
+          '<p class="meta">' + esc(TVl("note")) + '</p>' +
+          '<label>' + esc(TVl("roleLabel")) + '</label>' +
+          '<select id="vl-role">' + roles.map(function(r){ return '<option value="' + r + '">' + esc(roleName(r)) + '</option>'; }).join('') + '</select>' +
+          '<label>' + esc(TPin("pinLabel")) + '</label>' +
+          '<input type="password" inputmode="numeric" maxlength="6" id="vl-pin" autocomplete="off">' +
+          '<p class="error" id="vl-err" style="display:none;"></p>' +
+          '<button type="button" class="primary" id="vl-go">' + esc(TVl("enter")) + '</button>' +
+          '<button type="button" class="pin-forgot" id="vl-forgot">' + esc(TPin("forgot")) + '</button>' +
+        '</div>';
+      var pinInp = document.getElementById("vl-pin");
+      pinInp.addEventListener("input", function(){ pinInp.value = pinInp.value.replace(/\D/g, ""); });
+      pinInp.addEventListener("keydown", function(e){ if (e.key === "Enter") go(); });
+      document.getElementById("vl-go").addEventListener("click", go);
+      document.getElementById("vl-forgot").addEventListener("click", function(){
+        var r = document.getElementById("vl-role").value;
+        recoverPin(r).then(function(ok){ if (ok){ role = r; box.classList.add("hidden"); onOpen(); } else paint(); });
+      });
+      setTimeout(function(){ pinInp.focus(); }, 30);
+    }
+    function go(){
+      var r = document.getElementById("vl-role").value;
+      var pinVal = document.getElementById("vl-pin").value.trim();
+      var err = document.getElementById("vl-err");
+      if (lockRemaining() > 0){ err.textContent = lockedMsg(); err.style.display = "block"; return; }
+      if (!/^\d{4,6}$/.test(pinVal)){ err.textContent = TPin("badFormat"); err.style.display = "block"; return; }
+      verifyAgainst(secState().pins[r], pinVal).then(function(good){
+        if (good){
+          pinFails = 0; saveLock();
+          role = r;
+          box.classList.add("hidden");
+          onOpen();
+        } else {
+          noteFail();
+          err.textContent = lockRemaining() > 0 ? lockedMsg() : TPin("wrong");
+          err.style.display = "block";
+          document.getElementById("vl-pin").value = "";
+        }
+      });
+    }
+    box.classList.remove("hidden");
+    paint();
+  }
+
+  // ---- switching role ----
+  function requestRole(target){
+    if (target === "viewer" || target === role) return Promise.resolve(true);
+    if (!securityOn()) return Promise.resolve(true);
+    if (hasPin(target)) return askVerify(target, fillTpl(TPin("enterFor"), { ROLE: roleName(target) }, false));
+    // this role has no PIN yet: it gets one now (the Owner has to allow it)
+    if (target !== "owner" && role !== "owner" && hasPin("owner")){
+      return askVerify("owner", TPin("ownerNeeded")).then(function(good){ return good ? createPin(target) : false; });
+    }
+    return createPin(target);
+  }
+  document.getElementById("role-select").addEventListener("change", function(){
+    var sel = this, target = sel.value, prev = role;
+    requestRole(target).then(function(good){
+      if (good){
+        role = target;
+        pinUnlockedUntil = 0;
+        resetEditing();
+        renderAll();
+      } else {
+        sel.value = prev;
+      }
+    });
+  });
+
+  // ---- deleting (and other destructive actions) ----
+  function requirePin(){
+    if (!securityOn() || !hasPin(role)) return Promise.resolve(true);
+    if (Date.now() < pinUnlockedUntil) return Promise.resolve(true);
+    return askVerify(role, TPin("deleteTitle")).then(function(good){
+      if (good) pinUnlockedUntil = Date.now() + PIN_GRACE_MS;
+      return good;
+    });
+  }
+
+  // ---- back to view-only after a long time away ----
+  document.addEventListener("visibilitychange", function(){
+    if (document.hidden){ hiddenAt = Date.now(); return; }
+    if (securityOn() && role !== "viewer" && hiddenAt && Date.now() - hiddenAt > AUTOLOCK_MS){
+      role = "viewer";
+      document.getElementById("role-select").value = "viewer";
+      pinUnlockedUntil = 0;
+      resetEditing();
+      renderAll();
+      showToast(TPin("autoLocked"));
+    }
+  });
+
+  // ---- dashboard hints ----
+  function secBanner(){
+    if (!securityOn()){
+      if (role !== "owner") return "";
+      return '<section class="db-card"><h2>' + esc(TPin("nudgeTitle")) + '</h2>' +
+        '<p class="meta" style="margin:0 0 12px;">' + esc(TPin("nudgeText")) + '</p>' +
+        '<button type="button" class="primary" data-goto="storage">' + esc(TPin("setBtn")) + '</button></section>';
+    }
+    if (role === "viewer"){
+      return '<div class="note">' + esc(TPin("viewerNote")) + '</div>';
+    }
+    return "";
+  }
+
+  // ---- the "Security (PIN)" card in the Storage & Backup tab ----
+  function securityCardHtml(){
+    if (role === "viewer") return "";
+    var isOwner = role === "owner";
+    var rows = PIN_ROLES.filter(function(r){ return isOwner || r === role; }).map(function(r){
+      var set = hasPin(r);
+      var btns = "";
+      if (set && r === role) btns += '<button type="button" class="ghost" data-sec="change" data-role="' + r + '">' + esc(TPin("changeBtn")) + '</button>';
+      if (isOwner && r !== "owner" && !set) btns += '<button type="button" class="ghost" data-sec="set" data-role="' + r + '">' + esc(TPin("setBtn")) + '</button>';
+      if (isOwner && r !== "owner" && set) btns += '<button type="button" class="ghost" data-sec="clear" data-role="' + r + '">' + esc(TPin("clearBtn")) + '</button>';
+      if (isOwner && r === "owner" && !set) btns += '<button type="button" class="primary" data-sec="set" data-role="owner">' + esc(TPin("setBtn")) + '</button>';
+      return '<div class="row"><span>' + esc(roleName(r)) + '<br><span class="meta">' + esc(set ? TPin("statusSet") : TPin("statusNotSet")) + '</span>' +
+        (btns ? '<span class="row-actions">' + btns + '</span>' : '') + '</span>' +
+        '<span class="badge ' + (set ? "synced" : "pending") + '">' + esc(set ? "✓" : "—") + '</span></div>';
+    }).join('');
+    return '<div class="card"><h2>' + esc(TPin("secTitle")) + '</h2>' +
+      '<p class="meta">' + esc(TPin("secNote")) + '</p>' + rows +
+      (isOwner && securityOn() ? '<button type="button" class="ghost" data-sec="recovery" style="margin-top:10px;">' + esc(TPin("recoveryBtn")) + '</button>' : '') +
+      (isOwner && hasPin("owner") ?
+        '<label class="hp-check" style="margin-top:10px;border:none;"><input type="checkbox" id="sec-viewlock"' + (secState().viewLock ? " checked" : "") + '> <span>' + esc(TVl("toggleLabel")) + '</span></label>' +
+        '<p class="meta">' + esc(TVl("toggleNote")) + '</p>' :
+        (isOwner ? '<p class="meta" style="margin-top:10px;">' + esc(TVl("needOwnerFirst")) + '</p>' : '')) +
+      '</div>';
+  }
+  function bindSecurity(root){
+    root.querySelectorAll("[data-sec]").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var what = btn.getAttribute("data-sec"), r = btn.getAttribute("data-role");
+        var done = function(){ renderAll(); };
+        if (what === "set"){
+          if (role !== "owner") return;
+          createPin(r).then(done);
+        } else if (what === "change"){
+          if (r !== role) return;
+          askVerify(r, TPin("currentPin")).then(function(good){ return good ? createPin(r) : false; }).then(done);
+        } else if (what === "clear"){
+          if (role !== "owner") return;
+          requirePin().then(function(good){
+            if (!good) return;
+            delete secState().pins[r];
+            save();
+            done();
+          });
+        } else if (what === "recovery"){
+          if (role !== "owner") return;
+          requirePin().then(function(good){ return good ? makeRecovery() : null; }).then(done);
+        }
+      });
+    });
+  }
+
+  // ---------- departments (from the internal by-law) ----------
+  var DEPT_ORDER = ["edu", "choir", "members", "finance", "dev", "plan", "audit"];
+  var DEPT_SUBS = {
+    edu: ["ስርዓተ ትምህርት ቀረጻ፣ ዝግጅትና ማሻሻያ", "ተከታታይ ትምህርት ክትትል", "መምህራን ስልጠናና ምደባ", "ቤተ መጻሕፍት እና ቤተ መዛግብት", "ህትመት እና ብዙሀን መገናኛ", "መርሐ ግብር ዝግጅት", "አርትዖት", "አብነት ትምህርት"],
+    choir: ["መዝሙር ክፍል", "ኪነ ጥበብ ክፍል"],
+    members: ["አባላት መረጃ እና አስተዳደር", "አገልግሎት ምደባ እና ክትትል", "አባላት መንፈሳዊና ማኅበራዊ ጉዳይ", "ህዝብ ግንኙነት"],
+    finance: ["ሂሳብና በጀት አስተዳደር", "ንብረት አስተዳደር", "ግዢ ክፍል"],
+    dev: ["ዕደ ጥበብ ሙያ ማስተባበሪያ", "ገቢ አስገኛ (ሽያጭ)", "ጽዳት እና መስተንግዶ", "አብያተ ክርስቲያናት ድጋፍና ዕርዳታ", "ማህበራዊ ድጋፍና ዕርዳታ"],
+    plan: ["ዕቅድ ዝግጅትና ክትትል", "ሥልጠናና ጥናትና ምርምር"],
+    audit: ["ሂሳብና ንብረት ምርመራ", "የስራ ሂደት ክትትልና ቁጥጥር"]
+  };
+  function TDept(key){ return (STRINGS.dept[key] && STRINGS.dept[key][lang]) || key; }
+  function TDp(key){ return (STRINGS.dp[key] && STRINGS.dp[key][lang]) || key; }
+  function departments(){
+    if (!state.departments || typeof state.departments !== "object" || Array.isArray(state.departments)) state.departments = {};
+    return state.departments;
+  }
+  function deptAssignedCount(){
+    var d = departments();
+    return DEPT_ORDER.filter(function(k){ return d[k] && d[k].headId; }).length;
+  }
+  function memberLabel(id){
+    var m = state.members.find(function(x){ return x.id === id; });
+    return m ? m.name + (m.code ? " (" + m.code + ")" : "") : "";
+  }
+
+  function renderDepartments(){
+    var el = document.getElementById("tab-departments");
+    var canEdit = can("manage-departments");
+    var d = departments();
+
+    var cards = DEPT_ORDER.map(function(key){
+      var rec = d[key] || {};
+      var subs = DEPT_SUBS[key].map(function(s){ return '<span class="dept-sub">' + esc(s) + '</span>'; }).join('');
+      function personRow(role, field, roleLabel){
+        var val = rec[field] || "";
+        if (canEdit){
+          return '<div class="field"><label>' + esc(roleLabel) + '</label><select data-dept="' + key + '" data-field="' + field + '">' +
+            '<option value="">' + esc(TDept("choose")) + '</option>' +
+            state.members.map(function(m){ return '<option value="' + esc(m.id) + '"' + (m.id === val ? " selected" : "") + '>' + esc(m.name) + (m.code ? " (" + esc(m.code) + ")" : "") + '</option>'; }).join('') +
+            '</select></div>';
+        }
+        return '<div class="row"><span>' + esc(roleLabel) + '</span><span>' + (val ? esc(memberLabel(val)) : '<span class="meta">' + esc(TDept("none")) + '</span>') + '</span></div>';
+      }
+      return '<div class="card"><h2>' + esc(TDp(key)) + '</h2>' +
+        '<p class="meta" style="margin:0 0 12px;">' + esc(TDp(key + "_d")) + '</p>' +
+        personRow("head", "headId", TDept("headRole")) +
+        personRow("sec", "secId", TDept("secRole")) +
+        '<div style="margin-top:12px;"><div class="meta" style="margin-bottom:6px;">' + esc(TDept("subsLabel")) + '</div><div class="dept-subs">' + subs + '</div></div>' +
+        '</div>';
+    }).join('');
+
+    el.innerHTML =
+      '<div class="note">' + esc(TDept("note")) + '</div>' +
+      (canEdit && !state.members.length ? '<div class="note">' + esc(TDept("needMembers")) + '</div>' : '') +
+      cards;
+
+    if (canEdit){
+      el.querySelectorAll("[data-dept]").forEach(function(sel){
+        sel.addEventListener("change", function(){
+          var key = sel.getAttribute("data-dept"), field = sel.getAttribute("data-field");
+          var d2 = departments();
+          if (!d2[key]) d2[key] = {};
+          d2[key][field] = sel.value;
+          logAction("act_dept", TDp(key) + " — " + (field === "headId" ? TDept("headRole") : TDept("secRole")) + ": " + (sel.value ? memberLabel(sel.value) : TDept("none")));
+          save();
+          renderAll();
+        });
+      });
+    }
+  }
+
   // ---------- storage, backup & files ----------
   function ymd(ts){
     var d = new Date(ts);
     return d.getFullYear() + "-" + pad(d.getMonth() + 1, 2) + "-" + pad(d.getDate(), 2);
+  }
+  function backupJson(){
+    var copy = JSON.parse(JSON.stringify(state));
+    delete copy.security;                                   // PINs never leave this device
+    return JSON.stringify({ app: "bkbn-sunday-school", version: 2, exportedAt: new Date().toISOString(), data: copy });
+  }
+  function canShareFiles(){
+    try { return !!(navigator.share && navigator.canShare && window.File); } catch(e){ return false; }
+  }
+  // Opens the phone's share sheet (Telegram, Drive, ...). Falls back to a normal download.
+  function shareBackup(){
+    var name = "bkbn-backup-" + ymd(Date.now()) + ".json";
+    var json = backupJson();
+    var pick = null;
+    try {
+      var candidates = [new File([json], name, { type: "application/json" }), new File([json], name + ".txt", { type: "text/plain" })];
+      for (var i = 0; i < candidates.length; i++){
+        if (navigator.canShare({ files: [candidates[i]] })){ pick = candidates[i]; break; }
+      }
+    } catch(e){ pick = null; }
+    if (!pick){
+      downloadTextFile(name, json, "application/json");
+      state.lastBackupAt = Date.now(); save(); renderAll();
+      showToast(THp("shareFail"));
+      return;
+    }
+    navigator.share({ files: [pick], title: name }).then(function(){
+      state.lastBackupAt = Date.now(); save(); renderAll();
+    }).catch(function(){});
   }
   function renderStorage(){
     var el = document.getElementById("tab-storage");
@@ -2812,6 +3650,7 @@
 
     el.innerHTML =
       '<div class="note">' + esc(TSt("note")) + '</div>' +
+      securityCardHtml() +
       '<div class="card"><h2>' + esc(TSt("usageTitle")) + '</h2>' +
         '<div class="st-bar"><i id="st-bar-fill" style="width:0%"></i></div>' +
         '<p class="meta" id="st-usage" style="margin:6px 0 0;">…</p>' +
@@ -2825,11 +3664,12 @@
             (state.lastBackupAt ? esc(fillTpl(TSt("lastBackup"), { DATE: new Date(state.lastBackupAt).toLocaleDateString("en-GB") }, false)) : esc(TSt("noBackup"))) +
           '</p>' +
           '<button class="primary" id="st-backup-btn">' + esc(TSt("backupBtn")) + '</button>' +
+          (canShareFiles() ? ' <button class="ghost" id="st-share-btn" style="margin-top:8px;">' + esc(THp("shareBtn")) + '</button>' : '') +
         '</div>' : '') +
       (canRestore ?
         '<div class="card"><h2>' + esc(TSt("restoreTitle")) + '</h2>' +
           '<p class="meta">' + esc(TSt("restoreNote")) + '</p>' +
-          '<input type="file" id="st-restore-file" accept=".json,application/json" style="margin:8px 0;display:block;">' +
+          '<input type="file" id="st-restore-file" accept=".json,.txt,application/json,text/plain" style="margin:8px 0;display:block;">' +
           '<button class="ghost" id="st-restore-btn">' + esc(TSt("restoreBtn")) + '</button>' +
           '<p class="error" id="st-restore-err"></p>' +
         '</div>' +
@@ -2841,6 +3681,10 @@
         (canFiles && unusedCount ? '<button type="button" class="ghost" id="st-clean-btn" style="margin-bottom:8px;">' + esc(fillTpl(TSt("cleanBtn"), { N: unusedCount }, false)) + '</button>' : '') +
         filesHtml +
       '</div>';
+
+    bindSecurity(el);
+    var vlChk = document.getElementById("sec-viewlock");
+    if (vlChk) vlChk.addEventListener("change", function(){ toggleViewLock(vlChk.checked); });
 
     // ---- usage bar + protection status ----
     var persistBtn = document.getElementById("st-persist-btn");
@@ -2874,10 +3718,12 @@
     if (backupBtn) backupBtn.addEventListener("click", function(){
       state.lastBackupAt = Date.now();
       save();
-      var payload = { app: "bkbn-sunday-school", version: 2, exportedAt: new Date().toISOString(), data: state };
-      downloadTextFile("bkbn-backup-" + ymd(Date.now()) + ".json", JSON.stringify(payload), "application/json");
+      downloadTextFile("bkbn-backup-" + ymd(Date.now()) + ".json", backupJson(), "application/json");
       renderAll();
     });
+
+    var shareBtn = document.getElementById("st-share-btn");
+    if (shareBtn) shareBtn.addEventListener("click", shareBackup);
 
     // ---- restore from a backup file ----
     var restoreBtn = document.getElementById("st-restore-btn");
@@ -2894,7 +3740,10 @@
         } catch(x){}
         if (!isValidData(obj)){ err.textContent = TSt("restoreBad"); err.style.display = "block"; return; }
         err.style.display = "none";
-        applyRestore(obj).then(function(ok){ showToast(ok ? TSt("restoreOk") : TSt("restoreBad")); });
+        requirePin().then(function(pinOk){
+          if (!pinOk) return;
+          applyRestore(obj).then(function(ok){ showToast(ok ? TSt("restoreOk") : TSt("restoreBad")); });
+        });
       };
       reader.onerror = function(){ err.textContent = TSt("restoreBad"); err.style.display = "block"; };
       reader.readAsText(inp.files[0]);
@@ -2916,10 +3765,13 @@
     var cleanBtn = document.getElementById("st-clean-btn");
     if (cleanBtn) cleanBtn.addEventListener("click", function(){
       armThen(cleanBtn, function(){
-        var ids = state.files.filter(function(f){ return fileRefs(f.id).length === 0; }).map(function(f){ return f.id; });
-        Promise.all(ids.map(removeFile)).then(function(){
-          save(); renderAll();
-          showToast(fillTpl(TSt("cleaned"), { N: ids.length }, false));
+        requirePin().then(function(pinOk){
+          if (!pinOk) return;
+          var ids = state.files.filter(function(f){ return fileRefs(f.id).length === 0; }).map(function(f){ return f.id; });
+          Promise.all(ids.map(removeFile)).then(function(){
+            save(); renderAll();
+            showToast(fillTpl(TSt("cleaned"), { N: ids.length }, false));
+          });
         });
       });
     });
@@ -2933,18 +3785,32 @@
   }
 
   // ---------- init ----------
-  load().then(function(){ return refreshFileKeys(); }).then(function(){
+  function finishInit(){
     document.getElementById("owner-name").value = state.ownerName || "";
+    if (prefs().lang && STRINGS.appTitle[prefs().lang]) lang = prefs().lang;   // remember the chosen language
     document.getElementById("lang-select").value = lang;
+    document.getElementById("role-select").value = role;
     if (!state.installId){
       state.installId = generateInstallId();
       save();
     }
-    lastSavedTs = state.savedAt || 0;
     checkPersisted();
     applyLang();
+    applyPrefs();
     renderAll();
     dailySnapshot();
+  }
+  load().then(function(){ return refreshFileKeys(); }).then(function(){
+    lastSavedTs = state.savedAt || 0;
+    loadLock();
+    if (securityOn()){                       // with PINs on, the app always opens view-only
+      role = "viewer";
+    }
+    if (viewLockOn() && pinRoles().length){
+      showAppLock(finishInit);
+    } else {
+      finishInit();
+    }
   });
 })();
 </script>
