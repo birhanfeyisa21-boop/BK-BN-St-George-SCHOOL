@@ -1,7 +1,6 @@
-// Network-first: the newest version is always loaded when online; the saved copy is used when offline.
-var CACHE = "bkbn-v1";
+// Network-first: newest version when online; saved copy when offline.
+var CACHE = "bkbn-v2";
 var CORE = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png"];
-
 self.addEventListener("install", function(e){
   self.skipWaiting();
   e.waitUntil(caches.open(CACHE).then(function(c){ return c.addAll(CORE); }).catch(function(){}));

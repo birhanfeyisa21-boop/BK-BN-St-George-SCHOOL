@@ -2,16 +2,15 @@
 <html lang="am">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; frame-src 'self' blob: data:; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+<meta name="referrer" content="no-referrer">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>.sec-lock .app{visibility:hidden}</style>
+<script>try{var c=JSON.parse(localStorage.getItem("bkbn_sec_v1")||"{}");if(c.pins&&c.pins.owner&&c.lockOpen!==false)document.documentElement.className+=" sec-lock"}catch(e){}</script>
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BK/B/N ለሰ/ት/ቤቶች መረጃ እና ትምህርት መለዋወጫ</title>
-<meta name="theme-color" content="#5F1C27">
-<meta name="application-name" content="BK/B/N ሰ/ት/ቤት">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="BK/B/N ሰ/ት/ቤት">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" sizes="192x192" href="data:image/png;base64,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">
-<link rel="apple-touch-icon" href="icon-192.png">
 <style>
   :root {
     --bg: #F6F1E3;
@@ -187,32 +186,6 @@
   .db-tl li { position:relative; padding-bottom: 12px; font-size: 13px; }
   .db-tl li:last-child { padding-bottom: 0; }
   .db-tl li::before { content:""; position:absolute; inset-inline-start:-18px; top:7px; width:9px; height:9px; border-radius:50%; background: var(--gold); border: 2px solid var(--card); box-sizing: content-box; margin-inline-start: -1px; }
-  .pin-overlay { position: fixed; inset: 0; background: rgba(30,10,14,.62); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
-  .pin-box { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; width: 100%; max-width: 340px; box-shadow: 0 10px 40px rgba(0,0,0,.35); }
-  .pin-box h3 { font-family: Georgia, "Noto Serif Ethiopic", serif; font-size: 17px; font-weight: normal; margin: 0 0 8px; color: var(--maroon-dark); }
-  .pin-box label { display: block; font-size: 13px; margin: 12px 0 4px; }
-  .pin-box input { width: 100%; box-sizing: border-box; font-size: 22px; letter-spacing: 6px; text-align: center; padding: 10px; border: 1px solid var(--border); border-radius: 10px; background: #fff; }
-  .pin-box .pin-code { font-family: monospace; font-size: 22px; letter-spacing: 2px; text-align: center; background: var(--gold-bg); padding: 14px 8px; border-radius: 10px; margin: 12px 0; user-select: all; word-break: break-all; }
-  .pin-row { display: flex; gap: 8px; margin-top: 16px; }
-  .pin-forgot { background: none; border: none; color: var(--maroon); text-decoration: underline; padding: 0; margin-top: 12px; font-size: 13px; cursor: pointer; }
-  .hp-checks { display: grid; grid-template-columns: 1fr; gap: 2px; }
-  .hp-check { display: flex; align-items: center; gap: 8px; padding: 7px 0; font-size: 14px; border-bottom: 1px solid var(--border); }
-  .hp-check input { width: 18px; height: 18px; flex: none; }
-  .hp-q { border-bottom: 1px solid var(--border); padding: 10px 0; }
-  .hp-q summary { cursor: pointer; font-size: 14px; color: var(--maroon-dark); }
-  .hp-q p { margin: 8px 0 0; font-size: 13px; line-height: 1.6; color: var(--ink); }
-  .hp-btn { display: inline-block; background: var(--maroon); color: #fff; text-decoration: none; padding: 9px 16px; border-radius: 10px; font-size: 14px; margin-top: 4px; }
-  .dept-subs { display: flex; flex-wrap: wrap; gap: 6px; }
-  .dept-sub { font-size: 12px; background: var(--gold-bg); color: var(--maroon-dark); padding: 4px 9px; border-radius: 999px; }
-  #view-lock { position: fixed; inset: 0; z-index: 200; background: var(--maroon-dark); background-image: radial-gradient(circle at 50% 0%, rgba(226,193,112,.12), transparent 60%); display: flex; align-items: center; justify-content: center; padding: 20px; }
-  #view-lock.hidden { display: none; }
-  .vl-card { background: var(--card); border-radius: 18px; padding: 24px 22px; width: 100%; max-width: 360px; box-shadow: 0 12px 44px rgba(0,0,0,.4); text-align: center; }
-  .vl-card h1 { font-family: Georgia, "Noto Serif Ethiopic", serif; font-size: 20px; color: var(--maroon-dark); margin: 0 0 4px; }
-  .vl-card h3 { font-weight: normal; font-size: 15px; color: var(--muted); margin: 0 0 10px; }
-  .vl-card label { display: block; text-align: start; font-size: 13px; margin: 10px 0 4px; }
-  .vl-card select, .vl-card input { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid var(--border); border-radius: 10px; font-size: 15px; }
-  .vl-card input { text-align: center; letter-spacing: 6px; font-size: 22px; }
-  .vl-card button.primary { width: 100%; margin-top: 14px; }
 </style>
 </head>
 <body>
@@ -257,7 +230,6 @@
     <button data-tab="dashboard" class="active">ዳሽቦርድ</button>
     <button data-tab="dioceses">የሰ/ት/ቤቱ ጽሕፈት ቤት</button>
     <button data-tab="parishes">የሰ/ት/ቤቱ ቁጥጥር ክፍል</button>
-    <button data-tab="departments">ክፍላት</button>
     <button data-tab="members">አባላት</button>
     <button data-tab="students">ተማሪዎች</button>
     <button data-tab="teachers">መምህራን</button>
@@ -267,7 +239,6 @@
     <button data-tab="cert">ማረጋገጫ ሰነድ</button>
     <button data-tab="io">ውጤት እና ማስመጣት</button>
     <button data-tab="storage">ማከማቻና ምትኬ</button>
-    <button data-tab="help">እገዛና ቅንብሮች</button>
     <button data-tab="audit">ኦዲት ትሬል</button>
     <button data-tab="comms">ግንኙነት / ሪፖርት</button>
   </nav>
@@ -284,8 +255,6 @@
   <div id="tab-cert" class="tab hidden"></div>
   <div id="tab-io" class="tab hidden"></div>
   <div id="tab-storage" class="tab hidden"></div>
-  <div id="tab-help" class="tab hidden"></div>
-  <div id="tab-departments" class="tab hidden"></div>
   <div id="tab-audit" class="tab hidden"></div>
   <div id="tab-comms" class="tab hidden"></div>
 
@@ -302,7 +271,6 @@
 <button id="fb-fab" type="button" style="position:fixed;bottom:18px;right:18px;width:54px;height:54px;border-radius:50%;background:var(--maroon);color:#fff;border:none;font-size:22px;box-shadow:0 3px 10px rgba(0,0,0,0.3);z-index:50;cursor:pointer;">🐛</button>
 
 <div id="toast" role="status"></div>
-<div id="view-lock" class="hidden"></div>
 
 <div id="fb-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:60;">
   <div style="max-width:420px;margin:40px auto;background:var(--bg);border-radius:14px;padding:18px;max-height:85vh;overflow-y:auto;">
@@ -381,7 +349,7 @@
     common: {
       save: { am: "መዝግብ", en: "Save", om: "Galmeessi", ti: "መዝግብ", ar: "حفظ", fr: "Enregistrer", es: "Guardar" },      none: { am: "እስካሁን የተመዘገበ የለም", en: "None registered yet", om: "Hanga ammaatti wanti hin galmoofne", ti: "ክሳብ ሕጂ ዝተመዝገበ የለን", ar: "لم يتم تسجيل أي شيء بعد", fr: "Rien n'a encore été enregistré", es: "Aún no se ha registrado nada" },      male: { am: "ወንድ", en: "Male", om: "Dhiira", ti: "ተባዕታይ", ar: "ذكر", fr: "Homme", es: "Hombre" },      female: { am: "ሴት", en: "Female", om: "Dubara", ti: "ኣንስተይቲ", ar: "أنثى", fr: "Femme", es: "Mujer" },      selectPlaceholder: { am: "ይምረጡ", en: "Select", om: "Filadhu", ti: "ምረጹ", ar: "اختر", fr: "Sélectionner", es: "Seleccionar" },      codeLabel: { am: "የመለያ ቁጥር", en: "Registration Code", om: "Lakkoofsa Galmee", ti: "ቁጽሪ ምዝገባ", ar: "رقم التسجيل", fr: "Numéro d'enregistrement", es: "Número de registro" },      synced: { am: "ተልኳል", en: "Synced", om: "Ergameera", ti: "ተልኢኹ", ar: "تمت المزامنة", fr: "Synchronisé", es: "Sincronizado" },      pending: { am: "ያልተላከ", en: "Pending", om: "Hin ergamne", ti: "ዘይተለኣኸ", ar: "قيد الانتظار", fr: "En attente", es: "Pendiente" }    },
     dio: {
-      newTitle:        { am: "አዲስ የሰ/ት/ቤቱ ጽሕፈት ቤት መዝግብ", en: "Register a New Parish Office", om: "Waajjira Waldaa Haaraa Galmeessi", ti: "ሓድሽ ቤ/ጽ ኣጥቢያ መዝግብ", ar: "تسجيل مكتب رعية جديد", fr: "Enregistrer un nouveau bureau paroissial", es: "Registrar una nueva oficina parroquial" },      nameLabel:       { am: "የሰ/ት/ቤቱ ጽሕፈት ቤት ስም", en: "Parish Office Name", om: "Maqaa Waajjira Waldaa", ti: "ስም ቤ/ጽ ኣጥቢያ", ar: "اسم مكتب الرعية", fr: "Nom du bureau paroissial", es: "Nombre de la oficina parroquial" },      namePlaceholder: { am: "የየደብሩ ጽሕፈት ቤቱን ስም ያስገቡ", en: "Enter Parish Office name", om: "Maqaa Waajjira Waldaa galchi", ti: "ስም ቤ/ጽ ኣጥቢያ የእቱ", ar: "أدخل اسم مكتب الرعية", fr: "Entrez le nom du bureau paroissial", es: "Ingrese el nombre de la oficina parroquial" },      nameErr:         { am: "እባክዎ ስም ያስገቡ", en: "Please enter a name", om: "Maaloo maqaa galchaa", ti: "በጃኹም ስም የእትዉ", ar: "الرجاء إدخال الاسم", fr: "Veuillez entrer un nom", es: "Por favor ingrese un nombre" },      lockMsg:         { am: "የ %ROLE% ሚና የሰ/ት/ቤቱ ጽሕፈት ቤት መመዝገብ አይፈቀድለትም — ይህ የባለቤት (የደብሩ ሰ/ት/ቤት) ስልጣን ብቻ ነው።", en: "The %ROLE% role may not register a Parish Office — this is the Owner's (Parish Sunday School) authority only.", om: "Gaheen %ROLE% Waajjira Waldaa galmeessuu hin danda'u — kun mirga Abbaa Qabeenyaa (Waajjira Waldaa) qofa.", ti: "ግደ %ROLE% ቤ/ጽ ኣጥቢያ ምምዝጋብ ኣይፍቀዶን እዩ — እዚ ናይ ወናኒ (ት/ቤት ሰንበት ኣጥቢያ) ስልጣን ጥራይ እዩ።", ar: "لا يُسمح لدور %ROLE% بتسجيل مكتب رعية — هذه صلاحية المالك (مدرسة الأحد بالرعية) فقط.", fr: "Le rôle %ROLE% n'est pas autorisé à enregistrer un bureau paroissial — prérogative exclusive du Propriétaire (École du dimanche paroissiale).", es: "El rol %ROLE% no puede registrar una oficina parroquial — esto es exclusivo del Propietario (Escuela Dominical parroquial)." },      registeredTitle: { am: "የተመዘገቡ የደብሩ ጽሕፈት ቤቶች", en: "Registered Parish Offices", om: "Waajjira Waldaa Galmaa'an", ti: "ዝተመዝገቡ ቤ/ጽ ኣጥቢያታት", ar: "مكاتب الرعايا المسجلة", fr: "Bureaux paroissiaux enregistrés", es: "Oficinas parroquiales registradas" }    },
+      newTitle:        { am: "አዲስ የሰ/ት/ቤቱ ጽሕፈት ቤት መዝግብ", en: "Register a New Parish Office", om: "Waajjira Waldaa Haaraa Galmeessi", ti: "ሓድሽ ቤ/ጽ ኣጥቢያ መዝግብ", ar: "تسجيل مكتب رعية جديد", fr: "Enregistrer un nouveau bureau paroissial", es: "Registrar una nueva oficina parroquial" },      nameLabel:       { am: "የየሰ/ት/ቤቱ ጽሕፈት ቤት ስም", en: "Parish Office Name", om: "Maqaa Waajjira Waldaa", ti: "ስም ቤ/ጽ ኣጥቢያ", ar: "اسم مكتب الرعية", fr: "Nom du bureau paroissial", es: "Nombre de la oficina parroquial" },      namePlaceholder: { am: "የየደብሩ ጽሕፈት ቤቱን ስም ያስገቡ", en: "Enter Parish Office name", om: "Maqaa Waajjira Waldaa galchi", ti: "ስም ቤ/ጽ ኣጥቢያ የእቱ", ar: "أدخل اسم مكتب الرعية", fr: "Entrez le nom du bureau paroissial", es: "Ingrese el nombre de la oficina parroquial" },      nameErr:         { am: "እባክዎ ስም ያስገቡ", en: "Please enter a name", om: "Maaloo maqaa galchaa", ti: "በጃኹም ስም የእትዉ", ar: "الرجاء إدخال الاسم", fr: "Veuillez entrer un nom", es: "Por favor ingrese un nombre" },      lockMsg:         { am: "የ %ROLE% ሚና የሰ/ት/ቤቱ ጽሕፈት ቤት መመዝገብ አይፈቀድለትም — ይህ የባለቤት (የደብሩ ሰ/ት/ቤት) ስልጣን ብቻ ነው።", en: "The %ROLE% role may not register a Parish Office — this is the Owner's (Parish Sunday School) authority only.", om: "Gaheen %ROLE% Waajjira Waldaa galmeessuu hin danda'u — kun mirga Abbaa Qabeenyaa (Waajjira Waldaa) qofa.", ti: "ግደ %ROLE% ቤ/ጽ ኣጥቢያ ምምዝጋብ ኣይፍቀዶን እዩ — እዚ ናይ ወናኒ (ት/ቤት ሰንበት ኣጥቢያ) ስልጣን ጥራይ እዩ።", ar: "لا يُسمح لدور %ROLE% بتسجيل مكتب رعية — هذه صلاحية المالك (مدرسة الأحد بالرعية) فقط.", fr: "Le rôle %ROLE% n'est pas autorisé à enregistrer un bureau paroissial — prérogative exclusive du Propriétaire (École du dimanche paroissiale).", es: "El rol %ROLE% no puede registrar una oficina parroquial — esto es exclusivo del Propietario (Escuela Dominical parroquial)." },      registeredTitle: { am: "የተመዘገቡ የደብሩ ጽሕፈት ቤቶች", en: "Registered Parish Offices", om: "Waajjira Waldaa Galmaa'an", ti: "ዝተመዝገቡ ቤ/ጽ ኣጥቢያታት", ar: "مكاتب الرعايا المسجلة", fr: "Bureaux paroissiaux enregistrés", es: "Oficinas parroquiales registradas" }    },
     par: {
       needDiocese:     { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍል ከመመዝገብዎ በፊት ቢያንስ አንድ የሰ/ት/ቤቱ ጽሕፈት ቤት መመዝገብ ያስፈልጋል።", en: "You must register at least one Parish Office before registering a Sunday School Control Section.", om: "Kutaa To'annoo Mana Barnoota Sanbataa galmeessuun dura yoo xiqqaate Waajjira Waldaa tokko galmeessuun dirqama.", ti: "ክፍሊ ቁጽጽር ት/ቤት ሰንበት ቅድሚ ምምዝጋብኩም ብውሑዱ ሓደ ቤ/ጽ ኣጥቢያ ክትምዝግቡ ኣለኩም።", ar: "يجب تسجيل مكتب رعية واحد على الأقل قبل تسجيل قسم مراقبة مدرسة الأحد.", fr: "Vous devez enregistrer au moins un bureau paroissial avant d'enregistrer une section de contrôle de l'école du dimanche.", es: "Debe registrar al menos una oficina parroquial antes de registrar una sección de control de la escuela dominical." },      newTitle:        { am: "አዲስ የሰ/ት/ቤቱ ቁጥጥር ክፍል መዝግብ", en: "Register a New Sunday School Control Section", om: "Kutaa To'annoo Mana Barnoota Sanbataa Haaraa Galmeessi", ti: "ሓድሽ ክፍሊ ቁጽጽር ት/ቤት ሰንበት መዝግብ", ar: "تسجيل قسم مراقبة مدرسة الأحد جديد", fr: "Enregistrer une nouvelle section de contrôle de l'école du dimanche", es: "Registrar una nueva sección de control de la escuela dominical" },      dioceseLabel:    { am: "ንብረት የሰ/ት/ቤቱ ጽሕፈት ቤት", en: "Belongs to Parish Office", om: "Waajjira Waldaa Keessatti Argamu", ti: "ናይ ቤ/ጽ ኣጥቢያ", ar: "مكتب الرعية التابعة", fr: "Bureau paroissial d'appartenance", es: "Oficina parroquial a la que pertenece" },      nameLabel:       { am: "የየሰ/ት/ቤቱ ቁጥጥር ክፍል ስም", en: "Sunday School Control Section Name", om: "Maqaa Kutaa To'annoo Mana Barnoota Sanbataa", ti: "ስም ክፍሊ ቁጽጽር ት/ቤት ሰንበት", ar: "اسم قسم مراقبة مدرسة الأحد", fr: "Nom de la section de contrôle de l'école du dimanche", es: "Nombre de la sección de control de la escuela dominical" },      namePlaceholder: { am: "የየሰ/ት/ቤቱ ቁጥጥር ክፍልውን ስም ያስገቡ", en: "Enter Sunday School Control Section name", om: "Maqaa Kutaa To'annoo Mana Barnoota Sanbataa galchi", ti: "ስም ክፍሊ ቁጽጽር ት/ቤት ሰንበት የእቱ", ar: "أدخل اسم قسم مراقبة مدرسة الأحد", fr: "Entrez le nom de la section de contrôle de l'école du dimanche", es: "Ingrese el nombre de la sección de control de la escuela dominical" },      titleLabel:      { am: "ልዩ መጠሪያ (አማራጭ)", en: "Special Title (optional)", om: "Maqaa Addaa (filannoo)", ti: "ፍሉይ መጸውዒ (ኣማራጺ)", ar: "لقب خاص (اختياري)", fr: "Titre spécial (facultatif)", es: "Título especial (opcional)" },      titlePlaceholder:{ am: "ካለ ያስገቡ", en: "Enter if any", om: "Yoo jiraate galchi", ti: "እንተሎ የእቱ", ar: "أدخل إن وجد", fr: "Entrez le cas échéant", es: "Ingrese si corresponde" },      foundedLabel:    { am: "የተመሰረተበት ዓመት", en: "Year Founded", om: "Bara Hundeeffame", ti: "ዓመተ ምስረታ", ar: "سنة التأسيس", fr: "Année de fondation", es: "Año de fundación" },      foundedPlaceholder: { am: "ለምሳሌ 1975 ዓ.ም", en: "e.g. 1975 EC", om: "fkn 1975 ALI", ti: "ኣብነት 1975 ዓ.ም", ar: "مثال: 1975 هـ.إ", fr: "ex. 1975 EC", es: "ej. 1975 CE" },      errAll:          { am: "እባክዎ ሁሉንም ያስፈልጋሉ የተባሉ መስኮች ይሙሉ", en: "Please fill in all required fields", om: "Maaloo dirreewwan barbaachisoo hunda guuti", ti: "በጃኹም ኩሎም ዘድልዩ ሜዳታት መልእዎም", ar: "يرجى ملء جميع الحقول المطلوبة", fr: "Veuillez remplir tous les champs requis", es: "Por favor complete todos los campos requeridos" },      lockMsg:         { am: "የ %ROLE% ሚና አዲስ የሰ/ት/ቤቱ ቁጥጥር ክፍል መመዝገብ አይፈቀድለትም።", en: "The %ROLE% role is not allowed to register a new Sunday School Control Section.", om: "Gaheen %ROLE% Kutaa To'annoo Mana Barnoota Sanbataa haaraa galmeessuu hin danda'u.", ti: "ግደ %ROLE% ሓድሽ ክፍሊ ቁጽጽር ት/ቤት ሰንበት ምምዝጋብ ኣይፍቀዶን።", ar: "لا يُسمح لدور %ROLE% بتسجيل قسم مراقبة مدرسة الأحد جديد.", fr: "Le rôle %ROLE% n'est pas autorisé à enregistrer une nouvelle section de contrôle de l'école du dimanche.", es: "El rol %ROLE% no tiene permitido registrar una nueva sección de control de la escuela dominical." },      registeredTitle: { am: "የተመዘገቡ የሰ/ት/ቤቱ ቁጥጥር ክፍልዎች", en: "Registered Sunday School Control Sections", om: "Kutaalee To'annoo Mana Barnoota Sanbataa Galmaa'an", ti: "ዝተመዝገቡ ክፍልታት ቁጽጽር ት/ቤት ሰንበት", ar: "أقسام مراقبة مدرسة الأحد المسجلة", fr: "Sections de contrôle de l'école du dimanche enregistrées", es: "Secciones de Control de la Escuela Dominical registradas" }    },
     mem: {
@@ -528,127 +496,6 @@
   STRINGS.les.noteText = { am: "ተማሪዎች ትምህርትን በኦዲዮ እና ቪዲዮ መልክ በደረጃቸው ተከፋፍሎ እዚህ ማግኘት ይችላሉ። ማገናኛ መጨመር ወይም ከስልክ/ኮምፒውተር ፋይል መጫን ይቻላል።", en: "Students can find lessons here in audio and video form, organized by level. You can add a link or upload a file from your phone or computer.", om: "Barattoonni barnoota sagalee fi viidiyoodhaan sadarkaa isaaniitiin as argachuu danda'u. Hidhannoo dabaluu ykn faayilii bilbila/kompiitara irraa fe'uu dandeessu.", ti: "ተመሃሮ ትምህርቲ ብድምጺን ቪድዮን ብደረጃኦም ተመቓቒሉ ኣብዚ ክረኽቡ ይኽእሉ። ማላገጺ ምውሳኽ ወይ ካብ ተሌፎን/ኮምፒተር ፋይል ምጽዓን ይከኣል።", ar: "يمكن للطلاب العثور على الدروس هنا بالصوت والفيديو مرتبة حسب مستواهم. يمكنك إضافة رابط أو رفع ملف من الهاتف أو الحاسوب.", fr: "Les élèves trouvent ici les leçons en audio et vidéo, classées par niveau. Vous pouvez ajouter un lien ou téléverser un fichier depuis le téléphone ou l'ordinateur.", es: "Los estudiantes encuentran aquí las lecciones en audio y vídeo, por nivel. Puede añadir un enlace o subir un archivo desde el teléfono o el ordenador." };
   STRINGS.doc.noteText = { am: "ይህ ክፍል የሰ/ት/ቤቱን ውስጠ ደንብ፣ መመሪያዎች እና ሌላ ማንኛውም ማጣቀሻ ሰነድ/መረጃ ለሁሉም ተጠቃሚዎች ክፍት አድርጎ የሚያቀርብ ማህደር (archive) ነው። ጽሑፍ መጻፍ ወይም ፋይል (PDF፣ Word፣ ምስል…) ማያያዝ ይቻላል።", en: "This section is an archive offering the Sunday school's bylaws, directives, and any other reference document/info to all users. You can write text or attach a file (PDF, Word, image…).", om: "Kutaan kun kuusaa sanada seera-keessaa, qajeelfamootaa fi odeeffannoo biroo fayyadamtoota hundaaf saaqu dha. Barreeffama barreessuu ykn faayilii (PDF, Word, suuraa…) maxxansuu dandeessu.", ti: "እዚ ክፋል ውሽጠ ደንቢ፣ መምርሒታትን ካልኦት ናይ ጠቓሽነት ሰነዳትን ንኩሎም ተጠቀምቲ ዘቕርብ መዝገብ እዩ። ጽሑፍ ምጽሓፍ ወይ ፋይል (PDF፣ Word፣ ስእሊ…) ምጥባቕ ይከኣል።", ar: "هذا القسم أرشيف يعرض لوائح مدرسة الأحد وتوجيهاتها وأي وثيقة مرجعية أخرى لجميع المستخدمين. يمكنك كتابة نص أو إرفاق ملف (PDF أو Word أو صورة…).", fr: "Cette section est une archive qui met à disposition de tous le règlement, les directives et tout autre document de référence de l'école du dimanche. Vous pouvez écrire du texte ou joindre un fichier (PDF, Word, image…).", es: "Esta sección es un archivo que ofrece a todos el reglamento, las directrices y cualquier otro documento de referencia de la escuela dominical. Puede escribir texto o adjuntar un archivo (PDF, Word, imagen…)." };
 
-  // ---------- strings for the PIN security ----------
-  STRINGS.pin = {
-    ok: { am: "እሺ", en: "OK", om: "Tole", ti: "ሕራይ", ar: "موافق", fr: "OK", es: "Aceptar" },
-    pinLabel: { am: "PIN (4–6 አኃዝ)", en: "PIN (4–6 digits)", om: "PIN (lakkoofsa 4–6)", ti: "PIN (4–6 ቁጽሪ)", ar: "PIN (4–6 أرقام)", fr: "PIN (4 à 6 chiffres)", es: "PIN (4–6 dígitos)" },
-    confirmLabel: { am: "PIN እንደገና ያስገቡ", en: "Enter the PIN again", om: "PIN irra deebi'ii galchi", ti: "PIN ደጊም የእትዉ", ar: "أعد إدخال PIN", fr: "Saisissez à nouveau le PIN", es: "Introduzca el PIN otra vez" },
-    enterFor: { am: "የ%ROLE% PIN ያስገቡ", en: "Enter the PIN for %ROLE%", om: "PIN %ROLE% galchi", ti: "PIN ናይ %ROLE% የእትዉ", ar: "أدخل PIN لـ %ROLE%", fr: "Saisissez le PIN pour %ROLE%", es: "Introduzca el PIN de %ROLE%" },
-    deleteTitle: { am: "ለመሰረዝ PIN ያስገቡ", en: "Enter your PIN to delete", om: "Haquuf PIN galchi", ti: "ንምድምሳስ PIN የእትዉ", ar: "أدخل PIN للحذف", fr: "Saisissez votre PIN pour supprimer", es: "Introduzca su PIN para eliminar" },
-    createTitle: { am: "ለ%ROLE% PIN ይፍጠሩ", en: "Create a PIN for %ROLE%", om: "%ROLE%f PIN uumi", ti: "ን%ROLE% PIN ፍጠሩ", ar: "أنشئ PIN لـ %ROLE%", fr: "Créez un PIN pour %ROLE%", es: "Cree un PIN para %ROLE%" },
-    createNote: { am: "ከ4 እስከ 6 አኃዝ ይምረጡ። ለሌላ ሰው አይንገሩ።", en: "Choose 4 to 6 digits. Don't share it with anyone.", om: "Lakkoofsa 4 hanga 6 filadhu. Nama kamiyyuu hin himin.", ti: "ካብ 4 ክሳብ 6 ቁጽሪ ምረጹ። ንካልእ ሰብ ኣይትንገሩ።", ar: "اختر من 4 إلى 6 أرقام ولا تشاركها مع أحد.", fr: "Choisissez 4 à 6 chiffres. Ne le partagez avec personne.", es: "Elija de 4 a 6 dígitos. No lo comparta con nadie." },
-    wrong: { am: "PIN ትክክል አይደለም", en: "Wrong PIN", om: "PIN sirrii miti", ti: "PIN ቅኑዕ ኣይኮነን", ar: "PIN غير صحيح", fr: "PIN incorrect", es: "PIN incorrecto" },
-    locked: { am: "ብዙ ጊዜ ተሳስተዋል። ከ%S% ሰከንድ በኋላ ይሞክሩ።", en: "Too many wrong attempts. Try again in %S% seconds.", om: "Yeroo hedduu dogoggore. Sekondii %S% booda yaali.", ti: "ብዙሕ ግዜ ጌጋ ኮይኑ። ድሕሪ %S% ሰከንድ ፈትኑ።", ar: "محاولات خاطئة كثيرة. حاول بعد %S% ثانية.", fr: "Trop d'essais erronés. Réessayez dans %S% secondes.", es: "Demasiados intentos fallidos. Inténtelo en %S% segundos." },
-    mismatch: { am: "ሁለቱ PIN አይመሳሰሉም", en: "The two PINs don't match", om: "PIN lamaan wal hin fakkaatan", ti: "እቶም ክልተ PIN ኣይመሳሰሉን", ar: "الـ PIN غير متطابقين", fr: "Les deux PIN ne correspondent pas", es: "Los dos PIN no coinciden" },
-    badFormat: { am: "PIN ከ4 እስከ 6 አኃዝ መሆን አለበት", en: "The PIN must be 4 to 6 digits", om: "PIN lakkoofsa 4 hanga 6 ta'uu qaba", ti: "PIN ካብ 4 ክሳብ 6 ቁጽሪ ክኸውን ኣለዎ", ar: "يجب أن يتكون PIN من 4 إلى 6 أرقام", fr: "Le PIN doit comporter 4 à 6 chiffres", es: "El PIN debe tener de 4 a 6 dígitos" },
-    ownerNeeded: { am: "ይህን ለማድረግ የባለቤቱ PIN ያስፈልጋል", en: "The Owner's PIN is needed for this", om: "Kanaaf PIN abbaa qabeenyaa barbaachisa", ti: "ነዚ ንምግባር PIN ናይ ባዕልቲ ቤት የድሊ", ar: "يلزم PIN المالك لهذا", fr: "Le PIN du propriétaire est nécessaire", es: "Se necesita el PIN del propietario" },
-    forgot: { am: "PIN ረሱ?", en: "Forgot PIN?", om: "PIN irraanfattee?", ti: "PIN ረሲዕኩም?", ar: "نسيت PIN؟", fr: "PIN oublié ?", es: "¿Olvidó el PIN?" },
-    recoveryEnter: { am: "የመመለሻ ኮድ ያስገቡ", en: "Enter the recovery code", om: "Koodii deebisuu galchi", ti: "ኮድ መመለሲ የእትዉ", ar: "أدخل رمز الاستعادة", fr: "Saisissez le code de récupération", es: "Introduzca el código de recuperación" },
-    recoveryBad: { am: "ኮዱ ትክክል አይደለም", en: "The code is not correct", om: "Koodiin sirrii miti", ti: "እቲ ኮድ ቅኑዕ ኣይኮነን", ar: "الرمز غير صحيح", fr: "Le code n'est pas correct", es: "El código no es correcto" },
-    noRecovery: { am: "የመመለሻ ኮድ አልተዘጋጀም", en: "No recovery code has been created", om: "Koodiin deebisuu hin uumamne", ti: "ኮድ መመለሲ ኣይተዳልወን", ar: "لم يتم إنشاء رمز استعادة", fr: "Aucun code de récupération n'a été créé", es: "No se ha creado un código de recuperación" },
-    codeTitle: { am: "የመመለሻ ኮድዎ", en: "Your recovery code", om: "Koodii deebisuu keessan", ti: "ኮድ መመለሲኹም", ar: "رمز الاستعادة الخاص بك", fr: "Votre code de récupération", es: "Su código de recuperación" },
-    codeNote: { am: "ይህን ኮድ አሁን ይጻፉት፤ እንደገና አይታይም። PIN ከረሱ ይህ ብቻ ይረዳል።", en: "Write this code down now — it will not be shown again. If you forget the PIN, only this code can help.", om: "Koodii kana amma barreessaa; ammas hin mul'atu. PIN yoo irraanfattan kun qofa isin gargaara.", ti: "ነዚ ኮድ ሕጂ ጸሓፉዎ፤ ደጊም ኣይርአይን። PIN እንተ ረሲዕኩም እዚ ጥራይ የሕግዝ።", ar: "اكتب هذا الرمز الآن — لن يظهر مرة أخرى. إذا نسيت PIN فهذا الرمز وحده ينفعك.", fr: "Notez ce code maintenant — il ne sera plus affiché. Si vous oubliez le PIN, seul ce code peut aider.", es: "Anote este código ahora: no se volverá a mostrar. Si olvida el PIN, solo este código puede ayudar." },
-    codeDone: { am: "ጽፌዋለሁ", en: "I wrote it down", om: "Barreesseera", ti: "ጽሒፈዮ", ar: "كتبته", fr: "Je l'ai noté", es: "Lo he anotado" },
-    saved: { am: "PIN ተቀምጧል", en: "PIN saved", om: "PIN kuufameera", ti: "PIN ተዓቂቡ", ar: "تم حفظ PIN", fr: "PIN enregistré", es: "PIN guardado" },
-    secTitle: { am: "ደህንነት (PIN)", en: "Security (PIN)", om: "Nageenya (PIN)", ti: "ድሕንነት (PIN)", ar: "الأمان (PIN)", fr: "Sécurité (PIN)", es: "Seguridad (PIN)" },
-    secNote: { am: "PIN ሲዘጋጅ መተግበሪያው በ«ተመልካች» ሁኔታ ይከፈታል፤ ለማስተካከል ሚናዎን መርጠው PIN ያስገባሉ። ማንኛውንም ነገር መሰረዝም PIN ይጠይቃል። ይህ የስልክ መቆለፊያ ዓይነት ጥበቃ ነው።", en: "Once a PIN is set, the app opens in view-only mode; to make changes you choose your role and enter its PIN. Deleting anything also asks for the PIN. This is a phone-lock style protection.", om: "PIN yoo qophaa'e, appiin haala ilaaluu qofaan banama; jijjiiruuf gahee keessan filatanii PIN galchitu. Waan hunda haquun PIN gaafata. Kun eegumsa kan cufaa bilbilaa fakkaata.", ti: "PIN ምስ ዝዳለው እቲ ኣፕሊኬሽን ብ«ተዓዛቢ» ኩነታት ይኸፈት፤ ንምእራም ግደኹም መሪጽኩም PIN የእትዉ። ዝኾነ ነገር ምድምሳስ እውን PIN የድሊ። እዚ ከም መዕጸዊ ተሌፎን ዝኣመሰለ ሓለዋ እዩ።", ar: "بعد تعيين PIN يُفتح التطبيق في وضع العرض فقط؛ لإجراء تغييرات تختار دورك وتدخل PIN الخاص به. وحذف أي شيء يطلب PIN أيضًا. هذه حماية بأسلوب قفل الهاتف.", fr: "Une fois un PIN défini, l'application s'ouvre en lecture seule ; pour modifier, choisissez votre rôle et saisissez son PIN. Toute suppression demande aussi le PIN. C'est une protection de type verrouillage de téléphone.", es: "Una vez definido un PIN, la aplicación se abre en modo solo lectura; para hacer cambios elija su rol e introduzca su PIN. Eliminar algo también pide el PIN. Es una protección del tipo bloqueo de teléfono." },
-    statusSet: { am: "ተዘጋጅቷል", en: "Set", om: "Qophaa'eera", ti: "ተዳልዩ", ar: "مُعيَّن", fr: "Défini", es: "Definido" },
-    statusNotSet: { am: "ገና አልተዘጋጀም", en: "Not set yet", om: "Hin qophaa'ne", ti: "ገና ኣይተዳልወን", ar: "غير معيَّن بعد", fr: "Pas encore défini", es: "Aún sin definir" },
-    setBtn: { am: "PIN ፍጠር", en: "Create PIN", om: "PIN uumi", ti: "PIN ፍጠር", ar: "إنشاء PIN", fr: "Créer un PIN", es: "Crear PIN" },
-    changeBtn: { am: "PIN ቀይር", en: "Change PIN", om: "PIN jijjiiri", ti: "PIN ቀይር", ar: "تغيير PIN", fr: "Changer le PIN", es: "Cambiar PIN" },
-    clearBtn: { am: "PIN አጽዳ", en: "Clear PIN", om: "PIN haqi", ti: "PIN ኣጽሪ", ar: "مسح PIN", fr: "Effacer le PIN", es: "Borrar PIN" },
-    currentPin: { am: "አሁን ያለውን PIN ያስገቡ", en: "Enter the current PIN", om: "PIN amma jiru galchi", ti: "ሕጂ ዘሎ PIN የእትዉ", ar: "أدخل PIN الحالي", fr: "Saisissez le PIN actuel", es: "Introduzca el PIN actual" },
-    recoveryBtn: { am: "አዲስ የመመለሻ ኮድ ፍጠር", en: "Create a new recovery code", om: "Koodii deebisuu haaraa uumi", ti: "ሓዲሽ ኮድ መመለሲ ፍጠር", ar: "إنشاء رمز استعادة جديد", fr: "Créer un nouveau code de récupération", es: "Crear un nuevo código de recuperación" },
-    nudgeTitle: { am: "መረጃዎን በPIN ይጠብቁ", en: "Protect your data with a PIN", om: "Odeeffannoo keessan PIN'n eegaa", ti: "ሓበሬታኹም ብ PIN ሓልዉ", ar: "احمِ بياناتك بـ PIN", fr: "Protégez vos données avec un PIN", es: "Proteja sus datos con un PIN" },
-    nudgeText: { am: "ሰው ስልክዎን ቢይዝ በስህተትም ሆነ በፈቃድ ማስተካከልና መሰረዝ እንዳይችል PIN ይፍጠሩ።", en: "Create a PIN so no one who picks up your phone can change or delete anything.", om: "PIN uumaa; namni bilbila keessan qabate homaa jijjiiruu ykn haquu akka hin dandeenye.", ti: "ሰብ ተሌፎንኩም እንተ ኣሕዘ ዝኾነ ነገር ከይቐይር ወይ ከየጥፍእ PIN ፍጠሩ።", ar: "أنشئ PIN حتى لا يستطيع أي شخص يمسك هاتفك تغيير أو حذف أي شيء.", fr: "Créez un PIN pour que personne ne puisse rien modifier ni supprimer avec votre téléphone.", es: "Cree un PIN para que nadie que tome su teléfono pueda cambiar o eliminar nada." },
-    viewerNote: { am: "አሁን «ተመልካች» ሁኔታ ላይ ነዎት፤ ማየት ብቻ ይችላሉ። ለማስተካከል ከላይ ሚናዎን ይምረጡ።", en: "You are in view-only mode. To make changes, choose your role at the top.", om: "Amma haala ilaaluu qofa irra jirtu. Jijjiiruuf gahee keessan olitti filadhu.", ti: "ሕጂ ኣብ «ተዓዛቢ» ኩነታት ኢኹም፤ ምርኣይ ጥራይ ትኽእሉ። ንምእራም ግድኹም ኣብ ላዕሊ ምረጹ።", ar: "أنت في وضع العرض فقط. لإجراء تغييرات اختر دورك من الأعلى.", fr: "Vous êtes en lecture seule. Pour modifier, choisissez votre rôle en haut.", es: "Está en modo solo lectura. Para hacer cambios, elija su rol arriba." },
-    autoLocked: { am: "ለደህንነት ወደ «ተመልካች» ተመልሷል", en: "Locked to view-only for safety", om: "Nageenyaaf gara ilaaluu qofaatti deebi'e", ti: "ንድሕንነት ናብ «ተዓዛቢ» ተመሊሱ", ar: "تم القفل إلى وضع العرض للأمان", fr: "Verrouillé en lecture seule par sécurité", es: "Bloqueado en solo lectura por seguridad" },
-  };
-
-  // ---------- strings for help, settings and sharing ----------
-  STRINGS.hp = {
-    prefTitle: { am: "ቅንብሮች", en: "Settings", om: "Qindaa'ina", ti: "ቅጥዕታት", ar: "الإعدادات", fr: "Paramètres", es: "Ajustes" },
-    textSize: { am: "የጽሑፍ መጠን", en: "Text size", om: "Guddina barreeffamaa", ti: "ዓቐን ጽሑፍ", ar: "حجم النص", fr: "Taille du texte", es: "Tamaño del texto" },
-    sizeNormal: { am: "መደበኛ", en: "Normal", om: "Idilee", ti: "ንቡር", ar: "عادي", fr: "Normale", es: "Normal" },
-    sizeLarge: { am: "ትልቅ", en: "Large", om: "Guddaa", ti: "ዓቢ", ar: "كبير", fr: "Grande", es: "Grande" },
-    sizeXl: { am: "እጅግ ትልቅ", en: "Extra large", om: "Baayʼee guddaa", ti: "ኣዝዩ ዓቢ", ar: "كبير جدًا", fr: "Très grand", es: "Muy grande" },
-    tabsTitle: { am: "የሚታዩ ትሮች", en: "Visible tabs", om: "Gabatee mul'atan", ti: "ዝረኣዩ ትሮታት", ar: "التبويبات المرئية", fr: "Onglets visibles", es: "Pestañas visibles" },
-    tabsNote: { am: "የማይጠቀሙባቸውን ትሮች ምልክቱን በማንሳት ይደብቁ። ዳሽቦርድ፣ ማከማቻና ምትኬ እና እገዛ ሁልጊዜ ይታያሉ።", en: "Untick the tabs you don't use to hide them. Dashboard, Storage & Backup and Help are always shown.", om: "Gabatee hin fayyadamne mallattoo irraa buusuun dhoksi. Gabatee Ijaarsaa, Kuusaa fi Waraabbii, fi Gargaarsi yeroo hundaa ni mul'atu.", ti: "ዘይትጥቀሙሎም ትሮታት ምልክቱ ብምውሳድ ሕብኡ። ዳሽቦርድ፣ ማኽዘንን ምትኬን ሓገዝን ወትሩ ይረኣዩ።", ar: "ألغِ تحديد التبويبات التي لا تستخدمها لإخفائها. تظهر دائمًا لوحة التحكم والتخزين والنسخ الاحتياطي والمساعدة.", fr: "Décochez les onglets inutilisés pour les masquer. Tableau de bord, Stockage et sauvegarde et Aide restent toujours visibles.", es: "Desmarque las pestañas que no use para ocultarlas. Panel, Almacenamiento y copias y Ayuda siempre se muestran." },
-    showAll: { am: "ሁሉንም አሳይ", en: "Show all", om: "Hunda agarsiisi", ti: "ኩሉ ኣርኢ", ar: "إظهار الكل", fr: "Tout afficher", es: "Mostrar todo" },
-    aboutTitle: { am: "ስለ መተግበሪያው", en: "About the app", om: "Waa'ee appii", ti: "ብዛዕባ እቲ ኣፕሊኬሽን", ar: "حول التطبيق", fr: "À propos de l'application", es: "Acerca de la aplicación" },
-    versionLine: { am: "ስሪት %V%", en: "Version %V%", om: "Gulaalata %V%", ti: "እትመት %V%", ar: "الإصدار %V%", fr: "Version %V%", es: "Versión %V%" },
-    modeInstalled: { am: "እንደ መተግበሪያ ተጭኗል", en: "Installed as an app", om: "Akka appiitti kaa'ameera", ti: "ከም ኣፕሊኬሽን ተጎሚዱ", ar: "مثبّت كتطبيق", fr: "Installée comme application", es: "Instalada como aplicación" },
-    modeBrowser: { am: "በአሳሽ ውስጥ እየተከፈተ ነው", en: "Running in the browser", om: "Biraawzarii keessatti banameera", ti: "ኣብ ብሮውዘር ይኽፈት ኣሎ", ar: "يعمل في المتصفح", fr: "S'exécute dans le navigateur", es: "Ejecutándose en el navegador" },
-    checkBtn: { am: "ዝማኔ ፈልግ", en: "Check for updates", om: "Haaromsa barbaadi", ti: "ምሕዳስ ድለይ", ar: "التحقق من التحديثات", fr: "Rechercher des mises à jour", es: "Buscar actualizaciones" },
-    checking: { am: "በመፈተሽ ላይ…", en: "Checking…", om: "Ilaalaa jira…", ti: "ይፍትሽ ኣሎ…", ar: "جارٍ التحقق…", fr: "Vérification…", es: "Comprobando…" },
-    upToDate: { am: "የመጨረሻው ስሪት አለዎት ✓", en: "You have the latest version ✓", om: "Gulaalata dhumaa qabdu ✓", ti: "እቲ ናይ መወዳእታ እትመት ኣለኩም ✓", ar: "لديك أحدث إصدار ✓", fr: "Vous avez la dernière version ✓", es: "Tiene la última versión ✓" },
-    newVersion: { am: "አዲስ ስሪት (%V%) አለ", en: "A new version (%V%) is available", om: "Gulaalatni haaraan (%V%) jira", ti: "ሓድሽ እትመት (%V%) ኣሎ", ar: "يتوفر إصدار جديد (%V%)", fr: "Une nouvelle version (%V%) est disponible", es: "Hay una nueva versión (%V%)" },
-    updateNow: { am: "አሁን አዘምን", en: "Update now", om: "Amma haaromsi", ti: "ሕጂ ኣሐድስ", ar: "حدّث الآن", fr: "Mettre à jour maintenant", es: "Actualizar ahora" },
-    checkFail: { am: "መፈተሽ አልተቻለም፤ ኢንተርኔት ይፈትሹ", en: "Couldn't check — is the internet on?", om: "Ilaaluu hin dandeenye; interneetii ilaali", ti: "ምፍታሽ ኣይተኻእለን፤ ኢንተርነት ርኣዩ", ar: "تعذر التحقق — هل الإنترنت يعمل؟", fr: "Vérification impossible — Internet est-il actif ?", es: "No se pudo comprobar: ¿hay Internet?" },
-    contactTitle: { am: "ጥያቄ ይላኩ", en: "Ask a question", om: "Gaaffii ergi", ti: "ሕቶ ስደዱ", ar: "اطرح سؤالًا", fr: "Poser une question", es: "Hacer una pregunta" },
-    contactNote: { am: "ጥያቄ ወይም ችግር ካለ በቴሌግራም ይላኩ።", en: "Send a question or a problem on Telegram.", om: "Gaaffii ykn rakkoo Telegramiin ergaa.", ti: "ሕቶ ወይ ጸገም ብቴሌግራም ስደዱ።", ar: "أرسل سؤالًا أو مشكلة عبر تيليجرام.", fr: "Envoyez une question ou un problème sur Telegram.", es: "Envíe una pregunta o un problema por Telegram." },
-    contactBtn: { am: "በቴሌግራም ላክ", en: "Message on Telegram", om: "Telegramiin ergi", ti: "ብቴሌግራም ስደድ", ar: "راسل عبر تيليجرام", fr: "Écrire sur Telegram", es: "Escribir por Telegram" },
-    contactSet: { am: "የቴሌግራም ስም (ለምሳሌ birhan_abc)", en: "Telegram username (e.g. birhan_abc)", om: "Maqaa Telegram (fkn birhan_abc)", ti: "ስም ቴሌግራም (ንኣብነት birhan_abc)", ar: "اسم مستخدم تيليجرام (مثل birhan_abc)", fr: "Nom d'utilisateur Telegram (ex. birhan_abc)", es: "Usuario de Telegram (p. ej. birhan_abc)" },
-    contactBad: { am: "ስሙ ትክክል አይደለም (ፊደል፣ ቁጥር ወይም _ ብቻ፣ 4–32)", en: "Invalid username (letters, digits or _ only, 4–32)", om: "Maqaan sirrii miti (qubee, lakkoofsa ykn _ qofa, 4–32)", ti: "ስሙ ቅኑዕ ኣይኮነን (ፊደል፣ ቁጽሪ ወይ _ ጥራይ፣ 4–32)", ar: "اسم غير صالح (أحرف أو أرقام أو _ فقط، 4–32)", fr: "Nom invalide (lettres, chiffres ou _ uniquement, 4–32)", es: "Usuario no válido (solo letras, dígitos o _, 4–32)" },
-    faqTitle: { am: "የተለመዱ ጥያቄዎች", en: "Frequently asked questions", om: "Gaaffilee yeroo baayʼee gaafataman", ti: "ዝበዝሑ ሕቶታት", ar: "الأسئلة الشائعة", fr: "Questions fréquentes", es: "Preguntas frecuentes" },
-    shareBtn: { am: "ምትኬ ላክ (ቴሌግራም ወዘተ)", en: "Send backup (Telegram, etc.)", om: "Waraabbii ergi (Telegram fi kkf)", ti: "ምትኬ ስደድ (ቴሌግራም ወዘተ)", ar: "إرسال النسخة (تيليجرام وغيره)", fr: "Envoyer la sauvegarde (Telegram, etc.)", es: "Enviar copia (Telegram, etc.)" },
-    shareFail: { am: "መላክ አልተቻለም፤ ፋይሉ ወርዷል", en: "Sharing wasn't possible; the file was downloaded instead", om: "Erguun hin danda'amne; faayiliin buufameera", ti: "ምስዳድ ኣይተኻእለን፤ እቲ ፋይል ወሪዱ", ar: "تعذرت المشاركة؛ تم تنزيل الملف بدلًا من ذلك", fr: "Partage impossible ; le fichier a été téléchargé", es: "No se pudo compartir; se descargó el archivo" },
-    q1: { am: "እንደ መተግበሪያ እንዴት እጭናለሁ?", en: "How do I install it as an app?", om: "Akka appiitti akkamitti kaa'a?", ti: "ከም ኣፕሊኬሽን ብኸመይ እጎሚድ?", ar: "كيف أثبّته كتطبيق؟", fr: "Comment l'installer comme application ?", es: "¿Cómo la instalo como aplicación?" },
-    a1: { am: "በChrome ከላይ ቀኝ ⋮ ምናሌ → «Install app» ይንኩ (ወይም «Add to Home screen» → «Install»)። «Create shortcut» አይምረጡ።", en: "In Chrome tap ⋮ (top right) → “Install app” (or “Add to Home screen” → “Install”). Don't choose “Create shortcut”.", om: "Chrome keessatti ⋮ (gubbaa mirga) → “Install app” tuqi (ykn “Add to Home screen” → “Install”). “Create shortcut” hin filatin.", ti: "ኣብ Chrome ⋮ (ላዕሊ የማን) → “Install app” ጠውቑ (ወይ “Add to Home screen” → “Install”)። “Create shortcut” ኣይትምረጹ።", ar: "في Chrome اضغط ⋮ (أعلى اليمين) ← «Install app» (أو «Add to Home screen» ثم «Install»). لا تختر «Create shortcut».", fr: "Dans Chrome, touchez ⋮ (en haut à droite) → « Install app » (ou « Add to Home screen » → « Install »). Ne choisissez pas « Create shortcut ».", es: "En Chrome toque ⋮ (arriba a la derecha) → «Install app» (o «Add to Home screen» → «Install»). No elija «Create shortcut»." },
-    q2: { am: "መረጃዬ እንዳይጠፋ ምን ላድርግ?", en: "How do I keep my data safe?", om: "Odeeffannoon koo akka hin badne maal godha?", ti: "ሓበሬታይ ከይጠፍእ እንታይ ኣገብር?", ar: "كيف أحمي بياناتي من الضياع؟", fr: "Comment éviter de perdre mes données ?", es: "¿Cómo evito perder mis datos?" },
-    a2: { am: "በ«ማከማቻና ምትኬ» ትር «ምትኬ አውርድ» (ወይም «ምትኬ ላክ») ይንኩ፤ በየሳምንቱ ይድገሙት። ፋይሉን በቴሌግራም ወይም በሌላ ቦታ ያስቀምጡ።", en: "In the “Storage & Backup” tab tap “Download backup” (or “Send backup”) every week, and keep the file in Telegram or another safe place.", om: "Gabatee “Kuusaa fi Waraabbii” keessatti “Waraabbii buufadhu” (ykn “Waraabbii ergi”) torbaan torbaan tuqi; faayilicha Telegram ykn iddoo amansiisaa kaa'i.", ti: "ኣብ ትሮ “ማኽዘንን ምትኬን” “ምትኬ ኣውርድ” (ወይ “ምትኬ ስደድ”) ሰሙናዊ ጠውቑ፤ እቲ ፋይል ኣብ ቴሌግራም ወይ ካልእ ውሑስ ቦታ ሓዙ።", ar: "في تبويب «التخزين والنسخ الاحتياطي» اضغط «تنزيل النسخة الاحتياطية» (أو «إرسال النسخة») كل أسبوع واحفظ الملف في تيليجرام أو مكان آمن.", fr: "Dans l'onglet « Stockage et sauvegarde », touchez « Télécharger la sauvegarde » (ou « Envoyer la sauvegarde ») chaque semaine et gardez le fichier dans Telegram ou ailleurs.", es: "En la pestaña «Almacenamiento y copias» pulse «Descargar copia» (o «Enviar copia») cada semana y guarde el archivo en Telegram u otro lugar seguro." },
-    q3: { am: "PIN ምን ያደርጋል? ከረሳሁስ?", en: "What does the PIN do? What if I forget it?", om: "PIN maal godha? Yoo irraanfadhe?", ti: "PIN እንታይ ይገብር? እንተ ረሲዐዮስ?", ar: "ماذا يفعل PIN؟ وماذا لو نسيته؟", fr: "À quoi sert le PIN ? Et si je l'oublie ?", es: "¿Para qué sirve el PIN? ¿Y si lo olvido?" },
-    a3: { am: "PIN ያለ ፈቃድ ማስተካከልና መሰረዝን ይከላከላል። ከረሱ በPIN መስኮት «PIN ረሱ?» ይንኩና የመመለሻ ኮዱን ያስገቡ።", en: "The PIN stops others from changing or deleting data. If you forget it, tap “Forgot PIN?” in the PIN box and enter your recovery code.", om: "PIN namni hayyama malee jijjiiruu ykn haquu ni dhorka. Yoo irraanfatte, foddaa PIN keessatti “PIN irraanfattee?” tuqii koodii deebisuu galchi.", ti: "PIN ብዘይ ፍቓድ ምእራምን ምድምሳስን ይከላኸል። እንተ ረሲዕኩሞ ኣብ መስኮት PIN “PIN ረሲዕኩም?” ጠዊቕኩም ኮድ መመለሲ የእትዉ።", ar: "يمنع PIN الآخرين من تعديل البيانات أو حذفها. إذا نسيته اضغط «نسيت PIN؟» في نافذة PIN وأدخل رمز الاستعادة.", fr: "Le PIN empêche les autres de modifier ou supprimer les données. Si vous l'oubliez, touchez « PIN oublié ? » dans la fenêtre du PIN et saisissez votre code de récupération.", es: "El PIN evita que otros cambien o eliminen datos. Si lo olvida, pulse «¿Olvidó el PIN?» en la ventana del PIN e introduzca su código de recuperación." },
-    q4: { am: "መረጃዬ የት ይቀመጣል? ማንስ ያየዋል?", en: "Where is my data stored? Who can see it?", om: "Odeeffannoon koo eessa kuufama? Eenyutu argaa?", ti: "ሓበሬታይ ኣበይ ይዕቀብ? መን ይርእዮ?", ar: "أين تُخزَّن بياناتي؟ ومن يراها؟", fr: "Où sont stockées mes données ? Qui peut les voir ?", es: "¿Dónde se guardan mis datos? ¿Quién puede verlos?" },
-    a4: { am: "በዚህ ስልክ ላይ ብቻ ይቀመጣል። መተግበሪያው ወደ ማንኛውም ሰርቨር አይልክም፤ ምትኬና ፋይሎችን የሚልኩት እርስዎ ብቻ ነዎት።", en: "Only on this phone. The app does not send it to any server; only you decide when to share a backup or a file.", om: "Bilbila kana irratti qofa. Appiin sarvarii kamiifuu hin erguu; waraabbii ykn faayilii yeroo itti qooddan isin qofatu murteessa.", ti: "ኣብዚ ተሌፎን ጥራይ። እቲ ኣፕሊኬሽን ናብ ዝኾነ ሰርቨር ኣይልእክን፤ ምትኬን ፋይላትን ዝሰድዱ ንስኻትኩም ጥራይ ኢኹም።", ar: "على هذا الهاتف فقط. لا يرسل التطبيق شيئًا إلى أي خادم؛ أنت وحدك تقرر متى تشارك نسخة احتياطية أو ملفًا.", fr: "Uniquement sur ce téléphone. L'application n'envoie rien à un serveur ; vous seul décidez quand partager une sauvegarde ou un fichier.", es: "Solo en este teléfono. La aplicación no envía nada a ningún servidor; solo usted decide cuándo compartir una copia o un archivo." },
-    q5: { am: "ኦዲዮ፣ ቪዲዮና ሰነድ እንዴት እጨምራለሁ?", en: "How do I add audio, video and documents?", om: "Sagalee, viidiyoo fi sanada akkamitti dabala?", ti: "ድምጺ፣ ቪድዮን ሰነድን ብኸመይ ኣወስኽ?", ar: "كيف أضيف الصوت والفيديو والمستندات؟", fr: "Comment ajouter audio, vidéo et documents ?", es: "¿Cómo añado audio, vídeo y documentos?" },
-    a5: { am: "በ«ትምህርት» ወይም «ደንብ / ሰነድ» ትር ውስጥ ፋይል ይምረጡ። ብዙ ፋይሎችን በአንድ ጊዜ ለመጨመር «ብዙ ፋይሎችን በአንድ ጊዜ ጨምር» ካርድን ይጠቀሙ።", en: "In the “Lessons” or “Bylaws / Docs” tab choose a file. To add many at once use the “Add several files at once” card.", om: "Gabatee “Barnoota” ykn “Seera/Sanada” keessatti faayilii filadhu. Baayʼee yeroo tokkoon dabaluuf kaardii “Faayilii baayʼee yeroo tokkoon dabali” fayyadami.", ti: "ኣብ ትሮ “ትምህርቲ” ወይ “ደንቢ / ሰነድ” ፋይል ምረጹ። ብዙሕ ብሓደ ግዜ ንምውሳኽ ካርድ “ብዙሕ ፋይላት ብሓደ ጊዜ ወስኽ” ተጠቐሙ።", ar: "في تبويب «الدروس» أو «اللوائح / الوثائق» اختر ملفًا. ولإضافة عدة ملفات دفعة واحدة استخدم بطاقة «إضافة عدة ملفات دفعة واحدة».", fr: "Dans l'onglet « Leçons » ou « Règlement / Documents », choisissez un fichier. Pour en ajouter plusieurs d'un coup, utilisez la carte « Ajouter plusieurs fichiers d'un coup ».", es: "En la pestaña «Lecciones» o «Reglamento / Documentos» elija un archivo. Para añadir varios a la vez use la tarjeta «Añadir varios archivos a la vez»." },
-    q6: { am: "አዲስ ስሪት እንዴት አገኛለሁ?", en: "How do I get the newest version?", om: "Gulaalata haaraa akkamitti argadha?", ti: "ሓድሽ እትመት ብኸመይ ይረክብ?", ar: "كيف أحصل على أحدث إصدار؟", fr: "Comment obtenir la dernière version ?", es: "¿Cómo obtengo la última versión?" },
-    a6: { am: "በዚህ ገጽ ላይ «ዝማኔ ፈልግ» ይንኩ። ኢንተርኔት ሲኖር መተግበሪያው በራሱም ይዘምናል።", en: "Tap “Check for updates” on this page. The app also updates by itself when there is internet.", om: "Fuula kana irratti “Haaromsa barbaadi” tuqi. Interneetiin yoo jiraate appiin ofumaanuu ni haaromfama.", ti: "ኣብዚ ገጽ “ምሕዳስ ድለይ” ጠውቑ። ኢንተርነት እንተ ሃልዩ እቲ ኣፕሊኬሽን ባዕሉ እውን የሐድስ።", ar: "اضغط «التحقق من التحديثات» في هذه الصفحة. كما يتحدث التطبيق تلقائيًا عند توفر الإنترنت.", fr: "Touchez « Rechercher des mises à jour » sur cette page. L'application se met aussi à jour seule lorsqu'Internet est disponible.", es: "Pulse «Buscar actualizaciones» en esta página. La aplicación también se actualiza sola cuando hay Internet." },
-  };
-  STRINGS.tabs.help = { am: "እገዛና ቅንብሮች", en: "Help & Settings", om: "Gargaarsaa fi Qindaa'ina", ti: "ሓገዝን ቅጥዕታትን", ar: "المساعدة والإعدادات", fr: "Aide et paramètres", es: "Ayuda y ajustes" };
-
-  // ---------- strings for departments and app-lock ----------
-  STRINGS.dept = {
-    tabName: { am: "ክፍላት", en: "Departments", om: "Kutaalee", ti: "ክፍልታት", ar: "الأقسام", fr: "Départements", es: "Departamentos" },
-    note: { am: "ከውስጠ ደንቡ የተወሰዱ 7ቱ ዋና ክፍሎች እዚህ አሉ። ኃላፊና ጸሐፊ ከአባላት ዝርዝር ይመድቡ። ንዑሳን ክፍሎች ስማቸው በዋናው ሰነድ ቋንቋ (አማርኛ) ይታያል።", en: "The 7 main departments from the bylaw are listed here. Assign a head and a secretary from the members list. Sub-department names are shown in the original document's language (Amharic).", om: "Kutaaleen 7 ijoo seera keessaa kan fudhataman as jiru. Hoogganaa fi barreessaa tarree miseensotaa keessaa filadhu. Maqaan kutaalee xixiqqaa afaan sanada jalqabaatiin (Afaan Amaaraa) mul'ata.", ti: "7ቲ ቀንዲ ክፍልታት ካብ ደንቢ እተውጽአ ኣብዚ ኣሎ። ሓላፊን ጸሓፍን ካብ ዝርዝር ኣባላት ምደቡ። ስም ንኡሳን ክፍልታት ብቋንቋ ናይቲ በዅሪ ሰነድ (ኣምሓርኛ) ይረኣይ።", ar: "الأقسام الرئيسية السبعة من اللائحة مدرجة هنا. عيّن رئيسًا وأمينًا من قائمة الأعضاء. تظهر أسماء الأقسام الفرعية بلغة الوثيقة الأصلية (الأمهرية).", fr: "Les 7 départements principaux du règlement sont listés ici. Désignez un responsable et un secrétaire parmi les membres. Les noms des sous-départements apparaissent dans la langue du document original (amharique).", es: "Los 7 departamentos principales del reglamento se listan aquí. Asigne un responsable y un secretario de la lista de miembros. Los nombres de subdepartamentos aparecen en el idioma del documento original (amárico)." },
-    headRole: { am: "ኃላፊ", en: "Head", om: "Hoogganaa", ti: "ሓላፊ", ar: "الرئيس", fr: "Responsable", es: "Responsable" },
-    secRole: { am: "ጸሐፊ", en: "Secretary", om: "Barreessaa", ti: "ጸሓፊ", ar: "الأمين", fr: "Secrétaire", es: "Secretario" },
-    none: { am: "አልተመደበም", en: "Not assigned", om: "Hin ramadamne", ti: "ኣይተመደበን", ar: "لم يُعيَّن", fr: "Non désigné", es: "Sin asignar" },
-    choose: { am: "ይምረጡ…", en: "Choose…", om: "Filadhu…", ti: "ምረጹ…", ar: "اختر…", fr: "Choisir…", es: "Elegir…" },
-    needMembers: { am: "ኃላፊ ለመመደብ መጀመሪያ በ«አባላት» ትር ውስጥ ሰዎችን ያስመዝግቡ።", en: "To assign a head, first register people in the “Members” tab.", om: "Hoogganaa ramaduuf dura gabatee “Miseensota” keessatti namoota galmeessi.", ti: "ሓላፊ ንምምዳብ ቅድም ኣብ ትሮ “ኣባላት” ሰባት መዝግቡ።", ar: "لتعيين رئيس، سجّل الأشخاص أولاً في تبويب «الأعضاء».", fr: "Pour désigner un responsable, inscrivez d'abord des personnes dans l'onglet « Membres ».", es: "Para asignar un responsable, primero registre personas en la pestaña «Miembros»." },
-    subsLabel: { am: "ንዑሳን ክፍሎች", en: "Sub-departments", om: "Kutaalee xixiqqaa", ti: "ንኡሳን ክፍልታት", ar: "الأقسام الفرعية", fr: "Sous-départements", es: "Subdepartamentos" },
-    dashTitle: { am: "ክፍላት", en: "Departments", om: "Kutaalee", ti: "ክፍልታት", ar: "الأقسام", fr: "Départements", es: "Departamentos" },
-    dashLine: { am: "%N% ከ 7 ክፍሎች ኃላፊ ተመድቦላቸዋል", en: "%N% of 7 departments have a head assigned", om: "Kutaalee 7 keessaa %N% hoogganaa qabu", ti: "%N% ካብ 7 ክፍልታት ሓላፊ ተመዲብሎም", ar: "%N% من أصل 7 أقسام لها رئيس معيَّن", fr: "%N% des 7 départements ont un responsable désigné", es: "%N% de los 7 departamentos tienen un responsable asignado" },
-    assigned: { am: "ተመድቧል", en: "Assigned", om: "Ramadameera", ti: "ተመዲቡ", ar: "تم التعيين", fr: "Désigné", es: "Asignado" },
-  };
-  STRINGS.dp = {
-    edu: { am: "ትምህርት እና ሐዋርያዊ አገልግሎት", en: "Education & Evangelism", om: "Barnootaa fi Tajaajila Wangeelaa", ti: "ትምህርትን ሓዋርያዊ ኣገልግሎትን", ar: "التعليم والخدمة التبشيرية", fr: "Enseignement et service évangélique", es: "Educación y servicio evangelístico" },
-    edu_d: { am: "የትምህርት ስርዓት፣ የመምህራን ስልጠናና ምደባ፣ ቤተ መጻሕፍትና ሚዲያ ይመራል።", en: "Leads the curriculum, teacher training and assignment, library and media.", om: "Sirna barnootaa, leenjii fi ramaddii barsiisotaa, mana kitaabaa fi miidiyaa geggeessa.", ti: "ስርዓት ትምህርቲ፣ ስልጠናን ምድባን መምህራን፣ ቤተ መጻሕፍትን ሚድያን ይመርሕ።", ar: "يقود المنهج الدراسي وتدريب وتوزيع المعلمين والمكتبة والإعلام.", fr: "Dirige le programme, la formation et l'affectation des enseignants, la bibliothèque et les médias.", es: "Dirige el currículo, la formación y asignación de maestros, la biblioteca y los medios." },
-    choir: { am: "መዝሙር እና ኪነ ጥበብ", en: "Choir & Arts", om: "Faarfannaa fi Ogbarruu", ti: "ደርፍን ስነ ጥበብን", ar: "الترانيم والفنون", fr: "Chorale et arts", es: "Coro y artes" },
-    choir_d: { am: "መዝሙርና ኪነ ጥበብ አገልግሎቶችን ያስተባብራል፣ ይቆጣጠራል።", en: "Coordinates and oversees the choir and arts services.", om: "Tajaajila faarfannaa fi ogbarruu qindeessa, to'ata.", ti: "ኣገልግሎት ደርፍን ስነ ጥበብን ይውሃህድ፣ ይቈጻጸር።", ar: "ينسق ويشرف على خدمات الترانيم والفنون.", fr: "Coordonne et supervise les services de chorale et d'arts.", es: "Coordina y supervisa los servicios de coro y artes." },
-    members: { am: "የአባላት አስተዳደር እና ክትትል", en: "Member Administration & Follow-up", om: "Bulchiinsaa fi Hordoffii Miseensotaa", ti: "ምምሕዳርን ክትትልን ኣባላት", ar: "إدارة ومتابعة الأعضاء", fr: "Administration et suivi des membres", es: "Administración y seguimiento de miembros" },
-    members_d: { am: "የአባላት መረጃ፣ ምደባ፣ መንፈሳዊ ድጋፍና ህዝብ ግንኙነት ይመራል።", en: "Leads member records, assignment, spiritual support and public relations.", om: "Galmee, ramaddii, deggersa hafuuraa fi hariiroo ummataa miseensotaa geggeessa.", ti: "መዝገብ፣ ምድባ፣ መንፈሳዊ ደገፍን ህዝባዊ ርክብን ኣባላት ይመርሕ።", ar: "يقود سجلات الأعضاء وتوزيعهم والدعم الروحي والعلاقات العامة.", fr: "Dirige les dossiers des membres, leur affectation, le soutien spirituel et les relations publiques.", es: "Dirige los registros de miembros, su asignación, el apoyo espiritual y las relaciones públicas." },
-    finance: { am: "ሂሳብ እና ንብረት አስተዳደር", en: "Finance & Property Administration", om: "Bulchiinsa Herregaa fi Qabeenyaa", ti: "ምምሕዳር ሕሳብን ንብረትን", ar: "إدارة الحسابات والممتلكات", fr: "Administration financière et des biens", es: "Administración de finanzas y bienes" },
-    finance_d: { am: "ሂሳብ፣ በጀትና ንብረት አያያዝን ይመራል፣ ይቆጣጠራል።", en: "Leads and oversees accounts, budget and property.", om: "Herrega, baajataa fi qabeenya to'achuu geggeessa, to'ata.", ti: "ሕሳብ፣ በጀትን ኣተሓሕዛ ንብረትን ይመርሕ፣ ይቈጻጸር።", ar: "يقود ويشرف على الحسابات والميزانية والممتلكات.", fr: "Dirige et supervise les comptes, le budget et les biens.", es: "Dirige y supervisa las cuentas, el presupuesto y los bienes." },
-    dev: { am: "ልማት፣ ሙያ አገልግሎትና በጎ አድራጎት", en: "Development, Vocational Service & Charity", om: "Misoomaa, Tajaajila Ogummaa fi Tola-oolummaa", ti: "ልምዓት፣ ኣገልግሎት ሞያን ሰናይ ግብርን", ar: "التنمية والخدمة المهنية والأعمال الخيرية", fr: "Développement, service professionnel et bienfaisance", es: "Desarrollo, servicio vocacional y caridad" },
-    dev_d: { am: "የገቢ ማስገኛ፣ ማህበራዊ ድጋፍና በጎ አድራጎት ስራዎችን ያስተባብራል።", en: "Coordinates income-generating, social-support and charity work.", om: "Hojii galii horachuu, deggersa hawaasaa fi tola-oolummaa qindeessa.", ti: "ስራሕቲ መእተዊ ገንዘብ፣ ደገፍ ሕብረተሰብን ሰናይ ግብርን ይውሃህድ።", ar: "ينسق أعمال توليد الدخل والدعم الاجتماعي والأعمال الخيرية.", fr: "Coordonne les activités génératrices de revenus, le soutien social et les œuvres caritatives.", es: "Coordina las actividades generadoras de ingresos, el apoyo social y las obras de caridad." },
-    plan: { am: "ዕቅድ፣ ሥልጠናና ጥናት ምርምር", en: "Planning, Training & Research", om: "Karoora, Leenjii fi Qorannoo", ti: "ውጥን፣ ስልጠናን መጽናዕትን", ar: "التخطيط والتدريب والبحث", fr: "Planification, formation et recherche", es: "Planificación, formación e investigación" },
-    plan_d: { am: "አመታዊ ዕቅድ ዝግጅት፣ ስልጠናና ጥናት ምርምር ይመራል።", en: "Leads annual planning, training and research.", om: "Karoora waggaa, leenjii fi qorannoo qopheessuu geggeessa.", ti: "ኣዳላውቲ ውጥን ዓመታዊ፣ ስልጠናን መጽናዕትን ይመርሕ።", ar: "يقود التخطيط السنوي والتدريب والبحث.", fr: "Dirige la planification annuelle, la formation et la recherche.", es: "Dirige la planificación anual, la formación y la investigación." },
-    audit: { am: "ኦዲትና ኢንስፔክሽን", en: "Audit & Inspection", om: "Odiitii fi Ilaalcha", ti: "ኦዲትን ምርመራን", ar: "التدقيق والتفتيش", fr: "Audit et inspection", es: "Auditoría e inspección" },
-    audit_d: { am: "የሂሳብና ንብረት ምርመራ እንዲሁም የስራ ክትትል ያከናውናል።", en: "Carries out financial/property audits and work-process oversight.", om: "Herregaa fi qabeenya qorachuu fi hojii to'achuu raawwata.", ti: "ምርመራ ሕሳብን ንብረትን ከምኡውን ክትትል ስራሕ የካይድ።", ar: "يجري تدقيق الحسابات والممتلكات ومراقبة سير العمل.", fr: "Réalise des audits financiers/immobiliers et supervise les processus de travail.", es: "Realiza auditorías financieras/de bienes y supervisa los procesos de trabajo." },
-  };
-  STRINGS.vl = {
-    title: { am: "የመተግበሪያው መዝጊያ", en: "App lock", om: "Cufaa Appii", ti: "መዕጸዊ ኣፕሊኬሽን", ar: "قفل التطبيق", fr: "Verrouillage de l'application", es: "Bloqueo de la aplicación" },
-    note: { am: "ይህን መተግበሪያ ለመክፈት PIN ያስፈልጋል። ሚናዎን ይምረጡና PIN ያስገቡ።", en: "A PIN is needed to open this app. Choose your role and enter its PIN.", om: "Appii kana banuuf PIN barbaachisa. Gahee keessan filadhaatii PIN galchaa.", ti: "ነዚ ኣፕሊኬሽን ንምኽፋት PIN የድሊ። ግድኹም ምረጹን PIN ኣእትዉን።", ar: "يلزم PIN لفتح هذا التطبيق. اختر دورك وأدخل PIN الخاص به.", fr: "Un PIN est nécessaire pour ouvrir cette application. Choisissez votre rôle et saisissez son PIN.", es: "Se necesita un PIN para abrir esta aplicación. Elija su rol e introduzca su PIN." },
-    roleLabel: { am: "ሚና", en: "Role", om: "Gahee", ti: "ግደ", ar: "الدور", fr: "Rôle", es: "Rol" },
-    enter: { am: "ክፈት", en: "Unlock", om: "Bani", ti: "ክፈት", ar: "فتح", fr: "Déverrouiller", es: "Desbloquear" },
-    toggleLabel: { am: "ገጹን ከመክፈት በፊት PIN ጠይቅ", en: "Ask for a PIN before opening the app", om: "Appii banuu dura PIN gaafadhu", ti: "ቅድሚ ምኽፋት ገጽ PIN ሕተት", ar: "اطلب PIN قبل فتح التطبيق", fr: "Demander un PIN avant d'ouvrir l'application", es: "Pedir un PIN antes de abrir la aplicación" },
-    toggleNote: { am: "ይህ ካበሩ፣ PIN የተዘጋጀላቸው ሚናዎች ብቻ መተግበሪያውን መክፈት ይችላሉ፤ ያለ PIN ዕይታ ሙሉ በሙሉ ይዘጋል።", en: "When on, only roles with a PIN can open the app at all — even viewing is closed without one.", om: "Yoo banamee, geggeessitoota PIN qaban qofatu appii banuu danda'a; PIN malee ilaaluunis cufaadha.", ti: "እዚ እንተ ተኸፊቱ፣ PIN ዘለዎም ግደታት ጥራይ ኣፕሊኬሽን ክኸፍቱ ይኽእሉ፤ ብዘይ PIN ምርኣይ እውን ይዕጾ።", ar: "عند التفعيل، فقط الأدوار التي لها PIN يمكنها فتح التطبيق إطلاقًا — حتى العرض مغلق بدونه.", fr: "Une fois activé, seuls les rôles ayant un PIN peuvent ouvrir l'application — même la consultation est fermée sans PIN.", es: "Al activarlo, solo los roles con PIN pueden abrir la aplicación; incluso la vista queda cerrada sin uno." },
-    needOwnerFirst: { am: "በመጀመሪያ የባለቤቱን PIN ይፍጠሩ", en: "Create the Owner's PIN first", om: "Dura PIN abbaa qabeenyaa uumi", ti: "ቅድም PIN ናይ ባዕልቲ ቤት ፍጠሩ", ar: "أنشئ PIN المالك أولاً", fr: "Créez d'abord le PIN du propriétaire", es: "Cree primero el PIN del propietario" },
-  };
-  STRINGS.audit.act_dept = { am: "ክፍል ኃላፊ/ጸሐፊ ተመድቧል", en: "Department head/secretary assigned", om: "Hoogganaa/barreessaa kutaa ramadame", ti: "ሓላፊ/ጸሓፊ ክፍሊ ተመዲቡ", ar: "تم تعيين رئيس/أمين القسم", fr: "Responsable/secrétaire de département désigné", es: "Responsable/secretario de departamento asignado" };
-  STRINGS.tabs.departments = { am: "ክፍላት", en: "Departments", om: "Kutaalee", ti: "ክፍልታት", ar: "الأقسام", fr: "Départements", es: "Departamentos" };
   function T(key){ return (STRINGS.dash[key] && STRINGS.dash[key][lang]) || (STRINGS.common[key] && STRINGS.common[key][lang]) || key; }
   function TD(key){ return (STRINGS.dio[key] && STRINGS.dio[key][lang]) || key; }
   function TP(key){ return (STRINGS.par[key] && STRINGS.par[key][lang]) || key; }
@@ -765,7 +612,7 @@
       ownerName: "", dioceses: [], parishes: [], members: [], students: [], teachers: [],
       documents: [], lessons: [], circulars: [], reports: [], auditLog: [],
       smsAdminPhone: "", installId: "", feedback: [], seq: {}, files: [],
-      lastBackupAt: 0, savedAt: 0, security: { pins: {}, recovery: null }, prefs: {}, departments: {}
+      lastBackupAt: 0, savedAt: 0
     };
     if (!state || typeof state !== "object" || Array.isArray(state)) state = {};
     Object.keys(defaults).forEach(function(k){
@@ -951,8 +798,6 @@
     return takeSnapshot("rRestore").then(function(){
       var cur = state, next = obj;
       next.installId = cur.installId;                       // this device keeps its own identity
-      next.security = cur.security;                         // ...and its own PINs (they never travel in a backup)
-      next.prefs = cur.prefs;                               // ...and its own settings (language, text size, tabs)
       next.files = Array.isArray(next.files) ? next.files : [];
       var have = {};
       next.files.forEach(function(f){ have[f.id] = true; });
@@ -1108,13 +953,13 @@
         "add-diocese","add-parish","add-member","add-student","add-teacher","add-document","add-lesson",
         "edit-diocese","edit-parish","edit-member","edit-student","edit-teacher","edit-document","edit-lesson",
         "delete-diocese","delete-parish","delete-member","delete-student","delete-teacher","delete-document","delete-lesson",
-        "send-circular","send-report","sync","manage-files","backup","restore","manage-departments"
+        "send-circular","send-report","sync","manage-files","backup","restore"
       ],
       admin: [
         "add-parish","add-member","add-student","add-teacher","add-document","add-lesson",
         "edit-parish","edit-member","edit-student","edit-teacher","edit-document","edit-lesson",
         "delete-parish","delete-member","delete-student","delete-teacher","delete-document","delete-lesson",
-        "send-report","sync","manage-files","backup","manage-departments"
+        "send-report","sync","manage-files","backup"
       ],
       collector: ["add-member","add-student","add-teacher","edit-member","edit-student","edit-teacher","send-report"],
       viewer: []
@@ -1306,32 +1151,26 @@
     }
     if (act === "del"){
       if (!can("delete-" + type)) return;
-      armThen(btn, function(){ requirePin().then(function(ok){ if (ok) deleteRecord(type, id); }); });
+      armThen(btn, function(){ deleteRecord(type, id); });
       return;
     }
     if (act === "dl"){ downloadStoredFile(id); return; }
     if (act === "delfile"){
       if (!can("manage-files")) return;
       armThen(btn, function(){
-        requirePin().then(function(ok){
-          if (!ok) return;
-          fileRefs(id).forEach(function(r){ r.rec.fileId = ""; });   // detach from lessons/documents
-          removeFile(id).then(function(){ save(); renderAll(); showToast(TAct("deleted")); });
-        });
+        fileRefs(id).forEach(function(r){ r.rec.fileId = ""; });   // detach from lessons/documents
+        removeFile(id).then(function(){ save(); renderAll(); showToast(TAct("deleted")); });
       });
       return;
     }
     if (act === "snap-restore"){
       if (!can("restore")) return;
       armThen(btn, function(){
-        requirePin().then(function(pinOk){
-          if (!pinOk) return;
-          listSnapshots().then(function(rows){
-            var snap = rows.filter(function(r){ return r.id === id; })[0];
-            var data = null;
-            try { data = snap ? JSON.parse(snap.data) : null; } catch(err){}
-            applyRestore(data).then(function(ok){ showToast(ok ? TSt("restoreOk") : TSt("restoreBad")); });
-          });
+        listSnapshots().then(function(rows){
+          var snap = rows.filter(function(r){ return r.id === id; })[0];
+          var data = null;
+          try { data = snap ? JSON.parse(snap.data) : null; } catch(err){}
+          applyRestore(data).then(function(ok){ showToast(ok ? TSt("restoreOk") : TSt("restoreBad")); });
         });
       });
       return;
@@ -1357,6 +1196,11 @@
     save();
   });
 
+  document.getElementById("role-select").addEventListener("change", function(){
+    role = this.value;
+    resetEditing();
+    renderAll();
+  });
   document.getElementById("online-toggle").addEventListener("change", function(){
     online = this.checked;
     var b = document.getElementById("conn-badge");
@@ -1366,8 +1210,6 @@
   });
   document.getElementById("lang-select").addEventListener("change", function(){
     lang = this.value;
-    prefs().lang = lang;
-    save();
     applyLang();
     renderAll();
   });
@@ -1442,8 +1284,6 @@
     if (activeTab === "cert") renderCert();
     if (activeTab === "io") renderIO();
     if (activeTab === "storage") renderStorage();
-    if (activeTab === "help") renderHelp();
-    if (activeTab === "departments") renderDepartments();
     if (activeTab === "audit") renderAudit();
     if (activeTab === "comms") renderComms();
   }
@@ -1612,13 +1452,7 @@
         }).join('') + '</ol>' : '<div class="empty">' + T("none") + '</div>') +
       '</section>';
 
-
-    var deptDone = deptAssignedCount();
-    var deptCard = '<section class="db-card"><h2>' + esc(TDept("dashTitle")) + '</h2>' +
-      '<div class="db-off"><div class="db-off-top"><span>' + esc(fillTpl(TDept("dashLine"), { N: deptDone }, false)) + '</span></div>' +
-      '<div class="db-bar"><i style="width:' + pct(deptDone, 7) + '%"></i></div></div>' +
-      '<button type="button" class="ghost" data-goto="departments" style="margin-top:8px;">' + esc(TDept("tabName")) + '</button></section>';
-    el.innerHTML = hero + secBanner() + kpis + dataCard + deptCard + quickCard + genderCard + levelCard + officeCard + activityCard;
+    el.innerHTML = hero + kpis + dataCard + quickCard + genderCard + levelCard + officeCard + activityCard;
   }
   function stat(num, label){
     return '<div class="stat"><div class="num">' + esc(num) + '</div><div class="label">' + label + '</div></div>';
@@ -2951,683 +2785,10 @@
     });
   }
 
-  // ---------- help & settings ----------
-  var APP_VERSION = "2.2 · 2026-09-21";   // keep this exact form: the update check reads it from the newest index.html
-  var ALWAYS_TABS = ["dashboard", "storage", "help"];
-  function THp(key){ return (STRINGS.hp[key] && STRINGS.hp[key][lang]) || key; }
-
-  function prefs(){
-    if (!state.prefs || typeof state.prefs !== "object" || Array.isArray(state.prefs)) state.prefs = {};
-    return state.prefs;
-  }
-  // text size (zoom on the app) and hidden tabs live in the data, so they survive reloads
-  function applyPrefs(){
-    var p = prefs();
-    var z = parseFloat(p.fontScale) || 1;
-    var app = document.querySelector(".app");
-    if (app) app.style.zoom = z === 1 ? "" : String(z);
-    var hidden = Array.isArray(p.hiddenTabs) ? p.hiddenTabs : [];
-    document.querySelectorAll("nav.tabs button").forEach(function(b){
-      var k = b.getAttribute("data-tab");
-      b.style.display = (hidden.indexOf(k) !== -1 && ALWAYS_TABS.indexOf(k) === -1) ? "none" : "";
-    });
-  }
-  function isInstalledApp(){
-    try {
-      return (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
-    } catch(e){ return false; }
-  }
-  function cleanTelegram(v){
-    v = String(v || "").trim().replace(/^@/, "").replace(/^https?:\/\/t\.me\//i, "");
-    return /^[A-Za-z0-9_]{4,32}$/.test(v) ? v : "";
-  }
-
-  function renderHelp(){
-    var el = document.getElementById("tab-help");
-    var p = prefs();
-    var hidden = Array.isArray(p.hiddenTabs) ? p.hiddenTabs : [];
-    var navTabs = Array.prototype.map.call(document.querySelectorAll("nav.tabs button"), function(b){ return b.getAttribute("data-tab"); })
-      .filter(function(k){ return ALWAYS_TABS.indexOf(k) === -1; });
-    var scale = String(parseFloat(p.fontScale) || 1);
-    var tg = cleanTelegram(p.supportTelegram);
-
-    var tabsHtml = navTabs.map(function(k){
-      var checked = hidden.indexOf(k) === -1;
-      return '<label class="hp-check"><input type="checkbox" data-hp-tab="' + esc(k) + '"' + (checked ? ' checked' : '') + '> <span>' + esc(STRINGS.tabs[k][lang]) + '</span></label>';
-    }).join('');
-
-    var faq = [1, 2, 3, 4, 5, 6].map(function(n){
-      return '<details class="hp-q"><summary>' + esc(THp("q" + n)) + '</summary><p>' + esc(THp("a" + n)) + '</p></details>';
-    }).join('');
-
-    var contactHtml = '<p class="meta">' + esc(THp("contactNote")) + '</p>' +
-      (tg ? '<a class="hp-btn" href="https://t.me/' + esc(tg) + '" target="_blank" rel="noopener noreferrer">' + esc(THp("contactBtn")) + '</a>' : '') +
-      (role === "owner" ?
-        '<div class="field" style="margin-top:12px;"><label>' + esc(THp("contactSet")) + '</label>' +
-        '<input type="text" id="hp-tg" value="' + esc(tg) + '" placeholder="birhan_abc" autocomplete="off">' +
-        '<p class="error" id="hp-tg-err">' + esc(THp("contactBad")) + '</p>' +
-        '<button type="button" class="ghost" id="hp-tg-save">' + esc(T("save")) + '</button></div>' : '');
-
-    el.innerHTML =
-      '<div class="card"><h2>' + esc(THp("prefTitle")) + '</h2>' +
-        '<div class="field"><label>' + esc(THp("textSize")) + '</label><select id="hp-size">' +
-          '<option value="1">' + esc(THp("sizeNormal")) + '</option>' +
-          '<option value="1.15">' + esc(THp("sizeLarge")) + '</option>' +
-          '<option value="1.3">' + esc(THp("sizeXl")) + '</option></select></div>' +
-        '<h2 style="margin-top:16px;">' + esc(THp("tabsTitle")) + '</h2>' +
-        '<p class="meta">' + esc(THp("tabsNote")) + '</p>' +
-        '<div class="hp-checks">' + tabsHtml + '</div>' +
-        '<button type="button" class="ghost" id="hp-showall" style="margin-top:10px;">' + esc(THp("showAll")) + '</button>' +
-      '</div>' +
-
-      '<div class="card"><h2>' + esc(THp("aboutTitle")) + '</h2>' +
-        '<p style="margin:0 0 4px;"><strong>' + esc(STRINGS.appTitle[lang]) + '</strong></p>' +
-        '<p class="meta" style="margin:0;">' + esc(fillTpl(THp("versionLine"), { V: APP_VERSION }, false)) + ' &middot; ' + esc(isInstalledApp() ? THp("modeInstalled") : THp("modeBrowser")) + '</p>' +
-        '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">' +
-          '<button type="button" class="ghost" id="hp-check">' + esc(THp("checkBtn")) + '</button>' +
-          '<button type="button" class="primary" id="hp-update" style="display:none;">' + esc(THp("updateNow")) + '</button>' +
-        '</div>' +
-        '<p class="meta" id="hp-check-msg" style="margin-top:8px;"></p>' +
-      '</div>' +
-
-      '<div class="card"><h2>' + esc(THp("contactTitle")) + '</h2>' + contactHtml + '</div>' +
-      '<div class="card"><h2>' + esc(THp("faqTitle")) + '</h2>' + faq + '</div>';
-
-    // ---- text size ----
-    var sizeSel = document.getElementById("hp-size");
-    sizeSel.value = ["1", "1.15", "1.3"].indexOf(scale) !== -1 ? scale : "1";
-    sizeSel.addEventListener("change", function(){
-      prefs().fontScale = sizeSel.value;
-      save();
-      applyPrefs();
-    });
-
-    // ---- visible tabs ----
-    el.querySelectorAll("[data-hp-tab]").forEach(function(cb){
-      cb.addEventListener("change", function(){
-        var list = [];
-        el.querySelectorAll("[data-hp-tab]").forEach(function(x){ if (!x.checked) list.push(x.getAttribute("data-hp-tab")); });
-        prefs().hiddenTabs = list;
-        save();
-        applyPrefs();
-      });
-    });
-    document.getElementById("hp-showall").addEventListener("click", function(){
-      prefs().hiddenTabs = [];
-      save();
-      applyPrefs();
-      renderAll();
-    });
-
-    // ---- update check: compare with the newest index.html on the server ----
-    var msg = document.getElementById("hp-check-msg");
-    var upBtn = document.getElementById("hp-update");
-    document.getElementById("hp-check").addEventListener("click", function(){
-      msg.textContent = THp("checking");
-      upBtn.style.display = "none";
-      var url = location.href.split("#")[0].split("?")[0] + "?v=" + Date.now();
-      fetch(url, { cache: "no-store" }).then(function(r){
-        if (!r.ok) throw new Error("http");
-        return r.text();
-      }).then(function(txt){
-        var m = txt.match(new RegExp("APP_VERSION" + " = \"([^\"]+)\""));
-        if (m && m[1] !== APP_VERSION){
-          msg.textContent = fillTpl(THp("newVersion"), { V: m[1] }, false);
-          upBtn.style.display = "inline-block";
-        } else {
-          msg.textContent = THp("upToDate");
-        }
-      }).catch(function(){ msg.textContent = THp("checkFail"); });
-    });
-    upBtn.addEventListener("click", function(){
-      save();
-      var done = function(){ location.reload(); };
-      try {
-        if (window.caches && caches.keys){
-          caches.keys().then(function(keys){ return Promise.all(keys.map(function(k){ return caches.delete(k); })); }).then(done, done);
-        } else { done(); }
-      } catch(e){ done(); }
-    });
-
-    // ---- Telegram contact (the Owner sets it once) ----
-    var tgSave = document.getElementById("hp-tg-save");
-    if (tgSave) tgSave.addEventListener("click", function(){
-      var raw = document.getElementById("hp-tg").value.trim();
-      var err = document.getElementById("hp-tg-err");
-      var clean = cleanTelegram(raw);
-      if (raw && !clean){ err.style.display = "block"; return; }
-      err.style.display = "none";
-      prefs().supportTelegram = clean;
-      save();
-      renderAll();
-    });
-  }
-
-  // ---------- security: PINs (a phone-lock style protection) ----------
-  var PIN_ROLES = ["owner", "admin", "collector"];
-  var PIN_GRACE_MS = 2 * 60 * 1000;        // after a correct PIN, deleting stays unlocked for 2 minutes
-  var AUTOLOCK_MS = 10 * 60 * 1000;        // back to view-only after 10 minutes in the background
-  var pinUnlockedUntil = 0;
-  var pinFails = 0, pinLockUntil = 0;
-  var hiddenAt = 0;
-  function TPin(key){ return (STRINGS.pin[key] && STRINGS.pin[key][lang]) || key; }
-
-  function secState(){
-    if (!state.security || typeof state.security !== "object" || Array.isArray(state.security)) state.security = { pins: {}, recovery: null, viewLock: false };
-    if (!state.security.pins || typeof state.security.pins !== "object") state.security.pins = {};
-    return state.security;
-  }
-  function securityOn(){
-    var p = secState().pins;
-    return !!(p.owner || p.admin || p.collector);
-  }
-  function hasPin(r){ return !!secState().pins[r]; }
-
-  // ---- hashing (PBKDF2 with a random salt; the PIN itself is never stored) ----
-  function bytesToHex(buf){
-    return Array.prototype.map.call(new Uint8Array(buf), function(b){ return ("0" + b.toString(16)).slice(-2); }).join("");
-  }
-  function randomBytes(n){
-    var a = new Uint8Array(n);
-    if (window.crypto && window.crypto.getRandomValues) window.crypto.getRandomValues(a);
-    else for (var i = 0; i < n; i++) a[i] = Math.floor(Math.random() * 256);
-    return a;
-  }
-  function randomSalt(){ return bytesToHex(randomBytes(16)); }
-  function hashPin(pin, salt){
-    if (window.crypto && window.crypto.subtle && window.crypto.subtle.importKey && window.TextEncoder){
-      var enc = new TextEncoder();
-      return window.crypto.subtle.importKey("raw", enc.encode(pin), "PBKDF2", false, ["deriveBits"]).then(function(key){
-        return window.crypto.subtle.deriveBits({ name: "PBKDF2", salt: enc.encode(salt), iterations: 150000, hash: "SHA-256" }, key, 256);
-      }).then(bytesToHex);
-    }
-    // fallback for very old browsers
-    var h = 2166136261, str = salt + ":" + pin;
-    for (var i = 0; i < 20000; i++){
-      for (var j = 0; j < str.length; j++){ h ^= str.charCodeAt(j); h = Math.imul(h, 16777619); }
-      str = String(h);
-    }
-    return Promise.resolve(String(h >>> 0));
-  }
-  function verifyAgainst(entry, secret){
-    if (!entry) return Promise.resolve(false);
-    return hashPin(secret, entry.s).then(function(h){ return h === entry.h; });
-  }
-
-  // ---- wrong-attempt lock (kept in the browser so a reload does not reset it) ----
-  function loadLock(){
-    try {
-      var o = JSON.parse(window.localStorage.getItem("bkbn_lock") || "{}");
-      pinFails = o.f || 0; pinLockUntil = o.u || 0;
-    } catch(e){}
-  }
-  function saveLock(){
-    try { window.localStorage.setItem("bkbn_lock", JSON.stringify({ f: pinFails, u: pinLockUntil })); } catch(e){}
-  }
-  function lockRemaining(){ return Math.max(0, Math.ceil((pinLockUntil - Date.now()) / 1000)); }
-  function noteFail(){
-    pinFails++;
-    if (pinFails >= 5){ pinFails = 0; pinLockUntil = Date.now() + 60000; }
-    saveLock();
-  }
-  function lockedMsg(){ return fillTpl(TPin("locked"), { S: lockRemaining() }, false); }
-
-  // ---- the dialog ----
-  // opts: { title, note, fields:[{label,text}], forgot, okLabel, hideCancel, code, check(vals)->Promise<errorText|null> }
-  // resolves: the entered values on success, {forgot:true}, or null when cancelled
-  function pinDialog(opts){
-    return new Promise(function(resolve){
-      var ov = document.createElement("div");
-      ov.className = "pin-overlay";
-      var box = document.createElement("div");
-      box.className = "pin-box";
-      box.setAttribute("role", "dialog");
-      box.setAttribute("aria-modal", "true");
-      var h = document.createElement("h3");
-      h.textContent = opts.title;
-      box.appendChild(h);
-      if (opts.note){
-        var n = document.createElement("p");
-        n.className = "meta";
-        n.textContent = opts.note;
-        box.appendChild(n);
-      }
-      if (opts.code){
-        var c = document.createElement("div");
-        c.className = "pin-code";
-        c.textContent = opts.code;
-        box.appendChild(c);
-      }
-      var inputs = [];
-      (opts.fields || []).forEach(function(f){
-        var lab = document.createElement("label");
-        lab.textContent = f.label;
-        box.appendChild(lab);
-        var inp = document.createElement("input");
-        inp.autocomplete = "off";
-        if (f.text){ inp.type = "text"; inp.maxLength = 24; inp.style.letterSpacing = "2px"; inp.style.textTransform = "uppercase"; }
-        else {
-          inp.type = "password"; inp.inputMode = "numeric"; inp.maxLength = 6;
-          inp.addEventListener("input", function(){ inp.value = inp.value.replace(/\D/g, ""); });
-        }
-        box.appendChild(inp);
-        inputs.push(inp);
-      });
-      var err = document.createElement("p");
-      err.className = "error";
-      err.style.display = "none";
-      box.appendChild(err);
-      var row = document.createElement("div");
-      row.className = "pin-row";
-      var ok = document.createElement("button");
-      ok.type = "button"; ok.className = "primary"; ok.textContent = opts.okLabel || TPin("ok");
-      row.appendChild(ok);
-      var cancel = null;
-      if (!opts.hideCancel){
-        cancel = document.createElement("button");
-        cancel.type = "button"; cancel.className = "ghost"; cancel.textContent = TAct("cancel");
-        row.appendChild(cancel);
-      }
-      box.appendChild(row);
-      if (opts.forgot){
-        var fg = document.createElement("button");
-        fg.type = "button"; fg.className = "pin-forgot"; fg.textContent = TPin("forgot");
-        fg.addEventListener("click", function(){ close({ forgot: true }); });
-        box.appendChild(fg);
-      }
-      ov.appendChild(box);
-      document.body.appendChild(ov);
-      if (inputs[0]) setTimeout(function(){ inputs[0].focus(); }, 30);
-
-      var busy = false;
-      function close(val){
-        if (ov.parentNode) ov.parentNode.removeChild(ov);
-        document.removeEventListener("keydown", onKey, true);
-        resolve(val);
-      }
-      function submit(){
-        if (busy) return;
-        var vals = inputs.map(function(i){ return i.value.trim(); });
-        if (!opts.check){ close(vals); return; }
-        busy = true; ok.disabled = true;
-        Promise.resolve(opts.check(vals)).then(function(msg){
-          busy = false; ok.disabled = false;
-          if (msg){
-            err.textContent = msg; err.style.display = "block";
-            inputs.forEach(function(i){ i.value = ""; });
-            if (inputs[0]) inputs[0].focus();
-          } else { close(vals); }
-        }, function(){ busy = false; ok.disabled = false; err.textContent = TFl("storeFail"); err.style.display = "block"; });
-      }
-      function onKey(e){
-        if (e.key === "Enter"){ e.preventDefault(); submit(); }
-        else if (e.key === "Escape" && cancel){ e.preventDefault(); close(null); }
-      }
-      document.addEventListener("keydown", onKey, true);
-      ok.addEventListener("click", submit);
-      if (cancel) cancel.addEventListener("click", function(){ close(null); });
-    });
-  }
-
-  // ---- building blocks ----
-  function askVerify(r, title){
-    return pinDialog({
-      title: title, fields: [{ label: TPin("pinLabel") }], forgot: true,
-      check: function(vals){
-        if (lockRemaining() > 0) return Promise.resolve(lockedMsg());
-        if (!/^\d{4,6}$/.test(vals[0])) return Promise.resolve(TPin("badFormat"));
-        return verifyAgainst(secState().pins[r], vals[0]).then(function(good){
-          if (good){ pinFails = 0; saveLock(); return null; }
-          noteFail();
-          return lockRemaining() > 0 ? lockedMsg() : TPin("wrong");
-        });
-      }
-    }).then(function(res){
-      if (res && res.forgot) return recoverPin(r);
-      return !!res;
-    });
-  }
-  function normCode(s){ return String(s || "").replace(/[^A-Za-z0-9]/g, "").toUpperCase(); }
-  function newRecoveryCode(){
-    var chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789", a = randomBytes(12), s = "";
-    for (var i = 0; i < 12; i++){ s += chars[a[i] % chars.length]; if (i % 4 === 3 && i < 11) s += "-"; }
-    return s;
-  }
-  function showRecoveryCode(code){
-    return pinDialog({ title: TPin("codeTitle"), note: TPin("codeNote"), code: code, okLabel: TPin("codeDone"), hideCancel: true });
-  }
-  function makeRecovery(){
-    var code = newRecoveryCode(), salt = randomSalt();
-    return hashPin(normCode(code), salt).then(function(h){
-      secState().recovery = { s: salt, h: h };
-      save();
-      return showRecoveryCode(code);
-    });
-  }
-  function ensureRecovery(){ return secState().recovery ? Promise.resolve() : makeRecovery(); }
-
-  function createPin(r){
-    return pinDialog({
-      title: fillTpl(TPin("createTitle"), { ROLE: roleName(r) }, false), note: TPin("createNote"),
-      fields: [{ label: TPin("pinLabel") }, { label: TPin("confirmLabel") }],
-      check: function(v){
-        if (!/^\d{4,6}$/.test(v[0])) return Promise.resolve(TPin("badFormat"));
-        if (v[0] !== v[1]) return Promise.resolve(TPin("mismatch"));
-        return Promise.resolve(null);
-      }
-    }).then(function(vals){
-      if (!vals) return false;
-      var salt = randomSalt();
-      return hashPin(vals[0], salt).then(function(h){
-        secState().pins[r] = { s: salt, h: h };
-        save();
-        return ensureRecovery();
-      }).then(function(){ showToast(TPin("saved")); return true; });
-    });
-  }
-  function recoverPin(r){
-    if (!secState().recovery){ showToast(TPin("noRecovery")); return Promise.resolve(false); }
-    return pinDialog({
-      title: TPin("recoveryEnter"), fields: [{ label: "XXXX-XXXX-XXXX", text: true }],
-      check: function(vals){
-        if (lockRemaining() > 0) return Promise.resolve(lockedMsg());
-        return verifyAgainst(secState().recovery, normCode(vals[0])).then(function(good){
-          if (good){ pinFails = 0; saveLock(); return null; }
-          noteFail();
-          return lockRemaining() > 0 ? lockedMsg() : TPin("recoveryBad");
-        });
-      }
-    }).then(function(vals){ return vals ? createPin(r) : false; });
-  }
-
-
-  // ---- app lock: require a PIN before the app opens at all (not just before editing) ----
-  function TVl(key){ return (STRINGS.vl[key] && STRINGS.vl[key][lang]) || key; }
-  function viewLockOn(){ return securityOn() && !!secState().viewLock; }
-  function pinRoles(){ return PIN_ROLES.filter(function(r){ return hasPin(r); }); }
-
-  function toggleViewLock(checked){
-    var run = function(){
-      secState().viewLock = checked;
-      save();
-    };
-    if (checked){
-      run();
-    } else {
-      requirePin().then(function(ok){ if (ok) run(); else renderAll(); });
-    }
-  }
-
-  // Shows a full-screen lock; calls onOpen() once the correct PIN for some role is entered.
-  function showAppLock(onOpen){
-    var box = document.getElementById("view-lock");
-    var roles = pinRoles();
-    function paint(){
-      box.innerHTML =
-        '<div class="vl-card">' +
-          '<h1>' + esc(STRINGS.appTitle[lang]) + '</h1>' +
-          '<h3>' + esc(TVl("title")) + '</h3>' +
-          '<p class="meta">' + esc(TVl("note")) + '</p>' +
-          '<label>' + esc(TVl("roleLabel")) + '</label>' +
-          '<select id="vl-role">' + roles.map(function(r){ return '<option value="' + r + '">' + esc(roleName(r)) + '</option>'; }).join('') + '</select>' +
-          '<label>' + esc(TPin("pinLabel")) + '</label>' +
-          '<input type="password" inputmode="numeric" maxlength="6" id="vl-pin" autocomplete="off">' +
-          '<p class="error" id="vl-err" style="display:none;"></p>' +
-          '<button type="button" class="primary" id="vl-go">' + esc(TVl("enter")) + '</button>' +
-          '<button type="button" class="pin-forgot" id="vl-forgot">' + esc(TPin("forgot")) + '</button>' +
-        '</div>';
-      var pinInp = document.getElementById("vl-pin");
-      pinInp.addEventListener("input", function(){ pinInp.value = pinInp.value.replace(/\D/g, ""); });
-      pinInp.addEventListener("keydown", function(e){ if (e.key === "Enter") go(); });
-      document.getElementById("vl-go").addEventListener("click", go);
-      document.getElementById("vl-forgot").addEventListener("click", function(){
-        var r = document.getElementById("vl-role").value;
-        recoverPin(r).then(function(ok){ if (ok){ role = r; box.classList.add("hidden"); onOpen(); } else paint(); });
-      });
-      setTimeout(function(){ pinInp.focus(); }, 30);
-    }
-    function go(){
-      var r = document.getElementById("vl-role").value;
-      var pinVal = document.getElementById("vl-pin").value.trim();
-      var err = document.getElementById("vl-err");
-      if (lockRemaining() > 0){ err.textContent = lockedMsg(); err.style.display = "block"; return; }
-      if (!/^\d{4,6}$/.test(pinVal)){ err.textContent = TPin("badFormat"); err.style.display = "block"; return; }
-      verifyAgainst(secState().pins[r], pinVal).then(function(good){
-        if (good){
-          pinFails = 0; saveLock();
-          role = r;
-          box.classList.add("hidden");
-          onOpen();
-        } else {
-          noteFail();
-          err.textContent = lockRemaining() > 0 ? lockedMsg() : TPin("wrong");
-          err.style.display = "block";
-          document.getElementById("vl-pin").value = "";
-        }
-      });
-    }
-    box.classList.remove("hidden");
-    paint();
-  }
-
-  // ---- switching role ----
-  function requestRole(target){
-    if (target === "viewer" || target === role) return Promise.resolve(true);
-    if (!securityOn()) return Promise.resolve(true);
-    if (hasPin(target)) return askVerify(target, fillTpl(TPin("enterFor"), { ROLE: roleName(target) }, false));
-    // this role has no PIN yet: it gets one now (the Owner has to allow it)
-    if (target !== "owner" && role !== "owner" && hasPin("owner")){
-      return askVerify("owner", TPin("ownerNeeded")).then(function(good){ return good ? createPin(target) : false; });
-    }
-    return createPin(target);
-  }
-  document.getElementById("role-select").addEventListener("change", function(){
-    var sel = this, target = sel.value, prev = role;
-    requestRole(target).then(function(good){
-      if (good){
-        role = target;
-        pinUnlockedUntil = 0;
-        resetEditing();
-        renderAll();
-      } else {
-        sel.value = prev;
-      }
-    });
-  });
-
-  // ---- deleting (and other destructive actions) ----
-  function requirePin(){
-    if (!securityOn() || !hasPin(role)) return Promise.resolve(true);
-    if (Date.now() < pinUnlockedUntil) return Promise.resolve(true);
-    return askVerify(role, TPin("deleteTitle")).then(function(good){
-      if (good) pinUnlockedUntil = Date.now() + PIN_GRACE_MS;
-      return good;
-    });
-  }
-
-  // ---- back to view-only after a long time away ----
-  document.addEventListener("visibilitychange", function(){
-    if (document.hidden){ hiddenAt = Date.now(); return; }
-    if (securityOn() && role !== "viewer" && hiddenAt && Date.now() - hiddenAt > AUTOLOCK_MS){
-      role = "viewer";
-      document.getElementById("role-select").value = "viewer";
-      pinUnlockedUntil = 0;
-      resetEditing();
-      renderAll();
-      showToast(TPin("autoLocked"));
-    }
-  });
-
-  // ---- dashboard hints ----
-  function secBanner(){
-    if (!securityOn()){
-      if (role !== "owner") return "";
-      return '<section class="db-card"><h2>' + esc(TPin("nudgeTitle")) + '</h2>' +
-        '<p class="meta" style="margin:0 0 12px;">' + esc(TPin("nudgeText")) + '</p>' +
-        '<button type="button" class="primary" data-goto="storage">' + esc(TPin("setBtn")) + '</button></section>';
-    }
-    if (role === "viewer"){
-      return '<div class="note">' + esc(TPin("viewerNote")) + '</div>';
-    }
-    return "";
-  }
-
-  // ---- the "Security (PIN)" card in the Storage & Backup tab ----
-  function securityCardHtml(){
-    if (role === "viewer") return "";
-    var isOwner = role === "owner";
-    var rows = PIN_ROLES.filter(function(r){ return isOwner || r === role; }).map(function(r){
-      var set = hasPin(r);
-      var btns = "";
-      if (set && r === role) btns += '<button type="button" class="ghost" data-sec="change" data-role="' + r + '">' + esc(TPin("changeBtn")) + '</button>';
-      if (isOwner && r !== "owner" && !set) btns += '<button type="button" class="ghost" data-sec="set" data-role="' + r + '">' + esc(TPin("setBtn")) + '</button>';
-      if (isOwner && r !== "owner" && set) btns += '<button type="button" class="ghost" data-sec="clear" data-role="' + r + '">' + esc(TPin("clearBtn")) + '</button>';
-      if (isOwner && r === "owner" && !set) btns += '<button type="button" class="primary" data-sec="set" data-role="owner">' + esc(TPin("setBtn")) + '</button>';
-      return '<div class="row"><span>' + esc(roleName(r)) + '<br><span class="meta">' + esc(set ? TPin("statusSet") : TPin("statusNotSet")) + '</span>' +
-        (btns ? '<span class="row-actions">' + btns + '</span>' : '') + '</span>' +
-        '<span class="badge ' + (set ? "synced" : "pending") + '">' + esc(set ? "✓" : "—") + '</span></div>';
-    }).join('');
-    return '<div class="card"><h2>' + esc(TPin("secTitle")) + '</h2>' +
-      '<p class="meta">' + esc(TPin("secNote")) + '</p>' + rows +
-      (isOwner && securityOn() ? '<button type="button" class="ghost" data-sec="recovery" style="margin-top:10px;">' + esc(TPin("recoveryBtn")) + '</button>' : '') +
-      (isOwner && hasPin("owner") ?
-        '<label class="hp-check" style="margin-top:10px;border:none;"><input type="checkbox" id="sec-viewlock"' + (secState().viewLock ? " checked" : "") + '> <span>' + esc(TVl("toggleLabel")) + '</span></label>' +
-        '<p class="meta">' + esc(TVl("toggleNote")) + '</p>' :
-        (isOwner ? '<p class="meta" style="margin-top:10px;">' + esc(TVl("needOwnerFirst")) + '</p>' : '')) +
-      '</div>';
-  }
-  function bindSecurity(root){
-    root.querySelectorAll("[data-sec]").forEach(function(btn){
-      btn.addEventListener("click", function(){
-        var what = btn.getAttribute("data-sec"), r = btn.getAttribute("data-role");
-        var done = function(){ renderAll(); };
-        if (what === "set"){
-          if (role !== "owner") return;
-          createPin(r).then(done);
-        } else if (what === "change"){
-          if (r !== role) return;
-          askVerify(r, TPin("currentPin")).then(function(good){ return good ? createPin(r) : false; }).then(done);
-        } else if (what === "clear"){
-          if (role !== "owner") return;
-          requirePin().then(function(good){
-            if (!good) return;
-            delete secState().pins[r];
-            save();
-            done();
-          });
-        } else if (what === "recovery"){
-          if (role !== "owner") return;
-          requirePin().then(function(good){ return good ? makeRecovery() : null; }).then(done);
-        }
-      });
-    });
-  }
-
-  // ---------- departments (from the internal by-law) ----------
-  var DEPT_ORDER = ["edu", "choir", "members", "finance", "dev", "plan", "audit"];
-  var DEPT_SUBS = {
-    edu: ["ስርዓተ ትምህርት ቀረጻ፣ ዝግጅትና ማሻሻያ", "ተከታታይ ትምህርት ክትትል", "መምህራን ስልጠናና ምደባ", "ቤተ መጻሕፍት እና ቤተ መዛግብት", "ህትመት እና ብዙሀን መገናኛ", "መርሐ ግብር ዝግጅት", "አርትዖት", "አብነት ትምህርት"],
-    choir: ["መዝሙር ክፍል", "ኪነ ጥበብ ክፍል"],
-    members: ["አባላት መረጃ እና አስተዳደር", "አገልግሎት ምደባ እና ክትትል", "አባላት መንፈሳዊና ማኅበራዊ ጉዳይ", "ህዝብ ግንኙነት"],
-    finance: ["ሂሳብና በጀት አስተዳደር", "ንብረት አስተዳደር", "ግዢ ክፍል"],
-    dev: ["ዕደ ጥበብ ሙያ ማስተባበሪያ", "ገቢ አስገኛ (ሽያጭ)", "ጽዳት እና መስተንግዶ", "አብያተ ክርስቲያናት ድጋፍና ዕርዳታ", "ማህበራዊ ድጋፍና ዕርዳታ"],
-    plan: ["ዕቅድ ዝግጅትና ክትትል", "ሥልጠናና ጥናትና ምርምር"],
-    audit: ["ሂሳብና ንብረት ምርመራ", "የስራ ሂደት ክትትልና ቁጥጥር"]
-  };
-  function TDept(key){ return (STRINGS.dept[key] && STRINGS.dept[key][lang]) || key; }
-  function TDp(key){ return (STRINGS.dp[key] && STRINGS.dp[key][lang]) || key; }
-  function departments(){
-    if (!state.departments || typeof state.departments !== "object" || Array.isArray(state.departments)) state.departments = {};
-    return state.departments;
-  }
-  function deptAssignedCount(){
-    var d = departments();
-    return DEPT_ORDER.filter(function(k){ return d[k] && d[k].headId; }).length;
-  }
-  function memberLabel(id){
-    var m = state.members.find(function(x){ return x.id === id; });
-    return m ? m.name + (m.code ? " (" + m.code + ")" : "") : "";
-  }
-
-  function renderDepartments(){
-    var el = document.getElementById("tab-departments");
-    var canEdit = can("manage-departments");
-    var d = departments();
-
-    var cards = DEPT_ORDER.map(function(key){
-      var rec = d[key] || {};
-      var subs = DEPT_SUBS[key].map(function(s){ return '<span class="dept-sub">' + esc(s) + '</span>'; }).join('');
-      function personRow(role, field, roleLabel){
-        var val = rec[field] || "";
-        if (canEdit){
-          return '<div class="field"><label>' + esc(roleLabel) + '</label><select data-dept="' + key + '" data-field="' + field + '">' +
-            '<option value="">' + esc(TDept("choose")) + '</option>' +
-            state.members.map(function(m){ return '<option value="' + esc(m.id) + '"' + (m.id === val ? " selected" : "") + '>' + esc(m.name) + (m.code ? " (" + esc(m.code) + ")" : "") + '</option>'; }).join('') +
-            '</select></div>';
-        }
-        return '<div class="row"><span>' + esc(roleLabel) + '</span><span>' + (val ? esc(memberLabel(val)) : '<span class="meta">' + esc(TDept("none")) + '</span>') + '</span></div>';
-      }
-      return '<div class="card"><h2>' + esc(TDp(key)) + '</h2>' +
-        '<p class="meta" style="margin:0 0 12px;">' + esc(TDp(key + "_d")) + '</p>' +
-        personRow("head", "headId", TDept("headRole")) +
-        personRow("sec", "secId", TDept("secRole")) +
-        '<div style="margin-top:12px;"><div class="meta" style="margin-bottom:6px;">' + esc(TDept("subsLabel")) + '</div><div class="dept-subs">' + subs + '</div></div>' +
-        '</div>';
-    }).join('');
-
-    el.innerHTML =
-      '<div class="note">' + esc(TDept("note")) + '</div>' +
-      (canEdit && !state.members.length ? '<div class="note">' + esc(TDept("needMembers")) + '</div>' : '') +
-      cards;
-
-    if (canEdit){
-      el.querySelectorAll("[data-dept]").forEach(function(sel){
-        sel.addEventListener("change", function(){
-          var key = sel.getAttribute("data-dept"), field = sel.getAttribute("data-field");
-          var d2 = departments();
-          if (!d2[key]) d2[key] = {};
-          d2[key][field] = sel.value;
-          logAction("act_dept", TDp(key) + " — " + (field === "headId" ? TDept("headRole") : TDept("secRole")) + ": " + (sel.value ? memberLabel(sel.value) : TDept("none")));
-          save();
-          renderAll();
-        });
-      });
-    }
-  }
-
   // ---------- storage, backup & files ----------
   function ymd(ts){
     var d = new Date(ts);
     return d.getFullYear() + "-" + pad(d.getMonth() + 1, 2) + "-" + pad(d.getDate(), 2);
-  }
-  function backupJson(){
-    var copy = JSON.parse(JSON.stringify(state));
-    delete copy.security;                                   // PINs never leave this device
-    return JSON.stringify({ app: "bkbn-sunday-school", version: 2, exportedAt: new Date().toISOString(), data: copy });
-  }
-  function canShareFiles(){
-    try { return !!(navigator.share && navigator.canShare && window.File); } catch(e){ return false; }
-  }
-  // Opens the phone's share sheet (Telegram, Drive, ...). Falls back to a normal download.
-  function shareBackup(){
-    var name = "bkbn-backup-" + ymd(Date.now()) + ".json";
-    var json = backupJson();
-    var pick = null;
-    try {
-      var candidates = [new File([json], name, { type: "application/json" }), new File([json], name + ".txt", { type: "text/plain" })];
-      for (var i = 0; i < candidates.length; i++){
-        if (navigator.canShare({ files: [candidates[i]] })){ pick = candidates[i]; break; }
-      }
-    } catch(e){ pick = null; }
-    if (!pick){
-      downloadTextFile(name, json, "application/json");
-      state.lastBackupAt = Date.now(); save(); renderAll();
-      showToast(THp("shareFail"));
-      return;
-    }
-    navigator.share({ files: [pick], title: name }).then(function(){
-      state.lastBackupAt = Date.now(); save(); renderAll();
-    }).catch(function(){});
   }
   function renderStorage(){
     var el = document.getElementById("tab-storage");
@@ -3650,7 +2811,6 @@
 
     el.innerHTML =
       '<div class="note">' + esc(TSt("note")) + '</div>' +
-      securityCardHtml() +
       '<div class="card"><h2>' + esc(TSt("usageTitle")) + '</h2>' +
         '<div class="st-bar"><i id="st-bar-fill" style="width:0%"></i></div>' +
         '<p class="meta" id="st-usage" style="margin:6px 0 0;">…</p>' +
@@ -3664,12 +2824,11 @@
             (state.lastBackupAt ? esc(fillTpl(TSt("lastBackup"), { DATE: new Date(state.lastBackupAt).toLocaleDateString("en-GB") }, false)) : esc(TSt("noBackup"))) +
           '</p>' +
           '<button class="primary" id="st-backup-btn">' + esc(TSt("backupBtn")) + '</button>' +
-          (canShareFiles() ? ' <button class="ghost" id="st-share-btn" style="margin-top:8px;">' + esc(THp("shareBtn")) + '</button>' : '') +
         '</div>' : '') +
       (canRestore ?
         '<div class="card"><h2>' + esc(TSt("restoreTitle")) + '</h2>' +
           '<p class="meta">' + esc(TSt("restoreNote")) + '</p>' +
-          '<input type="file" id="st-restore-file" accept=".json,.txt,application/json,text/plain" style="margin:8px 0;display:block;">' +
+          '<input type="file" id="st-restore-file" accept=".json,application/json" style="margin:8px 0;display:block;">' +
           '<button class="ghost" id="st-restore-btn">' + esc(TSt("restoreBtn")) + '</button>' +
           '<p class="error" id="st-restore-err"></p>' +
         '</div>' +
@@ -3681,10 +2840,6 @@
         (canFiles && unusedCount ? '<button type="button" class="ghost" id="st-clean-btn" style="margin-bottom:8px;">' + esc(fillTpl(TSt("cleanBtn"), { N: unusedCount }, false)) + '</button>' : '') +
         filesHtml +
       '</div>';
-
-    bindSecurity(el);
-    var vlChk = document.getElementById("sec-viewlock");
-    if (vlChk) vlChk.addEventListener("change", function(){ toggleViewLock(vlChk.checked); });
 
     // ---- usage bar + protection status ----
     var persistBtn = document.getElementById("st-persist-btn");
@@ -3718,12 +2873,10 @@
     if (backupBtn) backupBtn.addEventListener("click", function(){
       state.lastBackupAt = Date.now();
       save();
-      downloadTextFile("bkbn-backup-" + ymd(Date.now()) + ".json", backupJson(), "application/json");
+      var payload = { app: "bkbn-sunday-school", version: 2, exportedAt: new Date().toISOString(), data: state };
+      downloadTextFile("bkbn-backup-" + ymd(Date.now()) + ".json", JSON.stringify(payload), "application/json");
       renderAll();
     });
-
-    var shareBtn = document.getElementById("st-share-btn");
-    if (shareBtn) shareBtn.addEventListener("click", shareBackup);
 
     // ---- restore from a backup file ----
     var restoreBtn = document.getElementById("st-restore-btn");
@@ -3740,10 +2893,7 @@
         } catch(x){}
         if (!isValidData(obj)){ err.textContent = TSt("restoreBad"); err.style.display = "block"; return; }
         err.style.display = "none";
-        requirePin().then(function(pinOk){
-          if (!pinOk) return;
-          applyRestore(obj).then(function(ok){ showToast(ok ? TSt("restoreOk") : TSt("restoreBad")); });
-        });
+        applyRestore(obj).then(function(ok){ showToast(ok ? TSt("restoreOk") : TSt("restoreBad")); });
       };
       reader.onerror = function(){ err.textContent = TSt("restoreBad"); err.style.display = "block"; };
       reader.readAsText(inp.files[0]);
@@ -3765,53 +2915,108 @@
     var cleanBtn = document.getElementById("st-clean-btn");
     if (cleanBtn) cleanBtn.addEventListener("click", function(){
       armThen(cleanBtn, function(){
-        requirePin().then(function(pinOk){
-          if (!pinOk) return;
-          var ids = state.files.filter(function(f){ return fileRefs(f.id).length === 0; }).map(function(f){ return f.id; });
-          Promise.all(ids.map(removeFile)).then(function(){
-            save(); renderAll();
-            showToast(fillTpl(TSt("cleaned"), { N: ids.length }, false));
-          });
+        var ids = state.files.filter(function(f){ return fileRefs(f.id).length === 0; }).map(function(f){ return f.id; });
+        Promise.all(ids.map(removeFile)).then(function(){
+          save(); renderAll();
+          showToast(fillTpl(TSt("cleaned"), { N: ids.length }, false));
         });
       });
     });
   }
 
-  // ---------- installable app + offline copy ----------
-  if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)){
-    window.addEventListener("load", function(){
-      try { navigator.serviceWorker.register("sw.js").catch(function(){}); } catch(e){}
-    });
-  }
-
   // ---------- init ----------
-  function finishInit(){
+  load().then(function(){ return refreshFileKeys(); }).then(function(){
     document.getElementById("owner-name").value = state.ownerName || "";
-    if (prefs().lang && STRINGS.appTitle[prefs().lang]) lang = prefs().lang;   // remember the chosen language
     document.getElementById("lang-select").value = lang;
-    document.getElementById("role-select").value = role;
     if (!state.installId){
       state.installId = generateInstallId();
       save();
     }
+    lastSavedTs = state.savedAt || 0;
     checkPersisted();
     applyLang();
-    applyPrefs();
     renderAll();
     dailySnapshot();
-  }
-  load().then(function(){ return refreshFileKeys(); }).then(function(){
-    lastSavedTs = state.savedAt || 0;
-    loadLock();
-    if (securityOn()){                       // with PINs on, the app always opens view-only
-      role = "viewer";
-    }
-    if (viewLockOn() && pinRoles().length){
-      showAppLock(finishInit);
-    } else {
-      finishInit();
-    }
   });
+})();
+</script>
+<script>
+(function(){"use strict";
+var KEY="bkbn_sec_v1",NAMES={owner:"ባለቤት",admin:"አስተዳዳሪ",collector:"ሰብሳቢ"},AUTO=5*60*1000,VOUCH=60*1000;
+var enc=new TextEncoder(),ok=!!(window.crypto&&crypto.subtle);
+function rd(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return{}}}
+var cfg=rd();cfg.pins=cfg.pins||{};cfg.fail=cfg.fail||{n:0,until:0};
+function sv(){try{localStorage.setItem(KEY,JSON.stringify(cfg))}catch(e){}}
+function b64(u){return btoa(String.fromCharCode.apply(null,new Uint8Array(u)))}
+function ub(s){return Uint8Array.from(atob(s),function(c){return c.charCodeAt(0)})}
+async function hs(pin,salt){var k=await crypto.subtle.importKey("raw",enc.encode(pin),"PBKDF2",false,["deriveBits"]);return b64(await crypto.subtle.deriveBits({name:"PBKDF2",hash:"SHA-256",salt:salt,iterations:150000},k,256))}
+async function setPin(r,pin){var s=crypto.getRandomValues(new Uint8Array(16));cfg.pins[r]={s:b64(s),h:await hs(pin,s)};sv()}
+async function chk(r,pin){var p=cfg.pins[r];if(!p)return false;return (await hs(pin,ub(p.s)))===p.h}
+function wait(){return Math.max(0,Math.ceil((cfg.fail.until-Date.now())/1000))}
+function bad(){cfg.fail.n++;if(cfg.fail.n>=5)cfg.fail.until=Date.now()+Math.min(900,30*Math.pow(2,cfg.fail.n-5))*1000;sv()}
+function good(){cfg.fail={n:0,until:0};sv()}
+function strong(p){return /^\d{6,12}$/.test(p)&&!/^(\d)\1+$/.test(p)&&"0123456789876543210".indexOf(p)<0}
+var sel=function(){return document.getElementById("role-select")};
+var cur="owner",bypass=false,vouched=0,locked=false,busy=false;
+function el(t,a,x){var e=document.createElement(t);for(var k in(a||{}))e.setAttribute(k,a[k]);if(x)e.textContent=x;return e}
+function modal(title,sub,fields,btns){return new Promise(function(res){
+ var ov=el("div",{"class":"sec-ov",role:"dialog","aria-modal":"true"}),bx=el("div",{"class":"sec-box"});
+ bx.appendChild(el("h3",{},title));if(sub)bx.appendChild(el("p",{},sub));
+ var ins=fields.map(function(f){var i=el("input",{type:"password",inputmode:"numeric",autocomplete:"off",maxlength:"12",placeholder:f});bx.appendChild(i);return i});
+ var msg=el("div",{"class":"sec-msg"});bx.appendChild(msg);var row=el("div",{"class":"sec-row"});
+ btns.forEach(function(b){var e=el("button",{type:"button","class":b.c||""},b.t);e.onclick=function(){if(b.cancel){ov.remove();res(null);return}
+  var v=ins.map(function(i){return i.value});Promise.resolve(b.fn?b.fn(v,msg):v).then(function(r){if(r!==false){ov.remove();res(r)}})};row.appendChild(e)});
+ bx.appendChild(row);ov.appendChild(bx);document.body.appendChild(ov);if(ins[0])setTimeout(function(){ins[0].focus()},50);
+ bx.addEventListener("keydown",function(e){if(e.key==="Enter"){var p=row.querySelector(".pri");if(p)p.click()}})})}
+async function verify(roles,title,cancel){
+ var t=title;return modal(t,"",["PIN"],[{t:"እሺ",c:"pri",fn:async function(v,m){
+  var w=wait();if(w){m.textContent="ብዙ ስህተት ተፈጽሟል። ከ "+w+" ሰከንድ በኋላ ይሞክሩ።";return false}
+  for(var i=0;i<roles.length;i++){if(await chk(roles[i],v[0])){good();return roles[i]}}
+  bad();var w2=wait();m.textContent=w2?"ብዙ ስህተት። ከ "+w2+" ሰከንድ በኋላ ይሞክሩ።":"PIN ትክክል አይደለም።";return false}}].concat(cancel?[{t:"ተመለስ",cancel:1}]:[]))}
+async function newPin(role,title){return modal(title,"ከ6–12 ቁጥሮች (ተመሳሳይ ወይም ተከታታይ አይፈቀድም)",["አዲስ PIN","PIN ድገም"],[{t:"አስቀምጥ",c:"pri",fn:async function(v,m){
+ if(!strong(v[0])){m.textContent="PIN ደካማ ነው። ከ6–12 ቁጥሮች ይጠቀሙ።";return false}
+ if(v[0]!==v[1]){m.textContent="ሁለቱ PIN አይመሳሰሉም።";return false}await setPin(role,v[0]);return true}},{t:"ተመለስ",cancel:1}])}
+function applyRole(r){cur=r;var s=sel();if(s){s.value=r;bypass=true;s.dispatchEvent(new Event("change",{bubbles:true}));bypass=false}}
+async function lock(){
+ if(locked||!ok||!cfg.pins.owner)return;locked=true;document.documentElement.classList.add("sec-lock");
+ var r;while(!(r=await verify(["owner","admin","collector"],"🔒 BK/B/N — PIN ያስገቡ",false)));
+ locked=false;vouched=Date.now();document.documentElement.classList.remove("sec-lock");applyRole(r)}
+async function boot(){
+ if(!ok){document.documentElement.classList.remove("sec-lock");return}
+ if(!cfg.pins.owner){document.documentElement.classList.remove("sec-lock");var d=false;
+  while(!d)d=await newPin("owner","🔐 የባለቤት PIN ይፍጠሩ");vouched=Date.now();return}
+ if(cfg.lockOpen!==false)await lock();else document.documentElement.classList.remove("sec-lock")}
+document.addEventListener("change",async function(e){
+ var s=e.target;if(!s||s.id!=="role-select"||bypass||!ok||!cfg.pins.owner)return;
+ var nr=s.value;if(nr===cur||nr==="viewer"){cur=nr;return}
+ e.stopImmediatePropagation();s.value=cur;
+ var r=await verify(cfg.pins[nr]?[nr]:["owner"],"PIN ለ "+(NAMES[nr]||nr),true);if(r){vouched=Date.now();applyRole(nr)}},true);
+document.addEventListener("click",async function(e){
+ var b=e.target.closest&&e.target.closest('[data-act="del"],[data-act="delfile"],[data-act="snap-restore"]');
+ if(!b||b.__ok||!ok||!cfg.pins.owner)return;if(Date.now()-vouched<VOUCH)return;
+ e.preventDefault();e.stopImmediatePropagation();if(busy)return;busy=true;
+ var r=await verify(cfg.pins[cur]?[cur]:["owner"],"PIN ያስገቡ — ይህን ለመሰረዝ/ለመመለስ",true);busy=false;
+ if(r){vouched=Date.now();b.__ok=1;b.click();b.__ok=0}},true);
+var tm;function rst(){clearTimeout(tm);if(cfg.pins.owner&&cfg.lockOpen!==false)tm=setTimeout(lock,AUTO)}
+["pointerdown","keydown","touchstart","scroll"].forEach(function(n){document.addEventListener(n,rst,{passive:true,capture:true})});
+var hid=0;document.addEventListener("visibilitychange",function(){if(document.hidden)hid=Date.now();else if(hid&&Date.now()-hid>2*60*1000&&cfg.lockOpen!==false)lock()});
+async function panel(){
+ if(!ok||!cfg.pins.owner){return}
+ var ov=el("div",{"class":"sec-ov"}),bx=el("div",{"class":"sec-box"});bx.appendChild(el("h3",{},"🔒 ደህንነት"));
+ function add(t,fn,c){var b=el("button",{type:"button","class":c||""},t);b.onclick=async function(){ov.remove();await fn()};bx.appendChild(b)}
+ add("አሁን ቆልፍ",lock,"pri");
+ if(cur==="owner"){
+  var ownerOk=async function(){var r=await verify(["owner"],"የባለቤት PIN ያስገቡ",true);return !!r};
+  add("የእይታ ጥበቃ (መክፈቻ PIN): "+(cfg.lockOpen!==false?"በርቷል":"ጠፍቷል"),async function(){if(await ownerOk()){cfg.lockOpen=cfg.lockOpen===false;sv();rst()}});
+  add("የአስተዳዳሪ PIN ፍጠር/ቀይር",async function(){if(await ownerOk())await newPin("admin","የአስተዳዳሪ PIN")});
+  add("የሰብሳቢ PIN ፍጠር/ቀይር",async function(){if(await ownerOk())await newPin("collector","የሰብሳቢ PIN")});
+  add("የባለቤት PIN ቀይር",async function(){if(await ownerOk())await newPin("owner","አዲስ የባለቤት PIN")})}
+ else bx.appendChild(el("p",{},"PIN መቀየር ለባለቤት ብቻ ነው።"));
+ add("ዝጋ",function(){});ov.appendChild(bx);document.body.appendChild(ov)}
+var fab=el("button",{type:"button",id:"sec-fab","aria-label":"ደህንነት"},"🔒");fab.onclick=panel;document.body.appendChild(fab);
+var st=el("style");st.textContent=".sec-lock .app{visibility:hidden}.sec-ov{position:fixed;inset:0;background:rgba(43,36,32,.78);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px}.sec-lock .sec-ov{background:#F6F1E3}.sec-box{background:#fff;border:1px solid #E2D6BA;border-radius:14px;padding:20px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:10px}.sec-box h3{margin:0;color:#7A2530}.sec-box p{margin:0;color:#7A7264;font-size:13px}.sec-box input{padding:12px;font-size:18px;letter-spacing:4px;text-align:center;border:1px solid #E2D6BA;border-radius:10px}.sec-box button{padding:11px;border-radius:10px;border:1px solid #E2D6BA;background:#F3E7C9;font-size:15px}.sec-box .pri{background:#7A2530;color:#fff;border-color:#7A2530}.sec-row{display:flex;gap:8px}.sec-row button{flex:1}.sec-msg{color:#b00020;font-size:13px;min-height:16px}#sec-fab{position:fixed;left:12px;bottom:12px;z-index:9999;width:44px;height:44px;border-radius:50%;border:1px solid #E2D6BA;background:#fff;font-size:20px;box-shadow:0 2px 8px rgba(0,0,0,.2)}";document.head.appendChild(st);
+if("serviceWorker" in navigator&&(location.protocol==="https:"||location.hostname==="localhost")){navigator.serviceWorker.register("./sw.js").catch(function(){})}
+boot().then(rst);
 })();
 </script>
 </body>
