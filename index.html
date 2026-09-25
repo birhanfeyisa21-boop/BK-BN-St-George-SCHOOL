@@ -3129,7 +3129,8 @@
       el.innerHTML = '<div class="lb"><img alt="" src="'+LOGO+'"><h3>'+esc(opts.title)+'</h3>' +
         '<input type="password" id="lk-pin" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="••••">' +
         '<div class="er" id="lk-er"></div><button class="primary" id="lk-ok" style="width:100%">'+S("ግባ","Unlock")+'</button>' +
-        (opts.cancel ? '<button class="ghost" id="lk-no" style="width:100%;margin-top:8px">'+S("ተመለስ","Cancel")+'</button>' : '') + '</div>';
+        (opts.cancel ? '<button class="ghost" id="lk-no" style="width:100%;margin-top:8px">'+S("ተመለስ","Cancel")+'</button>' : '') +
+        '<button class="ghost" id="lk-forgot" style="width:100%;margin-top:14px;font-size:12px;">'+S("PIN ረሳሁ","Forgot PIN")+'</button>' + '</div>';
       var pin = document.getElementById("lk-pin"), er = document.getElementById("lk-er"), tm;
       function tick(){
         var left = Math.ceil((sec.until - Date.now())/1000);
@@ -3147,6 +3148,27 @@
       document.getElementById("lk-ok").onclick = go;
       pin.onkeydown = function(e){ if (e.key === "Enter") go(); };
       if (opts.cancel) document.getElementById("lk-no").onclick = function(){ done(null); };
+      document.getElementById("lk-forgot").onclick = function(){
+        el.innerHTML = '<div class="lb"><img alt="" src="'+LOGO+'"><h3>'+S("PIN ማስተካከል","Reset PIN")+'</h3>' +
+          '<p class="meta" style="text-align:right;line-height:1.7;">'+S(
+            "ይህ የተቀመጡትን ሁሉንም PINዎች (ባለቤት፣ አስተዳዳሪ፣ ሰብሳቢ...) ያጠፋል — የተመዘገበው ውሂብ (አባላት፣ ተማሪዎች...) ግን አይነካም። ካረጋገጡ በኋላ አዲስ የባለቤት PIN ይፈጥራሉ። ይህ ስልክ የእርስዎ ካልሆነ ይህን አያድርጉ።",
+            "This clears every saved PIN (owner, admin, collector…) — your data (members, students…) is not touched. You'll set a new owner PIN afterward. Do not do this if this is not your device."
+          )+'</p>' +
+          '<p class="meta" style="text-align:right;">'+S('ለማረጋገጥ ከታች "'+S("አጽዳ","CLEAR")+'" ብለው ይጻፉ','Type "'+S("አጽዳ","CLEAR")+'" below to confirm')+'</p>' +
+          '<input type="text" id="fg-word" autocomplete="off" style="text-align:center;">' +
+          '<div class="er" id="fg-er"></div>' +
+          '<button class="primary" id="fg-ok" style="width:100%;">'+S("ሁሉንም PIN አጽዳ","Clear all PINs")+'</button>' +
+          '<button class="ghost" id="fg-no" style="width:100%;margin-top:8px">'+S("ተመለስ","Cancel")+'</button></div>';
+        document.getElementById("fg-no").onclick = function(){ done2backToPin(); };
+        document.getElementById("fg-ok").onclick = function(){
+          var w = (document.getElementById("fg-word").value || "").trim();
+          var want = S("አጽዳ","CLEAR");
+          if (w !== want){ document.getElementById("fg-er").textContent = S("በትክክል ይጻፉ","Type it exactly as shown"); return; }
+          try { localStorage.removeItem(SEC_KEY); } catch(x){}
+          location.reload();
+        };
+        function done2backToPin(){ clearTimeout(tm); el.style.display = "none"; el.innerHTML = ""; askPin(opts).then(res); }
+      };
       tick(); setTimeout(function(){ pin.focus(); }, 50);
     });
   }
