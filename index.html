@@ -223,6 +223,7 @@
     <div class="field" style="margin-top:8px;">
       <label id="owner-name-label" style="color:#EFE2C6;">የተመዘገበ ባለቤት (Owner) ስም</label>
       <input type="text" id="owner-name" placeholder="ስምዎን ያስገቡ" style="background:#FBF8F0;">
+      <div style="font-size:10px;opacity:.5;color:#EFE2C6;margin-top:2px;">ብርሃነክርስቶስ ፈይሳ</div>
     </div>
     <div class="top-controls">
       <label>ሚና፦
@@ -1538,7 +1539,8 @@
       '<div class="card"><h2>'+TM("registeredTitle")+' ('+state.members.length+')</h2>' +
       (state.members.length ? state.members.slice().reverse().map(function(m){
         var genderDisplay = m.gender === "ወንድ" ? T("male") : (m.gender === "ሴት" ? T("female") : "—");
-        return '<div class="row"><span><span class="badge role">'+esc(m.code||'—')+'</span> '+esc(m.name)+'<br><span class="meta">'+genderDisplay+' &middot; '+esc(parishName(m.parishId))+'</span>'+rowActions("member", m.id)+'</span>' +
+        var gradeDisplay = m.education ? esc(m.education) : S("እየተመዘገበ","Registering");
+        return '<div class="row"><span><span class="badge role">'+esc(m.code||'—')+'</span> '+esc(m.name)+'<br><span class="meta">'+genderDisplay+' &middot; '+gradeDisplay+' &middot; '+esc(parishName(m.parishId))+'</span>'+rowActions("member", m.id)+'</span>' +
           syncBadge(m)+'</div>';
       }).join('') : '<div class="empty">'+T("none")+'</div>') +
       '</div>';
@@ -1930,6 +1932,68 @@
   }
 
   // ---------- lessons (audio/video learning content for students) ----------
+  // ---- in-app audio recording (records straight into the file field, no extra app needed) ----
+  function recorderHtml(prefix){
+    return '<div id="' + prefix + '-rec-wrap" style="margin-top:8px;">' +
+      '<button type="button" class="ghost" id="' + prefix + '-rec-btn">' + esc(S("🎙️ ድምጽ ቅዳ","🎙️ Record audio")) + '</button> ' +
+      '<span class="meta" id="' + prefix + '-rec-time" style="display:none;"></span>' +
+      '<div id="' + prefix + '-rec-preview" style="margin-top:6px;"></div>' +
+      '</div>';
+  }
+  function wireRecorder(prefix, fileInputId){
+    var btn = document.getElementById(prefix + "-rec-btn");
+    if (!btn || btn._wired) return;
+    btn._wired = true;
+    var mr = null, chunks = [], startTs = 0, timerId = null, stream = null;
+    function fmt(s){ var m = Math.floor(s/60), r = s%60; return (m<10?"0":"")+m+":"+(r<10?"0":"")+r; }
+    function setBtn(recording){
+      btn.textContent = recording ? S("⏹️ አቁም","⏹️ Stop") : S("🎙️ ድምጽ ቅዳ","🎙️ Record audio");
+    }
+    btn.addEventListener("click", function(){
+      if (mr && mr.state === "recording"){ mr.stop(); return; }
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder === "undefined"){
+        showToast(S("ይህ አሳሽ ድምጽ መቅዳት አይደግፍም።","This browser can't record audio.")); return;
+      }
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(function(s){
+        stream = s; chunks = [];
+        var mime = ["audio/webm;codecs=opus","audio/webm","audio/mp4",""].filter(function(m){
+          try { return m === "" || MediaRecorder.isTypeSupported(m); } catch(x){ return m === ""; }
+        })[0];
+        mr = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
+        mr.ondataavailable = function(e){ if (e.data && e.data.size) chunks.push(e.data); };
+        mr.onstop = function(){
+          clearInterval(timerId);
+          var timeEl = document.getElementById(prefix + "-rec-time"); if (timeEl) timeEl.style.display = "none";
+          setBtn(false);
+          stream.getTracks().forEach(function(t){ t.stop(); });
+          var blob = new Blob(chunks, { type: mr.mimeType || "audio/webm" });
+          var ext = (blob.type.indexOf("mp4") >= 0) ? "m4a" : "webm";
+          var fname = "ቅጂ-" + ymd(Date.now()) + "-" + Math.floor(Date.now()%100000) + "." + ext;
+          var file = new File([blob], fname, { type: blob.type });
+          var dt = new DataTransfer(); dt.items.add(file);
+          var inp = document.getElementById(fileInputId);
+          inp.files = dt.files;
+          inp.dispatchEvent(new Event("change", { bubbles: true }));
+          var prev = document.getElementById(prefix + "-rec-preview");
+          if (prev){
+            var url = URL.createObjectURL(blob);
+            prev.innerHTML = '<audio controls style="width:100%;" src="' + url + '"></audio><p class="meta">' + esc(fname) + '</p>';
+          }
+        };
+        mr.start();
+        startTs = Date.now(); setBtn(true);
+        var timeEl2 = document.getElementById(prefix + "-rec-time");
+        if (timeEl2){ timeEl2.style.display = "inline"; timeEl2.textContent = "00:00"; }
+        timerId = setInterval(function(){
+          var el3 = document.getElementById(prefix + "-rec-time");
+          if (el3) el3.textContent = fmt(Math.floor((Date.now()-startTs)/1000));
+        }, 500);
+      }).catch(function(){
+        showToast(S("ማይክራፎን መዳረሻ አልተፈቀደም።","Microphone access was denied."));
+      });
+    });
+  }
+
   function renderLessons(){
     var el = document.getElementById("tab-lessons");
     var rec = editRec("lesson");
@@ -1947,6 +2011,7 @@
       '</div>' +
       '<div class="field" id="ln-file-field"><label>' + esc(TFl("chooseFile")) + '</label><input type="file" id="ln-file" accept="audio/*,video/*,.mp3,.m4a,.aac,.wav,.ogg,.opus,.mp4,.m4v,.mov,.webm,.mkv,.3gp">' +
         (rec && rec.fileId ? '<p class="meta" style="margin:6px 0 0;">' + esc(fillTpl(TFl("currentFile"), { NAME: curMeta ? curMeta.name : "", SIZE: humanSize(curMeta ? curMeta.size : 0) }, false)) + '<br>' + esc(TFl("keepHint")) + '</p>' : '') +
+        recorderHtml("ln") +
       '</div>' +
       '<div class="field" id="ln-url-field" style="display:none;"><label>' + TLes("urlLabel") + '</label><input type="text" id="ln-url" placeholder="' + TLes("urlPh") + '"></div>' +
       '<div class="field"><label>' + TLes("descLabel") + '</label><textarea id="ln-desc" placeholder="' + TLes("descPh") + '"></textarea></div>' +
@@ -1977,6 +2042,7 @@
 
     el.innerHTML = '<div class="note">' + TLes("noteText") + '</div>' + formHtml + quickHtml + listHtml;
     hydrateMedia(el);
+    wireRecorder("ln", "ln-file");
 
     var srcSel = document.getElementById("ln-src");
     function updateSrc(){
