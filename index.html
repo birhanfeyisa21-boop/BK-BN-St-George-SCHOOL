@@ -2783,6 +2783,14 @@
       fld("st-auto-pass", "password", c.pass, S("የምትኬ ይለፍ ቃል (ቢያንስ 6)","Backup password (min 6)")) +
       '<label style="display:block;margin:0 0 10px;"><input type="checkbox" id="st-auto-on"' + (c.on ? " checked" : "") + '> ' + esc(S("ራስ-ሰር ምትኬ አብራ","Turn on automatic backup")) + '</label>' +
       '<button class="primary" id="st-auto-save">' + esc(S("አስቀምጥ እና አሁን ሞክር","Save and test now")) + '</button>' +
+      '<hr style="margin:14px 0;border:none;border-top:1px solid var(--line,#2a3040);">' +
+      '<p class="meta">' + esc(S("ስልክ ሲቀየር ወይም ሲሪስቶር ይህንን ቅንብር በአዲሱ ስልክ ላይ ለመመለስ የማዛወሪያ ኮድ ይጠቀሙ — ሦስቱንም መስኮች እንደገና መተየብ አያስፈልግም።","Moving to a new or restored phone? Use a transfer code instead of retyping the three fields above.")) + '</p>' +
+      '<button class="ghost" id="st-auto-gen">' + esc(S("🔗 የማዛወሪያ ኮድ አውጣ","🔗 Get transfer code")) + '</button> ' +
+      '<button class="ghost" id="st-auto-copy" style="display:none;">' + esc(S("ቅዳ","Copy")) + '</button>' +
+      '<textarea id="st-auto-code" readonly rows="2" style="display:none;width:100%;margin:8px 0;font-family:monospace;font-size:12px;"></textarea>' +
+      '<label class="meta">' + esc(S("የተቀዳ ማዛወሪያ ኮድ እዚህ ለጥፉ","Paste a transfer code here")) + '</label>' +
+      '<textarea id="st-auto-paste" rows="2" placeholder="BKBN1-…" style="width:100%;margin:4px 0 8px;font-family:monospace;font-size:12px;"></textarea>' +
+      '<button class="ghost" id="st-auto-apply">' + esc(S("ተግብር","Apply")) + '</button>' +
       '<p class="meta" id="st-auto-msg" style="margin-top:8px;">' + (c.lastAt ? esc(S("የመጨረሻ ራስ-ሰር ምትኬ፦ ","Last automatic backup: ") + new Date(c.lastAt).toLocaleDateString("en-GB")) : "") + '</p></div>';
   }
 
@@ -2917,6 +2925,36 @@
         msg.textContent = (j && j.ok) ? S("✅ ተልኳል — Drive ውስጥ ይመልከቱ።","✅ Sent — check your Drive.")
           : S("❌ አልተሳካም። ሊንኩን፣ ሚስጥር ቃሉን እና ኢንተርኔቱን ያረጋግጡ።","❌ Failed. Check the link, the secret word and your connection.");
       });
+    });
+
+    var genBtn = document.getElementById("st-auto-gen");
+    if (genBtn) genBtn.addEventListener("click", function(){
+      var box = document.getElementById("st-auto-code"), copyBtn = document.getElementById("st-auto-copy");
+      var u = document.getElementById("st-auto-url").value.trim();
+      var k = document.getElementById("st-auto-key").value.trim();
+      var ps = document.getElementById("st-auto-pass").value.trim();
+      if (!u || !k || !ps){ showToast(S("መጀመሪያ ሦስቱን መስኮች ይሙሉ።","Fill in the three fields above first.")); return; }
+      var code = "BKBN1-" + btoa(unescape(encodeURIComponent(JSON.stringify({ u: u, k: k, p: ps }))));
+      box.value = code; box.style.display = "block"; copyBtn.style.display = "inline-block";
+    });
+    var copyBtn2 = document.getElementById("st-auto-copy");
+    if (copyBtn2) copyBtn2.addEventListener("click", function(){
+      var box = document.getElementById("st-auto-code"); box.select();
+      try { navigator.clipboard ? navigator.clipboard.writeText(box.value) : document.execCommand("copy"); showToast(S("ተቀድቷል","Copied")); } catch(x){}
+    });
+    var applyBtn = document.getElementById("st-auto-apply");
+    if (applyBtn) applyBtn.addEventListener("click", function(){
+      var raw = (document.getElementById("st-auto-paste").value || "").trim();
+      var msg = document.getElementById("st-auto-msg");
+      if (raw.indexOf("BKBN1-") !== 0){ showToast(S("ልክ ያልሆነ ኮድ","Invalid code")); return; }
+      var obj;
+      try { obj = JSON.parse(decodeURIComponent(escape(atob(raw.slice(6))))); } catch(x){ showToast(S("ልክ ያልሆነ ኮድ","Invalid code")); return; }
+      if (!obj || !obj.u || !obj.k || !obj.p){ showToast(S("ልክ ያልሆነ ኮድ","Invalid code")); return; }
+      document.getElementById("st-auto-url").value = obj.u;
+      document.getElementById("st-auto-key").value = obj.k;
+      document.getElementById("st-auto-pass").value = obj.p;
+      document.getElementById("st-auto-on").checked = true;
+      showToast(S("ገብቷል — አሁን ከታች ላይ ‹አስቀምጥ እና አሁን ሞክር› ይጫኑ","Filled in — now tap Save and test above"));
     });
 
     // ---- restore from a backup file (encrypted or plain) ----
