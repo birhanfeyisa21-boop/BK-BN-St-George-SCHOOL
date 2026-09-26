@@ -313,6 +313,11 @@
 <script>
 (function(){
   var STORAGE_KEY = "church_mgmt_state_v1";
+  // Public messaging relay: baked-in default so every install can reach it without setup.
+  // A separate, low-stakes Google Apps Script — different from each owner's private backup script.
+  var MSG_URL = "";
+  var MSG_KEY = "";
+  function msgCfg(){ return (state.msgScript && state.msgScript.url) ? state.msgScript : { url: MSG_URL, key: MSG_KEY }; }
   var state = {
     ownerName: "",
     parishes: [],
@@ -2732,6 +2737,88 @@
   }
 
   // ---------- comms / data flow ----------
+  var msgCache = [];
+  function myMsgIdentity(){
+    if (role === "student" && myStudent) return { name: myStudent.name, code: myStudent.code, group: myStudent.level, isLeader: false };
+    return { name: state.ownerName || roleName(role), code: "", group: "leadership", isLeader: true };
+  }
+  function fetchMessages(cb){
+    var cfg = msgCfg();
+    if (!cfg.url || !cfg.key){ cb(false); return; }
+    var url = cfg.url + (cfg.url.indexOf("?") === -1 ? "?" : "&") + "type=messages&key=" + encodeURIComponent(cfg.key) + "&_=" + Date.now();
+    fetch(url).then(function(r){ return r.json(); }).then(function(j){
+      msgCache = (j && j.ok && j.messages) ? j.messages : [];
+      cb(true);
+    }).catch(function(){ cb(false); });
+  }
+  function sendMessage(text, target, cb){
+    var cfg = msgCfg();
+    if (!cfg.url || !cfg.key){ cb(false, S("የመልእክት አገልግሎት ገና አልተዋቀረም","Messaging isn't set up yet")); return; }
+    var me = myMsgIdentity();
+    fetch(cfg.url, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({
+      type: "message", key: cfg.key, sender: me.name, senderCode: me.code, senderGroup: me.group, target: target, text: text
+    })}).then(function(r){ return r.json(); }).then(function(j){ cb(!!(j && j.ok)); }).catch(function(){ cb(false); });
+  }
+  function renderMessages(){
+    var el = document.getElementById("tab-messages");
+    var cfg = msgCfg();
+    var me = myMsgIdentity();
+    if (!cfg.url || !cfg.key){
+      el.innerHTML = '<div class="card"><h2>'+esc(STRINGS.tabs.messages[lang])+'</h2>' +
+        '<p class="meta">'+esc(S("አመራር የመልእክት አገልግሎቱን ገና አላዘጋጀውም። ባለቤት ሆነው «ማከማቻና ምትኬ» ትር ውስጥ ማዋቀር ይችላሉ (ቀጣይ ደረጃ)።","Leadership hasn't set up messaging yet. As owner, this is configured from the Storage tab (next step)."))+'</p></div>';
+      return;
+    }
+    var targetOptions = me.isLeader ?
+      ('<option value="all">'+esc(S("ለሁሉም","Everyone"))+'</option>' +
+       '<option value="leadership">'+esc(S("ለአመራር (ውስጣዊ)","Leadership (internal)"))+'</option>' +
+       LEVELS.map(function(l){ return '<option value="'+esc(l)+'">'+esc(TL(l))+'</option>'; }).join('')) :
+      ('<option value="leadership">'+esc(S("ለአመራር","To leadership"))+'</option>');
+    el.innerHTML =
+      '<div class="card"><h2>'+esc(STRINGS.tabs.messages[lang])+'</h2>' +
+        '<p class="meta">'+esc(S("መልእክቶች ወዲያውኑ አይደርሱም — ተቀባዩ መተግበሪያውን ኢንተርኔት ኖሮት ሲከፍት ያያቸዋል።","Messages aren't instant — the recipient sees them next time they open the app with internet."))+'</p>' +
+        (me.isLeader ? '<div class="field"><label>'+esc(S("ለማን","To"))+'</label><select id="msg-target">'+targetOptions+'</select></div>' : '') +
+        '<div class="field"><textarea id="msg-text" placeholder="'+esc(S("መልእክትዎን እዚህ ይጻፉ...","Write your message here..."))+'"></textarea></div>' +
+        '<p class="error" id="msg-err"></p>' +
+        '<button class="primary" id="msg-send">'+esc(S("ላክ","Send"))+'</button> ' +
+        '<button class="ghost" id="msg-refresh">'+esc(S("🔄 አድስ","🔄 Refresh"))+'</button>' +
+      '</div>' +
+      '<div class="card" id="msg-list"><p class="meta">'+esc(S("በመጫን ላይ...","Loading..."))+'</p></div>';
+
+    function paint(){
+      var visible = msgCache.filter(function(m){
+        if (me.isLeader) return true;
+        return m.target === "all" || m.target === me.group;
+      });
+      var box = document.getElementById("msg-list");
+      box.innerHTML = '<h2>'+esc(S("የደረሱ መልእክቶች","Messages"))+' ('+visible.length+')</h2>' +
+        (visible.length ? visible.slice().reverse().map(function(m){
+          var targetLabel = m.target === "all" ? S("ለሁሉም","Everyone") : (m.target === "leadership" ? S("ለአመራር","Leadership") : TL(m.target));
+          return '<div class="row" style="display:block;"><strong>'+esc(m.sender||"—")+'</strong> <span class="badge role">'+esc(targetLabel)+'</span>' +
+            '<p style="margin:6px 0;font-size:13px;white-space:pre-wrap;">'+esc(m.text||"")+'</p>' +
+            '<span class="meta">'+esc(m.ts ? new Date(m.ts).toLocaleString() : "")+'</span></div>';
+        }).join('') : '<div class="empty">'+T("none")+'</div>');
+    }
+    fetchMessages(function(ok){ if (!ok) document.getElementById("msg-list").innerHTML = '<p class="error">'+esc(S("ማምጣት አልተቻለም — ኢንተርኔት ያረጋግጡ","Could not load — check your connection"))+'</p>'; else paint(); });
+
+    document.getElementById("msg-refresh").onclick = function(){
+      document.getElementById("msg-list").innerHTML = '<p class="meta">'+esc(S("በመጫን ላይ...","Loading..."))+'</p>';
+      fetchMessages(function(ok){ paint(); });
+    };
+    document.getElementById("msg-send").onclick = function(){
+      var txt = document.getElementById("msg-text").value.trim();
+      var err = document.getElementById("msg-err");
+      var tgtEl = document.getElementById("msg-target");
+      var target = tgtEl ? tgtEl.value : "leadership";
+      if (!txt){ err.textContent = S("መልእክት ይጻፉ","Write a message"); return; }
+      err.textContent = "";
+      var btn = document.getElementById("msg-send"); btn.disabled = true;
+      sendMessage(txt, target, function(ok, msg){
+        btn.disabled = false;
+        if (ok){ document.getElementById("msg-text").value = ""; showToast(S("ተልኳል","Sent")); fetchMessages(paint); }
+        else { err.textContent = msg || S("አልተላከም — ኢንተርኔት ያረጋግጡ","Failed to send — check your connection"); }
+      });
+    };
+  }
   function renderComms(){
     var el = document.getElementById("tab-comms");
     var pc = pendingCounts();
@@ -2880,6 +2967,17 @@
     if (c.lastAt && Date.now() - c.lastAt < 7 * DAY_MS) return;
     autoUpload().then(function(j){ if (j && j.ok && (activeTab === "dashboard" || activeTab === "storage")) renderAll(); });
   }
+  function msgCardHtml(){
+    var c = state.msgScript || {};
+    function fld(id, type, val, label){ return '<label class="meta">' + esc(label) + '</label><input type="' + type + '" id="' + id + '" value="' + esc(val || "") + '" autocomplete="off" style="margin:4px 0 10px;display:block;width:100%;">'; }
+    return '<div class="card"><h2>' + esc(S("የመልእክት አገልግሎት ማዋቀር","Messaging setup")) + '</h2>' +
+      '<p class="meta">' + esc(S("ይህ ከምትኬ ስክሪፕቱ የተለየ አዲስ Google Script ነው — ሁሉም (አመራር፣ ተማሪዎች፣ ወላጆች) መልእክት እንዲለዋወጡ የሚያገለግል የጋራ ማገናኛ ስለሆነ፣ ካዘጋጁት በኋላ ይህን የተዘመነ index.html ወደ GitHub ይጫኑት፤ ያኔ ሁሉም ስልክ ራሱ ያውቀዋል።","This is a separate Google Script from the backup one — a shared relay so everyone (leadership, students, parents) can exchange messages. Once set, upload this updated index.html to GitHub so every phone knows it automatically.")) + '</p>' +
+      fld("msg-cfg-url", "text", c.url, S("የመልእክት Script ሊንክ (…/exec)","Messaging Script link (…/exec)")) +
+      fld("msg-cfg-key", "text", c.key, S("የመልእክት ሚስጥር ቃል","Messaging secret word")) +
+      '<p class="meta">' + esc(S("ማሳሰቢያ፦ ይህ ቃል እንደ ምትኬ ይለፍ ቃል ሚስጥር አይደለም (በኮዱ ውስጥ ስለሚቀመጥ ማንም ሊያየው ይችላል) — ዓላማው ከዘፈቀደ ኢንተርኔት ቦት ብቻ መከላከል ነው።","Note: unlike the backup password, this isn't truly secret (it ends up in public code) — its only job is to keep random internet bots out.")) + '</p>' +
+      '<button class="primary" id="msg-cfg-save">' + esc(S("አስቀምጥ","Save")) + '</button>' +
+      '<p class="error" id="msg-cfg-err"></p></div>';
+  }
   function autoCardHtml(){
     var c = autoCfg();
     function fld(id, type, val, label){ return '<label class="meta">' + esc(label) + '</label><input type="' + type + '" id="' + id + '" value="' + esc(val || "") + '" autocomplete="off" style="margin:4px 0 10px;display:block;width:100%;">'; }
@@ -2946,6 +3044,7 @@
           '<p class="error" id="st-backup-err"></p>' +
         '</div>' : '') +
       (role === "owner" ? autoCardHtml() : '') +
+      (role === "owner" ? msgCardHtml() : '') +
       (canRestore ?
         '<div class="card"><h2>' + esc(TSt("restoreTitle")) + '</h2>' +
           '<p class="meta">' + esc(TSt("restoreNote")) + '</p>' +
@@ -3010,6 +3109,17 @@
         downloadTextFile(name, text, "application/json");
       }).then(function(){ renderAll(); });
     }
+    var msgSaveBtn = document.getElementById("msg-cfg-save");
+    if (msgSaveBtn) msgSaveBtn.onclick = function(){
+      var u = document.getElementById("msg-cfg-url").value.trim();
+      var k = document.getElementById("msg-cfg-key").value.trim();
+      var err = document.getElementById("msg-cfg-err");
+      if (!u || !k){ err.textContent = S("ሁለቱንም ይሙሉ","Fill in both fields"); return; }
+      state.msgScript = { url: u, key: k };
+      save();
+      err.textContent = "";
+      showToast(S("ተቀምጧል","Saved"));
+    };
     var backupBtn = document.getElementById("st-backup-btn");
     if (backupBtn) backupBtn.addEventListener("click", function(){ makeBackup(false); });
     var shareBtn = document.getElementById("st-backup-share");
@@ -3215,6 +3325,19 @@
     var s = sec.salt + r + pin, h = 5381; for (var i=0;i<s.length;i++) h = ((h<<5)+h+s.charCodeAt(i))|0;
     return Promise.resolve("f" + h);
   }
+  // Student/parent/association PINs must verify the same way on ANY phone (not just the device
+  // that created them), so — unlike hashPin() above — this never mixes in this device's private sec.salt.
+  function hashStudentPin(pin, code){
+    var r = "bkbn-student-v1:" + code;
+    if (window.crypto && crypto.subtle && window.isSecureContext){
+      var enc = new TextEncoder();
+      return crypto.subtle.importKey("raw", enc.encode(pin), "PBKDF2", false, ["deriveBits"]).then(function(k){
+        return crypto.subtle.deriveBits({name:"PBKDF2", salt:enc.encode(r), iterations:150000, hash:"SHA-256"}, k, 256);
+      }).then(function(b){ return Array.prototype.map.call(new Uint8Array(b),function(x){return ("0"+x.toString(16)).slice(-2);}).join(""); });
+    }
+    var s = r + pin, h = 5381; for (var i=0;i<s.length;i++) h = ((h<<5)+h+s.charCodeAt(i))|0;
+    return Promise.resolve("f" + h);
+  }
   function matchRole(pin, roles){
     var i = 0;
     function next(){
@@ -3361,7 +3484,7 @@
       var er = document.getElementById("stl-er2");
       if (!/^[0-9]{4,12}$/.test(p1)){ er.textContent = S("PIN ቢያንስ 4 ቁጥር መሆን አለበት","PIN must be at least 4 digits"); return; }
       if (p1 !== p2){ er.textContent = S("PINዎቹ አይመሳሰሉም","PINs don't match"); return; }
-      hashPin(p1, st.code).then(function(h){
+      hashStudentPin(p1, st.code).then(function(h){
         st.pinHash = h; save();
         myStudent = { id: st.id, code: st.code, level: st.level, name: st.name };
         done("student");
@@ -3378,7 +3501,7 @@
     function go(){
       var p = document.getElementById("stl-p").value;
       var er = document.getElementById("stl-er3");
-      hashPin(p, st.code).then(function(h){
+      hashStudentPin(p, st.code).then(function(h){
         if (h === st.pinHash){ myStudent = { id: st.id, code: st.code, level: st.level, name: st.name }; done("student"); }
         else { er.textContent = S("PIN ትክክል አይደለም","Wrong PIN"); document.getElementById("stl-p").value = ""; }
       });
