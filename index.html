@@ -226,12 +226,13 @@
       <div style="font-size:10px;opacity:.5;color:#EFE2C6;margin-top:2px;">ብርሃነክርስቶስ ፈይሳ</div>
     </div>
     <div class="top-controls">
-      <label>ሚና፦
+      <label id="role-select-wrap">ሚና፦
         <select id="role-select">
           <option value="owner">ባለቤት (የደብሩ ሰ/ት/ቤት ጽ/ቤት)</option>
           <option value="admin">አስተዳዳሪ</option>
           <option value="collector">ሰብሳቢ (የሰ/ት/ቤቱ ቁጥጥር ክፍል)</option>
           <option value="viewer">ተመልካች</option>
+          <option value="student" style="display:none;">ተማሪ/ወላጅ/ማህበር</option>
         </select>
       </label>
       <label class="toggle">
@@ -268,6 +269,7 @@
     <button data-tab="storage">ማከማቻና ምትኬ</button>
     <button data-tab="audit">ኦዲት ትሬል</button>
     <button data-tab="comms">ግንኙነት / ሪፖርት</button>
+    <button data-tab="messages">መልእክቶች</button>
     <button data-tab="access">ፈቃድ እና ደኅንነት</button>
   </nav>
 
@@ -285,6 +287,7 @@
   <div id="tab-storage" class="tab hidden"></div>
   <div id="tab-audit" class="tab hidden"></div>
   <div id="tab-comms" class="tab hidden"></div>
+  <div id="tab-messages" class="tab hidden"></div>
   <div id="tab-access" class="tab hidden"></div>
 
   <footer style="text-align:center;padding:16px 8px;font-size:11px;color:var(--muted);">
@@ -326,6 +329,7 @@
     feedback: []
   };
   var role = "owner";
+  var myStudent = null; // set when someone is logged in via personal student/parent/association login
   var online = false;
   var activeTab = "dashboard";
   var lang = "am";
@@ -368,10 +372,12 @@
       ar: "متصل", fr: "En ligne", es: "En línea"
     },
     tabs: {
-      dashboard: { am: "ዳሽቦርድ", en: "Dashboard", om: "Gabatee Ijaarsaa", ti: "ዳሽቦርድ", ar: "لوحة التحكم", fr: "Tableau de bord", es: "Panel" },      parishes:  { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍል", en: "Sunday School Control Sections", om: "Kutaa To'annoo Mana Barnoota Sanbataa", ti: "ክፍሊ ቁጽጽር ት/ቤት ሰንበት", ar: "أقسام مراقبة مدرسة الأحد", fr: "Sections de contrôle de l'école du dimanche", es: "Secciones de Control de la Escuela Dominical" },      members:   { am: "አባላት", en: "Members", om: "Miseensota", ti: "ኣባላት", ar: "الأعضاء", fr: "Membres", es: "Miembros" },      students:  { am: "ተማሪዎች", en: "Students", om: "Barattoota", ti: "ተመሃሮ", ar: "الطلاب", fr: "Élèves", es: "Estudiantes" },      teachers:  { am: "መምህራን", en: "Teachers", om: "Barsiisota", ti: "መምህራን", ar: "المعلمون", fr: "Enseignants", es: "Maestros" },      documents: { am: "ደንብ / ሰነድ", en: "Bylaws / Docs", om: "Seera / Ragaa", ti: "ሕጊ / ሰነድ", ar: "اللوائح / الوثائق", fr: "Règlements / Documents", es: "Estatutos / Documentos" },      lessons:   { am: "ትምህርት (ኦዲዮ/ቪዲዮ)", en: "Lessons (Audio/Video)", om: "Barnoota (Sagalee/Viidiyoo)", ti: "ትምህርቲ (ድምጺ/ቪድዮ)", ar: "الدروس (صوت/فيديو)", fr: "Leçons (Audio/Vidéo)", es: "Lecciones (Audio/Video)" },      tools:     { am: "መሳሪያዎች", en: "Tools", om: "Meeshaalee", ti: "መሳርሒታት", ar: "الأدوات", fr: "Outils", es: "Herramientas" },      cert:      { am: "ማረጋገጫ ሰነድ", en: "Certificates", om: "Ragaalee Mirkaneessaa", ti: "ምስክር ወረቐት", ar: "الشهادات", fr: "Certificats", es: "Certificados" },      io:        { am: "ውጤት እና ማስመጣት", en: "Export & Import", om: "Baasuu fi Galchuu", ti: "ምውጻእን ምእታውን", ar: "التصدير والاستيراد", fr: "Exporter et importer", es: "Exportar e importar" },      audit:     { am: "ኦዲትና ኢንስፔክሽን ክፍል", en: "Audit & Inspection Dept.", om: "Kutaa Ilaalchaa fi Sakatta'aa", ti: "ክፍሊ ኦዲትን ኢንስፐክሽንን", ar: "قسم التدقيق والتفتيش", fr: "Département d'audit et d'inspection", es: "Departamento de Auditoría e Inspección" },      comms:     { am: "ህዝብ ግንኙነት / ሪፖርት", en: "Public Relations / Reports", om: "Hawaasa Waliin Hidhata / Gabaasa", ti: "ህዝባዊ ርክብ / ጸብጻብ", ar: "العلاقات العامة / التقارير", fr: "Relations publiques / Rapports", es: "Relaciones Públicas / Informes" }    },
+      dashboard: { am: "ዳሽቦርድ", en: "Dashboard", om: "Gabatee Ijaarsaa", ti: "ዳሽቦርድ", ar: "لوحة التحكم", fr: "Tableau de bord", es: "Panel" },      parishes:  { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍል", en: "Sunday School Control Sections", om: "Kutaa To'annoo Mana Barnoota Sanbataa", ti: "ክፍሊ ቁጽጽር ት/ቤት ሰንበት", ar: "أقسام مراقبة مدرسة الأحد", fr: "Sections de contrôle de l'école du dimanche", es: "Secciones de Control de la Escuela Dominical" },      members:   { am: "አባላት", en: "Members", om: "Miseensota", ti: "ኣባላት", ar: "الأعضاء", fr: "Membres", es: "Miembros" },      students:  { am: "ተማሪዎች", en: "Students", om: "Barattoota", ti: "ተመሃሮ", ar: "الطلاب", fr: "Élèves", es: "Estudiantes" },      teachers:  { am: "መምህራን", en: "Teachers", om: "Barsiisota", ti: "መምህራን", ar: "المعلمون", fr: "Enseignants", es: "Maestros" },      documents: { am: "ደንብ / ሰነድ", en: "Bylaws / Docs", om: "Seera / Ragaa", ti: "ሕጊ / ሰነድ", ar: "اللوائح / الوثائق", fr: "Règlements / Documents", es: "Estatutos / Documentos" },      lessons:   { am: "ትምህርት (ኦዲዮ/ቪዲዮ)", en: "Lessons (Audio/Video)", om: "Barnoota (Sagalee/Viidiyoo)", ti: "ትምህርቲ (ድምጺ/ቪድዮ)", ar: "الدروس (صوت/فيديو)", fr: "Leçons (Audio/Vidéo)", es: "Lecciones (Audio/Video)" },      tools:     { am: "መሳሪያዎች", en: "Tools", om: "Meeshaalee", ti: "መሳርሒታት", ar: "الأدوات", fr: "Outils", es: "Herramientas" },      cert:      { am: "ማረጋገጫ ሰነድ", en: "Certificates", om: "Ragaalee Mirkaneessaa", ti: "ምስክር ወረቐት", ar: "الشهادات", fr: "Certificats", es: "Certificados" },      io:        { am: "ውጤት እና ማስመጣት", en: "Export & Import", om: "Baasuu fi Galchuu", ti: "ምውጻእን ምእታውን", ar: "التصدير والاستيراد", fr: "Exporter et importer", es: "Exportar e importar" },      audit:     { am: "ኦዲትና ኢንስፔክሽን ክፍል", en: "Audit & Inspection Dept.", om: "Kutaa Ilaalchaa fi Sakatta'aa", ti: "ክፍሊ ኦዲትን ኢንስፐክሽንን", ar: "قسم التدقيق والتفتيش", fr: "Département d'audit et d'inspection", es: "Departamento de Auditoría e Inspección" },      comms:     { am: "ህዝብ ግንኙነት / ሪፖርት", en: "Public Relations / Reports", om: "Hawaasa Waliin Hidhata / Gabaasa", ti: "ህዝባዊ ርክብ / ጸብጻብ", ar: "العلاقات العامة / التقارير", fr: "Relations publiques / Rapports", es: "Relaciones Públicas / Informes" },
+      messages:  { am: "መልእክቶች", en: "Messages", om: "Ergaawwan", ti: "መልእኽትታት", ar: "الرسائل", fr: "Messages", es: "Mensajes" }    },
     roleOptions: {
       owner:     { am: "ባለቤት (የደብሩ ሰ/ት/ቤት ጽ/ቤት)", en: "Owner (Parish Sunday School Office)", om: "Abbaa Qabeenyaa (Waajjira Mana Barnoota Sanbataa Waldaa)", ti: "ወናኒ (ቤ/ጽ ት/ቤት ሰንበት ኣጥቢያ)", ar: "المالك (مكتب مدرسة الأحد بالرعية)", fr: "Propriétaire (Bureau de l'école du dimanche paroissiale)", es: "Propietario (Oficina de la Escuela Dominical parroquial)" },
-      admin:     { am: "አስተዳዳሪ", en: "Admin", om: "Bulchaa", ti: "ኣመሓዳሪ", ar: "المسؤول", fr: "Administrateur", es: "Administrador" },      collector: { am: "የደብሩ ስ/ት/ቤት ጽ/ቤት (ሰብሳቢ/ም-ሰብሳቢ/ጸሐፊ)", en: "Parish Sunday School Office (Chair/Deputy/Secretary)", om: "Waajjira Mana Barnoota Sanbataa Waldaa (Hoogganaa/I.A/Barreessaa)", ti: "ቤ/ጽ ት/ቤት ሰንበት ኣጥቢያ (ሰብሳቢ/ም-ሰብሳቢ/ጸሓፊ)", ar: "مكتب مدرسة الأحد بالرعية (الرئيس/النائب/السكرتير)", fr: "Bureau de l'école du dimanche paroissiale (Président/Adjoint/Secrétaire)", es: "Oficina de la Escuela Dominical parroquial (Presidente/Adjunto/Secretario)" },
+      admin:     { am: "አስተዳዳሪ", en: "Admin", om: "Bulchaa", ti: "ኣመሓዳሪ", ar: "المسؤول", fr: "Administrateur", es: "Administrador" },
+      student:   { am: "ተማሪ/ወላጅ/ማህበር", en: "Student/Parent/Association", om: "Barataa/Maatii", ti: "ተመሃራይ/ወላዲ", ar: "طالب/ولي أمر", fr: "Élève/Parent", es: "Estudiante/Padre" },      collector: { am: "የደብሩ ስ/ት/ቤት ጽ/ቤት (ሰብሳቢ/ም-ሰብሳቢ/ጸሐፊ)", en: "Parish Sunday School Office (Chair/Deputy/Secretary)", om: "Waajjira Mana Barnoota Sanbataa Waldaa (Hoogganaa/I.A/Barreessaa)", ti: "ቤ/ጽ ት/ቤት ሰንበት ኣጥቢያ (ሰብሳቢ/ም-ሰብሳቢ/ጸሓፊ)", ar: "مكتب مدرسة الأحد بالرعية (الرئيس/النائب/السكرتير)", fr: "Bureau de l'école du dimanche paroissiale (Président/Adjoint/Secrétaire)", es: "Oficina de la Escuela Dominical parroquial (Presidente/Adjunto/Secretario)" },
       viewer:    { am: "ተመልካች", en: "Viewer", om: "Ilaalaa", ti: "ተዓዛቢ", ar: "مشاهد", fr: "Observateur", es: "Observador" }    },
     dash: {
       summaryNote:   { am: "ይህ ማጠቃለያ ከሁሉም የሰ/ት/ቤቱ ቁጥጥር ክፍል የተሰበሰበ ወቅታዊ ድምር ነው። (%ROLE% ሚና ውስጥ ነዎት)", en: "This is a live summary collected from all Sunday School Control Sections. (You are in the %ROLE% role)", om: "Kun cuunfaa yeroo ammaa Kutaa To'annoo Mana Barnoota Sanbataa hunda irraa walitti qabame. (Gahee %ROLE% keessatti jirtu)", ti: "እዚ ጠቕላላ ድምር ካብ ኩሉ ክፍሊ ቁጽጽር ት/ቤት ሰንበትን ዝተኣከበ እዩ። (ኣብ ግደ %ROLE% ኣሎኻ)", ar: "هذا ملخص حي تم جمعه من جميع أقسام مراقبة مدرسة الأحد. (أنت في دور %ROLE%)", fr: "Ceci est un résumé en direct de toutes les sections de contrôle de l'école du dimanche. (Vous êtes dans le rôle %ROLE%)", es: "Este es un resumen en vivo de todas las secciones de control de la escuela dominical. (Usted está en el rol %ROLE%)" },      cardTotal:     { am: "ጠቅላላ ሁኔታ", en: "Overall Status", om: "Haala Waliigalaa", ti: "ጠቕላላ ኩነታት", ar: "الحالة العامة", fr: "État général", es: "Estado general" },      parishCount:   { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍልዎች", en: "Sunday School Control Sections", om: "Kutaalee To'annoo Mana Barnoota Sanbataa", ti: "ክፍልታት ቁጽጽር ት/ቤት ሰንበት", ar: "أقسام مراقبة مدرسة الأحد", fr: "Sections de contrôle de l'école du dimanche", es: "Secciones de Control de la Escuela Dominical" },      totalMembers:  { am: "ጠቅላላ አባላት", en: "Total Members", om: "Miseensota Waliigalaa", ti: "ጠቕላላ ኣባላት", ar: "إجمالي الأعضاء", fr: "Total des membres", es: "Total de miembros" },      totalStudents: { am: "ጠቅላላ ተማሪዎች", en: "Total Students", om: "Barattoota Waliigalaa", ti: "ጠቕላላ ተመሃሮ", ar: "إجمالي الطلاب", fr: "Total des élèves", es: "Total de estudiantes" },      totalTeachers: { am: "ጠቅላላ መምህራን", en: "Total Teachers", om: "Barsiisota Waliigalaa", ti: "ጠቕላላ መምህራን", ar: "إجمالي المعلمين", fr: "Total des enseignants", es: "Total de maestros" },      maleMembers:   { am: "ወንድ አባላት", en: "Male Members", om: "Miseensota Dhiiraa", ti: "ተባዕታይ ኣባላት", ar: "الأعضاء الذكور", fr: "Membres masculins", es: "Miembros hombres" },      parishWord:    { am: "የሰ/ት/ቤቱ ቁጥጥር ክፍል", en: "control sections", om: "kutaalee to'annoo", ti: "ክፍሊ ቁጽጽር ት/ቤት ሰንበት", ar: "قسم مراقبة مدرسة الأحد", fr: "sections de contrôle de l'école du dimanche", es: "secciones de control de la escuela dominical" },      memberWord:    { am: "አባል", en: "members", om: "miseensa", ti: "ኣባል", ar: "عضو", fr: "membres", es: "miembros" }    },
@@ -1306,6 +1312,7 @@
     if (activeTab === "storage") renderStorage();
     if (activeTab === "audit") renderAudit();
     if (activeTab === "comms") renderComms();
+    if (activeTab === "messages") renderMessages();
   }
 
   // ---------- dashboard ----------
@@ -2009,6 +2016,27 @@
 
   function renderLessons(){
     var el = document.getElementById("tab-lessons");
+    if (role === "student" && myStudent){
+      var myRows = state.lessons.filter(function(x){ return x.level === myStudent.level; });
+      el.innerHTML =
+        '<div class="card"><h2>' + esc(fillTpl(S("ሰላም, %NAME%","Welcome, %NAME%"), {NAME: myStudent.name}, false)) + '</h2>' +
+          '<p class="meta">' + esc(TL(myStudent.level)) + '</p>' +
+          '<button class="ghost" id="stl-signout">' + esc(S("🔒 ውጣ","🔒 Sign out")) + '</button>' +
+        '</div>' +
+        '<div class="card"><h2>' + esc(TL(myStudent.level)) + ' — ' + TLes("contentWord") + ' (' + myRows.length + ')</h2>' +
+          (myRows.length ? myRows.slice().reverse().map(function(x){
+            return '<div class="row" style="display:block;">' +
+              '<strong>' + esc(x.title) + '</strong> <span class="badge role">' + esc(TLesType(x.type)) + '</span>' +
+              (x.desc ? '<p style="margin:6px 0;font-size:13px;color:var(--muted);white-space:pre-wrap;">' + esc(x.desc) + '</p>' : '') +
+              playerHtml(x) +
+              '</div>';
+          }).join('') : '<div class="empty">' + T("none") + '</div>') +
+        '</div>';
+      hydrateMedia(el);
+      var so = document.getElementById("stl-signout");
+      if (so) so.onclick = function(){ lockApp("manual"); };
+      return;
+    }
     var rec = editRec("lesson");
     var curMeta = rec && rec.fileId ? fileMeta(rec.fileId) : null;
 
@@ -3098,7 +3126,7 @@
     STRINGS.act[k] = mk(["የተሳሳተ PIN ሙከራ","በPIN ገብቷል","የክፍል ፈቃድ ተቀየረ","PIN ተቀየረ","መተግበሪያው ተቆልፏል","የክፍል ሥራ ድርሻ ተመደበ"][i],["Wrong PIN attempt","Signed in with PIN","Section permission changed","PIN changed","App locked","Department assignment set"][i]);
   });
   var RANK = {owner:3, admin:2, collector:1, viewer:0};
-  var SECTIONS = ["dashboard","depts","parishes","members","students","teachers","documents","lessons","tools","cert","io","storage","audit","comms"];
+  var SECTIONS = ["dashboard","depts","parishes","members","students","teachers","documents","lessons","tools","cert","io","storage","audit","comms","messages"];
   var DEPTS = [
     {id:"office", n:"የሰ/ት/ቤቱ ጽሕፈት ቤት (ዋና አመራር)", roles:[["chair","ሰብሳቢ"],["vice","ምክትል ሰብሳቢ"],["secr","ጸሐፊ"]], subs:[]},
     {id:"edu", n:"ትምህርትና ሥርዓተ ትምህርት ክፍል", roles:[["head","ኃላፊ"],["secr","ጸሐፊ"]], subs:["ሥርዓተ ትምህርት ዝግጅት|የደረጃ ትምህርቶችን ማዘጋጀትና ማሻሻል","መምህራን ምደባና ሥልጠና|መምህራንን መመደብ፣ መከታተልና ማሠልጠን","ፈተናና ውጤት|ፈተና ማዘጋጀት፣ ውጤት መያዝና ምረቃ","ቤተ መጻሕፍት|መጻሕፍትና የትምህርት መርጃዎችን ማስተዳደር"]},
@@ -3110,6 +3138,7 @@
     {id:"aud", n:"ኦዲትና ኢንስፔክሽን ክፍል", roles:[["head","ኃላፊ"],["secr","ጸሐፊ"]], subs:["የሒሳብ ኦዲት|ገቢና ወጪን መመርመር","ሥነ ሥርዓት ክትትል|ደንብና መመሪያ መከበሩን መቆጣጠር"]}
   ];
   function tabAllowed(t){
+    if (role === "student") return t === "lessons" || t === "messages";
     if (t === "access") return role === "owner";
     if (role === "owner") return true;
     var a = (state.access || {})[role];
@@ -3120,8 +3149,8 @@
       b.style.display = tabAllowed(b.getAttribute("data-tab")) ? "" : "none";
     });
     if (!tabAllowed(activeTab)){
-      activeTab = "dashboard";
-      document.querySelectorAll("nav.tabs button").forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-tab") === "dashboard"); });
+      activeTab = (role === "student") ? "lessons" : "dashboard";
+      document.querySelectorAll("nav.tabs button").forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-tab") === activeTab); });
     }
   }
   function memName(id){ for (var i=0;i<state.members.length;i++) if (state.members[i].id === id) return state.members[i].name; return ""; }
@@ -3209,7 +3238,9 @@
         '<input type="password" id="lk-pin" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="••••">' +
         '<div class="er" id="lk-er"></div><button class="primary" id="lk-ok" style="width:100%">'+S("ግባ","Unlock")+'</button>' +
         (opts.cancel ? '<button class="ghost" id="lk-no" style="width:100%;margin-top:8px">'+S("ተመለስ","Cancel")+'</button>' : '') +
-        '<button class="ghost" id="lk-forgot" style="width:100%;margin-top:14px;font-size:12px;">'+S("PIN ረሳሁ","Forgot PIN")+'</button>' + '</div>';
+        '<button class="ghost" id="lk-forgot" style="width:100%;margin-top:14px;font-size:12px;">'+S("PIN ረሳሁ","Forgot PIN")+'</button>' +
+        (opts.studentLogin ? '<button class="ghost" id="lk-student" style="width:100%;margin-top:8px;">'+S("👤 ተማሪ/ወላጅ/ማህበር ግባ","👤 Student/Parent/Association login")+'</button>' : '') +
+        '</div>';
       var pin = document.getElementById("lk-pin"), er = document.getElementById("lk-er"), tm;
       function tick(){
         var left = Math.ceil((sec.until - Date.now())/1000);
@@ -3248,6 +3279,8 @@
         };
         function done2backToPin(){ clearTimeout(tm); el.style.display = "none"; el.innerHTML = ""; askPin(opts).then(res); }
       };
+      var stBtn = document.getElementById("lk-student");
+      if (stBtn) stBtn.onclick = function(){ clearTimeout(tm); studentLoginStep1(el, done); };
       tick(); setTimeout(function(){ pin.focus(); }, 50);
     });
   }
@@ -3265,7 +3298,14 @@
       };
     });
   }
-  function setRole(r){ role = r; document.getElementById("role-select").value = r; }
+  function setRole(r){
+    role = r;
+    if (r !== "student") myStudent = null;
+    var rs = document.getElementById("role-select");
+    if (rs) rs.value = r;
+    var wrap = document.getElementById("role-select-wrap");
+    if (wrap) wrap.style.display = (r === "student") ? "none" : "";
+  }
   function requirePin(run){
     if (role === "viewer" || !sec.h[role]) return run();
     askPin({title:S("ለመቀጠል PIN ያስገቡ","Enter PIN to continue"), roles:[role], cancel:true}).then(function(r){ if (r) run(); });
@@ -3286,9 +3326,66 @@
     if (lockedNow || (!sec.appLock && why !== "manual")) return; lockedNow = true;
     logAction("sec_lock", why || ""); save();
     var all = ["owner","admin","collector","viewer"];
-    askPin({title:S("መተግበሪያው ተቆልፏል — PIN ያስገቡ","App locked — enter PIN"), roles:all, cancel:false}).then(function(r){
+    askPin({title:S("መተግበሪያው ተቆልፏል — PIN ያስገቡ","App locked — enter PIN"), roles:all, cancel:false, studentLogin:true}).then(function(r){
       lockedNow = false; lastAct = Date.now(); setRole(r); renderAll();
     });
+  }
+  function studentLoginStep1(el, done){
+    el.innerHTML = '<div class="lb"><img alt="" src="'+LOGO+'"><h3>'+S("የግል መግቢያ","Personal login")+'</h3>' +
+      '<p class="meta" style="text-align:right;">'+S("በተመዘገቡበት ወቅት የተሰጠዎትን ኮድ ያስገቡ (ለምሳሌ P01-S0001)።","Enter the code you were given when registered (e.g. P01-S0001).")+'</p>' +
+      '<input type="text" id="stl-code" autocomplete="off" placeholder="P01-S0001" style="text-align:center;text-transform:uppercase;">' +
+      '<div class="er" id="stl-er"></div>' +
+      '<button class="primary" id="stl-next" style="width:100%;">'+S("ቀጥል","Continue")+'</button>' +
+      '<button class="ghost" id="stl-back" style="width:100%;margin-top:8px;">'+S("ተመለስ","Cancel")+'</button></div>';
+    document.getElementById("stl-back").onclick = function(){ done(null); };
+    document.getElementById("stl-next").onclick = function(){
+      var code = (document.getElementById("stl-code").value || "").trim().toUpperCase();
+      var er = document.getElementById("stl-er");
+      var st = state.students.find(function(s){ return (s.code||"").toUpperCase() === code; });
+      if (!st){ er.textContent = S("ኮድ አልተገኘም","Code not found"); return; }
+      if (st.pinHash) studentLoginStep2Verify(el, done, st); else studentLoginStep2Setup(el, done, st);
+    };
+    setTimeout(function(){ document.getElementById("stl-code").focus(); }, 50);
+  }
+  function studentLoginStep2Setup(el, done, st){
+    el.innerHTML = '<div class="lb"><img alt="" src="'+LOGO+'"><h3>'+esc(st.name)+'</h3>' +
+      '<p class="meta" style="text-align:right;">'+S("ይህ የመጀመሪያ መግቢያዎ ነው — የራስዎን PIN ይፍጠሩ (ቢያንስ 4 ቁጥር)።","This is your first login — create your own PIN (at least 4 digits).")+'</p>' +
+      '<input type="password" id="stl-p1" inputmode="numeric" maxlength="12" placeholder="'+S("አዲስ PIN","New PIN")+'">' +
+      '<input type="password" id="stl-p2" inputmode="numeric" maxlength="12" placeholder="'+S("PIN ደግመው ያስገቡ","Confirm PIN")+'" style="margin-top:8px;">' +
+      '<div class="er" id="stl-er2"></div>' +
+      '<button class="primary" id="stl-set" style="width:100%;margin-top:8px;">'+S("አስቀምጥ እና ግባ","Save and log in")+'</button>' +
+      '<button class="ghost" id="stl-back2" style="width:100%;margin-top:8px;">'+S("ተመለስ","Cancel")+'</button></div>';
+    document.getElementById("stl-back2").onclick = function(){ done(null); };
+    document.getElementById("stl-set").onclick = function(){
+      var p1 = document.getElementById("stl-p1").value, p2 = document.getElementById("stl-p2").value;
+      var er = document.getElementById("stl-er2");
+      if (!/^[0-9]{4,12}$/.test(p1)){ er.textContent = S("PIN ቢያንስ 4 ቁጥር መሆን አለበት","PIN must be at least 4 digits"); return; }
+      if (p1 !== p2){ er.textContent = S("PINዎቹ አይመሳሰሉም","PINs don't match"); return; }
+      hashPin(p1, st.code).then(function(h){
+        st.pinHash = h; save();
+        myStudent = { id: st.id, code: st.code, level: st.level, name: st.name };
+        done("student");
+      });
+    };
+  }
+  function studentLoginStep2Verify(el, done, st){
+    el.innerHTML = '<div class="lb"><img alt="" src="'+LOGO+'"><h3>'+esc(st.name)+'</h3>' +
+      '<input type="password" id="stl-p" inputmode="numeric" maxlength="12" placeholder="PIN">' +
+      '<div class="er" id="stl-er3"></div>' +
+      '<button class="primary" id="stl-ok" style="width:100%;margin-top:8px;">'+S("ግባ","Unlock")+'</button>' +
+      '<button class="ghost" id="stl-back3" style="width:100%;margin-top:8px;">'+S("ተመለስ","Cancel")+'</button></div>';
+    document.getElementById("stl-back3").onclick = function(){ done(null); };
+    function go(){
+      var p = document.getElementById("stl-p").value;
+      var er = document.getElementById("stl-er3");
+      hashPin(p, st.code).then(function(h){
+        if (h === st.pinHash){ myStudent = { id: st.id, code: st.code, level: st.level, name: st.name }; done("student"); }
+        else { er.textContent = S("PIN ትክክል አይደለም","Wrong PIN"); document.getElementById("stl-p").value = ""; }
+      });
+    }
+    document.getElementById("stl-ok").onclick = go;
+    document.getElementById("stl-p").onkeydown = function(e){ if (e.key === "Enter") go(); };
+    setTimeout(function(){ document.getElementById("stl-p").focus(); }, 50);
   }
   function startSecurity(){
     secLoad();
@@ -3296,7 +3393,7 @@
     return first.then(function(r){
       if (r) return r;
       if (!sec.appLock){ return "viewer"; }
-      return askPin({title:S("PIN ያስገቡ","Enter PIN"), roles:["owner","admin","collector","viewer"], cancel:false});
+      return askPin({title:S("PIN ያስገቡ","Enter PIN"), roles:["owner","admin","collector","viewer"], cancel:false, studentLogin:true});
     }).then(function(r){
       setRole(r); logAction("sec_login", r); save();
       ["click","keydown","touchstart"].forEach(function(ev){ document.addEventListener(ev, function(){ lastAct = Date.now(); }, true); });
