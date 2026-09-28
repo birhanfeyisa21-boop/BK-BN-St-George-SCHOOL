@@ -3594,6 +3594,8 @@
   function mk(am,en){ return {am:am,en:en,om:en,ti:am,ar:en,fr:en,es:en}; }
   STRINGS.tabs.depts = mk("ክፍላት እና አመራር","Departments");
   STRINGS.tabs.access = mk("ፈቃድ እና ደኅንነት","Access & Security");
+  STRINGS.tabs.work = mk("ሥራ ክትትል","Work tracking");
+  STRINGS.tabs.exam = mk("ምዘና","Exams");
   ["sec_fail","sec_login","sec_perm","sec_pin","sec_lock","dept_set"].forEach(function(k,i){
     STRINGS.act[k] = mk(["የተሳሳተ PIN ሙከራ","በPIN ገብቷል","የክፍል ፈቃድ ተቀየረ","PIN ተቀየረ","መተግበሪያው ተቆልፏል","የክፍል ሥራ ድርሻ ተመደበ"][i],["Wrong PIN attempt","Signed in with PIN","Section permission changed","PIN changed","App locked","Department assignment set"][i]);
   });
