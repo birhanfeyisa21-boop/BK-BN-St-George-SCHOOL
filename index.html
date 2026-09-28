@@ -272,6 +272,8 @@
   footer{opacity:.85}
   ::selection{background:#BBD3F5}
   input[type=password]{width:100%}
+  .x-timer{position:sticky;top:62px;z-index:20;text-align:center;font-weight:800;font-size:20px;background:#14336E;color:#fff;border-radius:14px;padding:8px;margin-bottom:10px;box-shadow:0 6px 16px rgba(20,54,112,.35)}
+  .x-timer.low{background:#B3261E}
   @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
   /* credit photo: larger and prominent */
   .credit{gap:10px;padding:6px 16px 6px 6px;font-size:14px;background:rgba(255,255,255,.16);box-shadow:inset 0 0 0 1px rgba(255,224,138,.5)}
@@ -343,6 +345,7 @@
     <button data-tab="comms">ግንኙነት / ሪፖርት</button>
     <button data-tab="messages">መልእክቶች</button>
     <button data-tab="work">ሥራ ክትትል</button>
+    <button data-tab="exam">ምዘና</button>
     <button data-tab="access">ፈቃድ እና ደኅንነት</button>
   </nav>
 
@@ -362,6 +365,7 @@
   <div id="tab-comms" class="tab hidden"></div>
   <div id="tab-messages" class="tab hidden"></div>
   <div id="tab-work" class="tab hidden"></div>
+  <div id="tab-exam" class="tab hidden"></div>
   <div id="tab-access" class="tab hidden"></div>
 
   <footer style="text-align:center;padding:16px 8px;font-size:11px;color:var(--muted);">
@@ -1394,6 +1398,7 @@
     if (activeTab === "comms") renderComms();
     if (activeTab === "messages") renderMessages();
     if (activeTab === "work") renderWork();
+    if (activeTab === "exam") renderExam();
   }
 
   // ---------- dashboard ----------
@@ -3031,6 +3036,128 @@
       else if (b.getAttribute("data-wcm")){ var tx = prompt(S("አስተያየት","Comment")); if (tx) wAct({ type: "w_comment", id: b.getAttribute("data-wcm"), text: tx }); }
     };
   }
+  // ---------- ምዘና (online exams: አዛምድ / እውነት-ሐሰት / ምርጫ / አብራራ) ----------
+  var examData = null, examDraft = [], examTake = null, examOut = null;
+  var examLeft = 0;
+  function xFmt(n){ n = Math.max(0, n); return Math.floor(n / 60) + ":" + ("0" + (n % 60)).slice(-2); }
+  var X_T = { mcq: ["ምርጫ","Choice"], tf: ["እውነት/ሐሰት","True/False"], match: ["አዛምድ","Match"], explain: ["አብራራ","Explain"] };
+  function xGet(cb){
+    var u = wCfg().url;
+    fetch(u + (u.indexOf("?") === -1 ? "?" : "&") + "type=elist&code=" + encodeURIComponent(workMe.code) + "&pin=" + encodeURIComponent(workMe.hash) + "&_=" + Date.now())
+      .then(function(r){ return r.json(); }).then(cb).catch(function(){ cb({ ok:false, error:wNet() }); });
+  }
+  function renderExam(){
+    var el = document.getElementById("tab-exam"), h = "", $ = function(i){ return document.getElementById(i); };
+    if (!workMe) examData = null;
+    if (!wCfg().url){
+      h = '<div class="card"><h2>' + S("ምዘና","Exams") + '</h2><p class="meta">' + S("ባለቤቱ ገና አላዘጋጀውም።","The owner hasn't set this up yet.") + '</p></div>';
+    } else if (!workMe){
+      h = '<div class="card"><h2>' + S("ምዘና","Exams") + '</h2><p class="meta">' + S("ለመግባት በ «ሥራ ክትትል» ትር ኮድዎንና PIN ያስገቡ (አንድ መግቢያ ለሁለቱም)።","Log in once in the “Work tracking” tab (same login).") + '</p><button class="primary" id="x-go">' + S("ወደ መግቢያ","Go to login") + '</button></div>';
+    } else if (!examData){
+      h = '<div class="card"><p class="meta">…</p></div>';
+      xGet(function(j){ examData = j.ok ? j : { mine: [], made: [], err: j.error }; renderExam(); });
+    } else if (examOut){
+      var o = examOut, pct = Math.round(o.score / o.max * 100);
+      h = '<div class="card"><h2>' + S("ውጤትዎ","Your result") + '</h2><div class="stat"><div class="num">' + o.score + ' / ' + o.max + '</div><div class="meta">' + pct + '%</div></div></div>' +
+        '<div class="card">' + o.detail.map(function(d, i){
+          return '<div class="row" style="display:block">' + (d.f >= 1 ? "✅" : d.f > 0 ? "🟡" : "❌") + ' <b>' + (i + 1) + '.</b> ' + esc(o.qs[i].q) + '<div class="meta">' + S("ትክክለኛ መልስ፦","Answer: ") + esc(d.c) + '</div></div>';
+        }).join("") + '<button class="primary" id="x-back" style="margin-top:10px">' + S("ተመለስ","Back") + '</button></div>';
+    } else if (examTake){
+      h = '<div id="x-timer" class="x-timer">⏱ ' + xFmt(examLeft) + '</div><div class="card"><h2>' + esc(examTake.title) + '</h2><p class="meta">' + S("አንድ ጊዜ ብቻ ነው መውሰድ የሚቻለው። ጊዜው ሲያልቅ በራሱ ይላካል።","One attempt only. It is submitted automatically when time runs out.") + '</p></div>' +
+        examTake.qs.map(function(q, i){
+          var b = "";
+          if (q.t === "mcq") b = q.o.map(function(t, k){ return '<label style="display:block"><input type="radio" name="xq' + i + '" value="' + k + '"> ' + esc(t) + '</label>'; }).join("");
+          else if (q.t === "tf") b = '<label style="display:block"><input type="radio" name="xq' + i + '" value="1"> ' + S("እውነት","True") + '</label><label style="display:block"><input type="radio" name="xq' + i + '" value="0"> ' + S("ሐሰት","False") + '</label>';
+          else if (q.t === "match") b = q.l.map(function(l, k){ return '<div style="margin:6px 0">' + esc(l) + '<select data-xm="' + i + '_' + k + '"><option value="">—</option>' + q.r.map(function(r){ return '<option>' + esc(r) + '</option>'; }).join("") + '</select></div>'; }).join("");
+          else b = '<textarea data-xe="' + i + '" placeholder="' + S("መልስዎን ያብራሩ","Explain your answer") + '"></textarea>';
+          return '<div class="card"><span class="badge role">' + esc(S(X_T[q.t][0], X_T[q.t][1])) + '</span> <b>' + (i + 1) + '.</b> ' + esc(q.q) + '<div style="margin-top:8px">' + b + '</div></div>';
+        }).join("") + '<button class="primary" id="x-submit">' + S("አስረክብ","Submit") + '</button> <button class="ghost" id="x-back">' + S("ተመለስ","Back") + '</button>';
+    } else {
+      var me = workData.me, mine = examData.mine, made = examData.made;
+      h = '<div class="card"><h2>' + S("ለእርስዎ የተመደቡ ምዘናዎች","Your exams") + '</h2>' + (mine.length ? mine.map(function(e){
+        return '<div class="row"><div><b>' + esc(e.title) + '</b><div class="meta">' + esc(e.byName) + ' · ' + e.qs.length + ' ' + S("ጥያቄ","Q") + ' · ⏱ ' + xFmt(e.limit) + '</div></div>' +
+          (e.done ? '<span class="badge role">' + e.done.score + '/' + e.done.max + '</span>' : '<button class="primary" data-xstart="' + esc(e.id) + '">' + S("ጀምር","Start") + '</button>') + '</div>';
+      }).join("") : '<div class="empty">' + S("ምንም ምዘና የለም","No exams") + '</div>') + '<button class="ghost" id="x-refresh" style="margin-top:8px">' + S("🔄 አድስ","🔄 Refresh") + '</button></div>';
+      if (me.role !== "sub"){
+        var others = workData.people.filter(function(p){ return p.code !== me.code; });
+        h += '<div class="card"><h2>' + S("አዲስ ምዘና ፍጠር","Create an exam") + '</h2>' +
+          '<div class="field"><input type="text" id="x-title" placeholder="' + S("የምዘናው ርዕስ","Exam title") + '"></div>' +
+          '<div class="field"><label>' + S("የጥያቄ ዓይነት","Question type") + '</label><select id="x-t">' + Object.keys(X_T).map(function(k){ return '<option value="' + k + '">' + esc(S(X_T[k][0], X_T[k][1])) + '</option>'; }).join("") + '</select></div>' +
+          '<div class="field"><textarea id="x-q" placeholder="' + S("ጥያቄው","Question") + '"></textarea></div>' +
+          '<div id="x-f-mcq"><div class="field"><textarea id="x-mo" placeholder="' + S("ምርጫዎች — በየመስመሩ አንድ","Options — one per line") + '"></textarea></div><div class="field"><input type="number" id="x-ma" min="1" max="6" placeholder="' + S("ትክክለኛው ምርጫ ቁጥር (1፣ 2…)","Correct option number") + '"></div></div>' +
+          '<div id="x-f-tf" style="display:none"><div class="field"><select id="x-ta"><option value="1">' + S("መልሱ እውነት","Answer: True") + '</option><option value="0">' + S("መልሱ ሐሰት","Answer: False") + '</option></select></div></div>' +
+          '<div id="x-f-match" style="display:none"><div class="field"><textarea id="x-pp" placeholder="' + S("ግራ|ቀኝ — በየመስመሩ አንድ ጥንድ (ከ2 እስከ 8)","left|right — one pair per line (2–8)") + '"></textarea></div></div>' +
+          '<div id="x-f-explain" style="display:none"><div class="field"><input type="text" id="x-ek" placeholder="' + S("ቁልፍ ቃላት በነጠላ ሰረዝ (፣ ወይም ,) ይለዩ","Key words, comma-separated") + '"></div><p class="meta">' + S("ሲስተሙ መልሱ ውስጥ ቁልፍ ቃላቱ የተካተቱትን ያስላል።","The system scores by how many key words appear in the answer.") + '</p></div>' +
+          '<p class="error" id="x-er"></p><button class="ghost" id="x-addq">' + S("＋ ጥያቄ ጨምር","＋ Add question") + '</button>' +
+          '<div id="x-dl"></div>' +
+          '<div class="field" style="margin-top:10px"><label>' + S("የሚወስዱ","Who takes it") + '</label>' + others.map(function(p){ return '<label style="display:flex;gap:8px;align-items:center;font-size:13px"><input type="checkbox" class="x-as" value="' + esc(p.code) + '"> ' + esc(p.name) + '</label>'; }).join("") + '</div>' +
+          '<button class="primary" id="x-pub">' + S("ምዘናውን አትም","Publish exam") + '</button></div>';
+        h += '<div class="card"><h2>' + S("የፈጠርኋቸው / ውጤቶች","Created / results") + '</h2>' + (made.length ? made.map(function(e){
+          return '<div class="row" style="display:block"><b>' + esc(e.title) + '</b> <span class="meta">' + e.results.length + '/' + e.n + '</span>' +
+            e.results.map(function(r){ return '<div class="meta">• ' + esc(r.name) + ': <b>' + r.score + '/' + r.max + '</b></div>'; }).join("") + '</div>';
+        }).join("") : '<div class="empty">—</div>') + '</div>';
+      }
+    }
+    el.innerHTML = h;
+    if ($("x-go")) $("x-go").onclick = function(){ var b = document.querySelector('nav.tabs button[data-tab="work"]'); if (b) b.click(); };
+    if ($("x-refresh")) $("x-refresh").onclick = function(){ examData = null; renderExam(); };
+    if ($("x-back")) $("x-back").onclick = function(){ examTake = null; examOut = null; examData = null; renderExam(); };
+    if ($("x-t")) $("x-t").onchange = function(){ Object.keys(X_T).forEach(function(k){ $("x-f-" + k).style.display = (k === $("x-t").value) ? "" : "none"; }); };
+    function drawDraft(){ if ($("x-dl")) $("x-dl").innerHTML = examDraft.map(function(q, i){ return '<div class="row"><span>' + (i + 1) + '. <span class="badge role">' + esc(S(X_T[q.t][0], X_T[q.t][1])) + '</span> ' + esc(q.q.slice(0, 60)) + '</span><button class="ghost danger" data-xdel="' + i + '">✕</button></div>'; }).join(""); }
+    drawDraft();
+    if ($("x-addq")) $("x-addq").onclick = function(){
+      var t = $("x-t").value, q = $("x-q").value.trim(), er = $("x-er"), item = { t: t, q: q };
+      function bad(m){ er.textContent = m; er.style.display = "block"; }
+      if (!q) return bad(S("ጥያቄውን ይጻፉ","Write the question"));
+      if (t === "mcq"){ item.o = $("x-mo").value.split("\n").map(function(x){ return x.trim(); }).filter(Boolean); item.a = parseInt($("x-ma").value, 10) - 1;
+        if (item.o.length < 2 || !(item.a >= 0 && item.a < item.o.length)) return bad(S("ቢያንስ 2 ምርጫና ትክክለኛ ቁጥር ያስገቡ","Need 2+ options and a valid correct number")); }
+      if (t === "tf") item.a = $("x-ta").value === "1";
+      if (t === "match"){ item.pairs = $("x-pp").value.split("\n").map(function(l){ var p = l.split("|"); return { l: (p[0] || "").trim(), r: (p[1] || "").trim() }; }).filter(function(p){ return p.l && p.r; });
+        if (item.pairs.length < 2 || item.pairs.length > 8) return bad(S("ከ2 እስከ 8 ጥንድ (ግራ|ቀኝ)","2–8 pairs (left|right)")); }
+      if (t === "explain"){ item.kw = $("x-ek").value.split(/[,፣]/).map(function(x){ return x.trim(); }).filter(Boolean);
+        if (!item.kw.length) return bad(S("ቢያንስ አንድ ቁልፍ ቃል ያስገቡ","Add at least one key word")); }
+      examDraft.push(item); er.textContent = ""; ["x-q","x-mo","x-ma","x-pp","x-ek"].forEach(function(id){ $(id).value = ""; }); drawDraft();
+    };
+    if ($("x-pub")) $("x-pub").onclick = function(){
+      var er = $("x-er"), ts = Array.prototype.map.call(el.querySelectorAll(".x-as:checked"), function(x){ return x.value; });
+      if (!examDraft.length || !ts.length){ er.textContent = S("ጥያቄ ጨምረው ተመዛኞችን ይምረጡ","Add questions and choose takers"); er.style.display = "block"; return; }
+      wPost({ code: workMe.code, pin: workMe.hash, type: "x_create", title: $("x-title").value.trim() || "ምዘና", qs: examDraft, targets: ts }, function(r){
+        if (r.ok){ examDraft = []; examData = null; showToast(S("ተለጥፏል","Published")); renderExam(); } else { er.textContent = r.error || wNet(); er.style.display = "block"; }
+      });
+    };
+    var xSend = function(auto){
+      var t = examTake; if (!t) return;
+      var ans = t.qs.map(function(q, i){
+        if (q.t === "mcq"){ var c = el.querySelector("input[name=xq" + i + "]:checked"); return c ? parseInt(c.value, 10) : null; }
+        if (q.t === "tf"){ var d = el.querySelector("input[name=xq" + i + "]:checked"); return d ? d.value === "1" : null; }
+        if (q.t === "match") return q.l.map(function(_, k){ return el.querySelector('[data-xm="' + i + "_" + k + '"]').value; });
+        return el.querySelector('[data-xe="' + i + '"]').value;
+      });
+      if (!auto && !confirm(S("ማስረከብ ይፈልጋሉ? በኋላ መቀየር አይቻልም።","Submit now? You can't change it later."))) return;
+      wPost({ code: workMe.code, pin: workMe.hash, type: "x_submit", id: t.id, answers: ans }, function(r){
+        if (r.ok){ examOut = { score: r.score, max: r.max, detail: r.detail, qs: t.qs }; examTake = null; examData = null; renderExam(); } else showToast(r.error || wNet());
+      });
+    };
+    if ($("x-submit")) $("x-submit").onclick = function(){ xSend(false); };
+    if (window.xTimer){ clearInterval(window.xTimer); window.xTimer = null; }
+    if (examTake && $("x-timer")) window.xTimer = setInterval(function(){
+      var tm = $("x-timer"); examLeft--;
+      if (!tm || !examTake){ clearInterval(window.xTimer); return; }
+      tm.textContent = "⏱ " + xFmt(examLeft); if (examLeft <= 60) tm.className = "x-timer low";
+      if (examLeft <= 0){ clearInterval(window.xTimer); xSend(true); }
+    }, 1000);
+    el.onclick = function(e){
+      var b = e.target.closest ? e.target.closest("button") : null; if (!b) return;
+      if (b.getAttribute("data-xstart")){ var id = b.getAttribute("data-xstart"); var ex = examData.mine.filter(function(x){ return x.id === id; })[0];
+        if (!confirm(S("ሲጀምሩ ሰዓቱ ይጀምራል፤ ማቆም አይቻልም። ይጀምሩ?","The timer starts now and can't be paused. Start?"))) return;
+        wPost({ code: workMe.code, pin: workMe.hash, type: "x_begin", id: id }, function(r){
+          if (!r.ok){ showToast(r.error || wNet()); return; }
+          if (r.expired){ showToast(S("ጊዜው አልፏል — ውጤት 0","Time is up — score 0")); examData = null; renderExam(); return; }
+          examTake = ex; examLeft = r.left; renderExam(); window.scrollTo(0, 0);
+        }); }
+      else if (b.getAttribute("data-xdel")){ examDraft.splice(parseInt(b.getAttribute("data-xdel"), 10), 1); drawDraft(); }
+    };
+  }
   function renderComms(){
     var el = document.getElementById("tab-comms");
     var pc = pendingCounts();
@@ -3471,7 +3598,7 @@
     STRINGS.act[k] = mk(["የተሳሳተ PIN ሙከራ","በPIN ገብቷል","የክፍል ፈቃድ ተቀየረ","PIN ተቀየረ","መተግበሪያው ተቆልፏል","የክፍል ሥራ ድርሻ ተመደበ"][i],["Wrong PIN attempt","Signed in with PIN","Section permission changed","PIN changed","App locked","Department assignment set"][i]);
   });
   var RANK = {owner:3, admin:2, collector:1, viewer:0};
-  var SECTIONS = ["dashboard","depts","parishes","members","students","teachers","documents","lessons","tools","cert","io","storage","audit","comms","messages","work"];
+  var SECTIONS = ["dashboard","depts","parishes","members","students","teachers","documents","lessons","tools","cert","io","storage","audit","comms","messages","work","exam"];
   var DEPTS = [
     {id:"office", n:"የሰ/ት/ቤቱ ጽሕፈት ቤት (ዋና አመራር)", roles:[["chair","ሰብሳቢ"],["vice","ምክትል ሰብሳቢ"],["secr","ጸሐፊ"]], subs:[]},
     {id:"edu", n:"ትምህርትና ሥርዓተ ትምህርት ክፍል", roles:[["head","ኃላፊ"],["secr","ጸሐፊ"]], subs:["ሥርዓተ ትምህርት ዝግጅት|የደረጃ ትምህርቶችን ማዘጋጀትና ማሻሻል","መምህራን ምደባና ሥልጠና|መምህራንን መመደብ፣ መከታተልና ማሠልጠን","ፈተናና ውጤት|ፈተና ማዘጋጀት፣ ውጤት መያዝና ምረቃ","ቤተ መጻሕፍት|መጻሕፍትና የትምህርት መርጃዎችን ማስተዳደር"]},
@@ -3483,7 +3610,7 @@
     {id:"aud", n:"ኦዲትና ኢንስፔክሽን ክፍል", roles:[["head","ኃላፊ"],["secr","ጸሐፊ"]], subs:["የሒሳብ ኦዲት|ገቢና ወጪን መመርመር","ሥነ ሥርዓት ክትትል|ደንብና መመሪያ መከበሩን መቆጣጠር"]}
   ];
   function tabAllowed(t){
-    if (role === "student") return t === "lessons" || t === "messages" || t === "work";
+    if (role === "student") return t === "lessons" || t === "messages" || t === "work" || t === "exam";
     if (t === "access") return role === "owner";
     if (role === "owner") return true;
     var a = (state.access || {})[role];
