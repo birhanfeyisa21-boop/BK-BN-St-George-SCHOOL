@@ -1,0 +1,18 @@
+{
+  "name": "BK/B/N ለሰ/ት/ቤቶች መረጃ እና ትምህርት መለዋወጫ",
+  "short_name": "ብርሃን ሰ/ት/ቤት",
+  "description": "የሰንበት ት/ቤት አባላት፣ ተማሪዎች፣ መምህራን እና አመራር መረጃና ትምህርት የሚለዋወጡበት መተግበሪያ።",
+  "lang": "am",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#1e3a8a",
+  "categories": ["education", "productivity"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
