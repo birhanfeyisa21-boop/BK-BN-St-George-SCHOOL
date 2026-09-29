@@ -297,6 +297,16 @@
   .thanks-l1 b,.thanks-l2 b{color:#0F2A63;font-weight:800}
   .thanks-div{width:52px;height:3px;margin:12px auto;border-radius:3px;background:linear-gradient(90deg,#E5B92E,#F2C230)}
   .thanks-c{margin:0;font-size:12px;color:var(--muted);letter-spacing:.2px}
+  .x-seg{display:flex;gap:6px;margin-bottom:10px;background:#E3EDFB;padding:4px;border-radius:12px}
+  .x-segbtn{flex:1;border:none;background:transparent;padding:9px 8px;border-radius:9px;font-weight:700;font-size:13px;color:#3A4A63;cursor:pointer}
+  .x-segbtn.on{background:linear-gradient(135deg,#1E4FA0,#3B7DD8);color:#fff;box-shadow:0 3px 10px rgba(30,79,160,.3)}
+
+  /* ኮምፒውተር/ሰፊ ስክሪን ላይ የትሮች መስመር ጫፍ ላይ እንዳይቆረጥ — ወደ ብዙ መስመር ይታጠፍ */
+  @media (min-width: 640px){
+    .app{max-width:960px}
+    nav.tabs{flex-wrap:wrap;overflow-x:visible;position:static;justify-content:center}
+    nav.tabs button{flex:none}
+  }
 </style>
 </head>
 <body>
@@ -3052,7 +3062,7 @@
     };
   }
   // ---------- ምዘና (online exams: አዛምድ / እውነት-ሐሰት / ምርጫ / አብራራ) ----------
-  var examData = null, examDraft = [], examTake = null, examOut = null;
+  var examData = null, examDraft = [], examTake = null, examOut = null, examView = "mine";
   var examLeft = 0;
   function xFmt(n){ n = Math.max(0, n); return Math.floor(n / 60) + ":" + ("0" + (n % 60)).slice(-2); }
   var X_T = { mcq: ["ምርጫ","Choice"], tf: ["እውነት/ሐሰት","True/False"], match: ["አዛምድ","Match"], explain: ["አብራራ","Explain"] };
@@ -3060,6 +3070,42 @@
     var u = wCfg().url;
     fetch(u + (u.indexOf("?") === -1 ? "?" : "&") + "type=elist&code=" + encodeURIComponent(workMe.code) + "&pin=" + encodeURIComponent(workMe.hash) + "&_=" + Date.now())
       .then(function(r){ return r.json(); }).then(cb).catch(function(){ cb({ ok:false, error:wNet() }); });
+  }
+  function xExamPage_(e){
+    var typ = { mcq: [S("ምርጫ","Choice")], tf: [S("እውነት/ሐሰት","True/False")], match: [S("አዛምድ","Match")], explain: [S("አብራራ","Explain")] };
+    var body = e.qs.map(function(q, i){
+      var b = "";
+      if (q.t === "mcq") b = '<div class="pq-opts">' + q.o.map(function(t){ return '<div class="pq-opt">☐ ' + esc(t) + '</div>'; }).join("") + '</div>';
+      else if (q.t === "tf") b = '<div class="pq-opts"><div class="pq-opt">☐ ' + S("እውነት","True") + '</div><div class="pq-opt">☐ ' + S("ሐሰት","False") + '</div></div>';
+      else if (q.t === "match") b = '<table class="pq-mt"><tr><th>' + S("ሀ","A") + '</th><th>' + S("ለ","B") + '</th></tr>' +
+        q.l.map(function(l, k){ return '<tr><td>' + (k + 1) + '. ' + esc(l) + '</td><td>' + esc(q.r[k] || "") + '</td></tr>'; }).join("") + '</table>';
+      else b = '<div class="pq-lines"><div></div><div></div><div></div></div>';
+      return '<div class="pq"><div class="pq-h"><span>' + (i + 1) + '.</span> ' + esc(q.q) + ' <span class="pq-tag">' + esc(typ[q.t][0]) + '</span></div>' + b + '</div>';
+    }).join("");
+    return '<!DOCTYPE html><html lang="am"><head><meta charset="UTF-8"><title>' + esc(e.title) + '</title><style>' +
+      'body{font-family:-apple-system,"Noto Sans Ethiopic",sans-serif;color:#14202E;padding:28px;max-width:780px;margin:0 auto}' +
+      'h1{font-size:20px;border-bottom:3px solid #E5B92E;padding-bottom:8px}.meta2{color:#5F6B7F;font-size:13px;margin-bottom:18px}' +
+      '.pq{margin-bottom:16px;page-break-inside:avoid}.pq-h{font-weight:700;margin-bottom:6px}.pq-tag{font-size:11px;color:#1E4FA0;font-weight:600;border:1px solid #C9D9F0;border-radius:8px;padding:1px 8px;margin-left:6px}' +
+      '.pq-opts{margin-left:18px}.pq-opt{margin:3px 0}.pq-mt{border-collapse:collapse;margin-left:18px}.pq-mt th,.pq-mt td{border:1px solid #ccc;padding:4px 10px;text-align:left;font-size:14px}' +
+      '.pq-lines div{border-bottom:1px solid #999;height:22px;margin:0 18px}' +
+      '@media print{body{padding:0}}</style></head><body>' +
+      '<h1>' + esc(e.title) + '</h1><div class="meta2">BK/B/N · ' + e.qs.length + ' ' + S("ጥያቄ","questions") + ' · ⏱ ' + xFmt(e.limit) + '</div>' +
+      body + '</body></html>';
+  }
+  function xExamPrint(id){
+    var e = examData && examData.made && examData.made.filter(function(x){ return x.id === id; })[0]; if (!e) return;
+    var w = window.open("", "_blank"); if (!w){ showToast(S("የብቅ-ባይ አግድ (popup) ተከፍቷል — ይፍቀዱ","Popup blocked — please allow it")); return; }
+    w.document.open(); w.document.write(xExamPage_(e)); w.document.close();
+    setTimeout(function(){ try { w.focus(); w.print(); } catch(e2){} }, 350);
+  }
+  function xExamShare(id){
+    var e = examData && examData.made && examData.made.filter(function(x){ return x.id === id; })[0]; if (!e) return;
+    var txt = S("«" + e.title + "» የሚል ምዘና ተመድቦልዎታል — በ", "You've been assigned the exam “" + e.title + "” — ") +
+      S("BK/B/N መተግበሪያ በ«ምዘና» ትር ውስጥ በራስዎ ኮድና PIN ገብተው ይውሰዱ። (" + e.qs.length + " ጥያቄ, ⏱ " + xFmt(e.limit) + ")",
+        "Open the BK/B/N app → “ምዘና” tab, log in with your code and PIN. (" + e.qs.length + " questions, ⏱ " + xFmt(e.limit) + ")");
+    if (navigator.share){ navigator.share({ title: e.title, text: txt }).catch(function(){}); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(function(){ showToast(S("ተቀድቷል — ለ Telegram/WhatsApp ለጥፉት","Copied — paste it into Telegram/WhatsApp")); }); }
+    else showToast(txt);
   }
   function renderExam(){
     var el = document.getElementById("tab-exam"), h = "", $ = function(i){ return document.getElementById(i); };
@@ -3088,12 +3134,19 @@
           return '<div class="card"><span class="badge role">' + esc(S(X_T[q.t][0], X_T[q.t][1])) + '</span> <b>' + (i + 1) + '.</b> ' + esc(q.q) + '<div style="margin-top:8px">' + b + '</div></div>';
         }).join("") + '<button class="primary" id="x-submit">' + S("አስረክብ","Submit") + '</button> <button class="ghost" id="x-back">' + S("ተመለስ","Back") + '</button>';
     } else {
-      var me = workData.me, mine = examData.mine, made = examData.made;
-      h = '<div class="card"><h2>' + S("ለእርስዎ የተመደቡ ምዘናዎች","Your exams") + '</h2>' + (mine.length ? mine.map(function(e){
+      var me = workData.me, mine = examData.mine, made = examData.made, canMake = me.role !== "sub";
+      if (canMake){
+        h += '<div class="x-seg">' +
+          '<button class="x-segbtn' + (examView === "mine" ? " on" : "") + '" data-xview="mine">🧾 ' + S("የተመደበልኝ","Assigned to me") + '</button>' +
+          '<button class="x-segbtn' + (examView === "make" ? " on" : "") + '" data-xview="make">📝 ' + S("አሰራጭ","Distribute") + '</button>' +
+        '</div>';
+      }
+      var view = canMake ? examView : "mine";
+      if (view === "mine") h += '<div class="card"><h2>' + S("ለእርስዎ የተመደቡ ምዘናዎች","Your exams") + '</h2>' + (mine.length ? mine.map(function(e){
         return '<div class="row"><div><b>' + esc(e.title) + '</b><div class="meta">' + esc(e.byName) + ' · ' + e.qs.length + ' ' + S("ጥያቄ","Q") + ' · ⏱ ' + xFmt(e.limit) + '</div></div>' +
           (e.done ? '<span class="badge role">' + e.done.score + '/' + e.done.max + '</span>' : '<button class="primary" data-xstart="' + esc(e.id) + '">' + S("ጀምር","Start") + '</button>') + '</div>';
       }).join("") : '<div class="empty">' + S("ምንም ምዘና የለም","No exams") + '</div>') + '<button class="ghost" id="x-refresh" style="margin-top:8px">' + S("🔄 አድስ","🔄 Refresh") + '</button></div>';
-      if (me.role !== "sub"){
+      if (view === "make" && canMake){
         var others = workData.people.filter(function(p){ return p.code !== me.code; });
         h += '<div class="card"><h2>' + S("አዲስ ምዘና ፍጠር","Create an exam") + '</h2>' +
           '<div class="field"><input type="text" id="x-title" placeholder="' + S("የምዘናው ርዕስ","Exam title") + '"></div>' +
@@ -3107,8 +3160,10 @@
           '<div id="x-dl"></div>' +
           '<div class="field" style="margin-top:10px"><label>' + S("የሚወስዱ","Who takes it") + '</label>' + others.map(function(p){ return '<label style="display:flex;gap:8px;align-items:center;font-size:13px"><input type="checkbox" class="x-as" value="' + esc(p.code) + '"> ' + esc(p.name) + '</label>'; }).join("") + '</div>' +
           '<button class="primary" id="x-pub">' + S("ምዘናውን አትም","Publish exam") + '</button></div>';
-        h += '<div class="card"><h2>' + S("የፈጠርኋቸው / ውጤቶች","Created / results") + '</h2>' + (made.length ? made.map(function(e){
-          return '<div class="row" style="display:block"><b>' + esc(e.title) + '</b> <span class="meta">' + e.results.length + '/' + e.n + '</span>' +
+        h += '<div class="card"><h2>' + S("የፈጠርኳቸው / ውጤቶች","Created / results") + '</h2>' + (made.length ? made.map(function(e){
+          return '<div class="row" style="display:block"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">' +
+            '<div><b>' + esc(e.title) + '</b> <span class="meta">' + e.results.length + '/' + e.n + '</span></div>' +
+            '<div style="display:flex;gap:6px;flex:none"><button class="ghost" data-xpdf="' + esc(e.id) + '" title="' + S("PDF","PDF") + '">📄</button><button class="ghost" data-xshare="' + esc(e.id) + '" title="' + S("አጋራ","Share") + '">📤</button></div></div>' +
             e.results.map(function(r){ return '<div class="meta">• ' + esc(r.name) + ': <b>' + r.score + '/' + r.max + '</b></div>'; }).join("") + '</div>';
         }).join("") : '<div class="empty">—</div>') + '</div>';
       }
@@ -3163,6 +3218,9 @@
     }, 1000);
     el.onclick = function(e){
       var b = e.target.closest ? e.target.closest("button") : null; if (!b) return;
+      if (b.getAttribute("data-xview")){ examView = b.getAttribute("data-xview"); renderExam(); return; }
+      if (b.getAttribute("data-xpdf")){ xExamPrint(b.getAttribute("data-xpdf")); return; }
+      if (b.getAttribute("data-xshare")){ xExamShare(b.getAttribute("data-xshare")); return; }
       if (b.getAttribute("data-xstart")){ var id = b.getAttribute("data-xstart"); var ex = examData.mine.filter(function(x){ return x.id === id; })[0];
         if (!confirm(S("ሲጀምሩ ሰዓቱ ይጀምራል፤ ማቆም አይቻልም። ይጀምሩ?","The timer starts now and can't be paused. Start?"))) return;
         wPost({ code: workMe.code, pin: workMe.hash, type: "x_begin", id: id }, function(r){
