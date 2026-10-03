@@ -3124,6 +3124,7 @@
       var me = workData.me, tasks = workData.tasks.slice().reverse();
       h += '<div class="card"><h2>' + esc(me.name) + '</h2><p class="meta">' + esc(me.role === "office" ? S("ጽሕፈት ቤት","Office") : me.role === "head" ? S("የክፍል አመራር","Department leader") : S("ንዑስ አባል","Sub-member")) + (me.dept ? " · " + esc(me.dept) : "") + '</p>' +
         '<button class="ghost" id="w-refresh">' + S("🔄 አድስ","🔄 Refresh") + '</button> <button class="ghost" id="w-out">' + S("ውጣ","Log out") + '</button></div>';
+      h += dirCardHtml(me);
       if (me.role !== "sub"){
         var others = workData.people.filter(function(p){ return p.code !== me.code; });
         h += '<div class="card"><h2>' + S("አዲስ ሥራ","New task") + '</h2>' +
@@ -3163,17 +3164,17 @@
       if (!code || !/^[0-9]{4,12}$/.test(pin)){ er.textContent = S("ኮድና ቢያንስ 4 ቁጥር PIN ያስገቡ","Enter your code and a PIN of 4+ digits"); return; }
       er.textContent = "…";
       hashStudentPin(pin, "W:" + code).then(function(hash){
-        function enter(){ wGet(code, hash, function(j){ if (j.ok){ workMe = { code: code, hash: hash }; workData = j; workSetPin = false; renderWork(); } else er.textContent = j.error || ""; }); }
+        function enter(){ wGet(code, hash, function(j){ if (j.ok){ workMe = { code: code, hash: hash }; workData = j; workSetPin = false; dirInfo = null; renderWork(); dirRefreshStatus(); } else er.textContent = j.error || ""; }); }
         wGet(code, hash, function(j){
-          if (j.ok){ workMe = { code: code, hash: hash }; workData = j; renderWork(); return; }
+          if (j.ok){ workMe = { code: code, hash: hash }; workData = j; dirInfo = null; renderWork(); dirRefreshStatus(); return; }
           if (j.error !== "nopin"){ er.textContent = j.error || ""; return; }
           if (!workSetPin){ workSetPin = true; er.textContent = S("የመጀመሪያ መግቢያዎ ነው — የመረጡትን PIN አረጋግጠው «ግባ» ይጫኑ።","First login — confirm your chosen PIN and press Log in again."); return; }
           wPost({ type: "w_setpin", code: code, pin: hash }, function(r){ if (r.ok) enter(); else er.textContent = r.error || wNet(); });
         });
       });
     };
-    if ($("w-refresh")) $("w-refresh").onclick = function(){ wGet(workMe.code, workMe.hash, function(j){ if (j.ok) workData = j; renderWork(); }); };
-    if ($("w-out")) $("w-out").onclick = function(){ workMe = null; workData = null; renderWork(); };
+    if ($("w-refresh")) $("w-refresh").onclick = function(){ wGet(workMe.code, workMe.hash, function(j){ if (j.ok) workData = j; renderWork(); dirRefreshStatus(); }); };
+    if ($("w-out")) $("w-out").onclick = function(){ workMe = null; workData = null; dirInfo = null; renderWork(); };
     if ($("w-add")) $("w-add").onclick = function(){
       var title = $("w-title").value.trim(); if (!title){ showToast(S("ርዕስ ይጻፉ","Enter a title")); return; }
       var as = Array.prototype.map.call(el.querySelectorAll(".w-as:checked"), function(x){ return x.value; });
@@ -3183,7 +3184,53 @@
       var b = e.target.closest ? e.target.closest("button") : null; if (!b || !workMe) return;
       if (b.getAttribute("data-wst")) wAct({ type: "w_status", id: b.getAttribute("data-id"), status: b.getAttribute("data-wst") });
       else if (b.getAttribute("data-wcm")){ var tx = prompt(S("አስተያየት","Comment")); if (tx) wAct({ type: "w_comment", id: b.getAttribute("data-wcm"), text: tx }); }
+      else if (b.id === "dir-push") dirPush();
+      else if (b.id === "dir-pull") dirPull();
     };
+  }
+  // ---------- የጋራ መዝገብ (አባላት/ተማሪዎች/መምህራን ለሁሉም ተመሳሳይ እንዲሆኑ) ----------
+  var dirInfo = null, dirBusy = false;
+  function dirCardHtml(me){
+    var h = '<div class="card" id="dir-card"><h2>' + S("የጋራ መዝገብ (አባላት / ተማሪዎች / መምህራን)","Shared directory (members / students / teachers)") + '</h2>' +
+      '<p class="meta">' + S("ይህ የእርስዎን አካባቢያዊ ዝርዝር ከሌሎች አመራሮች ጋር ለማመሳሰል ነው።","This syncs your local lists with other leaders.") + '</p>' +
+      '<p class="meta" id="dir-status">' + (dirInfo === null ? S("በመፈተሽ ላይ…","Checking…") :
+        dirInfo ? S("የመጨረሻ ላኪ፦ ","Last pushed by: ") + esc(dirInfo.byName) + " · " + new Date(dirInfo.ts).toLocaleString() +
+          " · " + dirInfo.members.length + " " + S("አባላት","members") + ", " + dirInfo.students.length + " " + S("ተማሪዎች","students") + ", " + dirInfo.teachers.length + " " + S("መምህራን","teachers")
+        : S("ገና ምንም አልተላከም።","Nothing pushed yet.")) + '</p>';
+    if (me.role !== "sub") h += '<button class="primary" id="dir-push">' + S("⬆️ የእኔን ወደ ጋራው ላክ (ይተካል)","⬆️ Push mine to shared (replaces it)") + '</button> ';
+    h += '<button class="ghost" id="dir-pull">' + S("⬇️ ከጋራው አምጣ (የእኔን ይተካል)","⬇️ Pull shared (replaces mine)") + '</button>';
+    return h;
+  }
+  function dirRefreshStatus(){
+    if (!workMe) return;
+    var u = wCfg().url;
+    fetch(u + (u.indexOf("?") === -1 ? "?" : "&") + "type=dlist&code=" + encodeURIComponent(workMe.code) + "&pin=" + encodeURIComponent(workMe.hash) + "&_=" + Date.now())
+      .then(function(r){ return r.json(); }).then(function(j){ dirInfo = (j.ok && j.directory) ? j.directory : (j.ok ? false : null); renderWork(); }).catch(function(){});
+  }
+  function dirPush(){
+    if (dirBusy || !workMe) return;
+    if (!confirm(S("የአሁኑን የእርስዎን አባላት/ተማሪዎች/መምህራን ዝርዝር ለሁሉም ይተካል። ይቀጥሉ?","This replaces the shared copy with your current members/students/teachers. Continue?"))) return;
+    dirBusy = true; showToast(S("በመላክ ላይ…","Pushing…"));
+    wPost({ code: workMe.code, pin: workMe.hash, type: "d_push", members: state.members, students: state.students, teachers: state.teachers }, function(r){
+      dirBusy = false;
+      if (r.ok){ showToast(S("ተልኳል","Pushed")); dirRefreshStatus(); } else showToast(r.error || wNet());
+    });
+  }
+  function dirPull(){
+    if (dirBusy || !workMe) return;
+    if (!confirm(S("የአሁኑን የእርስዎን አባላት/ተማሪዎች/መምህራን ከጋራው ይተካል (የአሁኑ በራሱ ምትኬ ይቀመጣል)። ይቀጥሉ?","This replaces your current members/students/teachers with the shared copy (a snapshot of the current data is kept). Continue?"))) return;
+    dirBusy = true; showToast(S("በማምጣት ላይ…","Pulling…"));
+    var u = wCfg().url;
+    fetch(u + (u.indexOf("?") === -1 ? "?" : "&") + "type=dlist&code=" + encodeURIComponent(workMe.code) + "&pin=" + encodeURIComponent(workMe.hash) + "&_=" + Date.now())
+      .then(function(r){ return r.json(); }).then(function(j){
+        dirBusy = false;
+        if (!j.ok){ showToast(j.error || wNet()); return; }
+        if (!j.directory){ showToast(S("ገና ምንም አልተላከም","Nothing pushed yet")); return; }
+        takeSnapshot("directory_pull").then(function(){
+          state.members = j.directory.members || []; state.students = j.directory.students || []; state.teachers = j.directory.teachers || [];
+          save(); dirInfo = j.directory; showToast(S("ተመጥቷል","Pulled")); renderAll();
+        });
+      }).catch(function(){ dirBusy = false; showToast(wNet()); });
   }
   // ---------- ምዘና (online exams: አዛምድ / እውነት-ሐሰት / ምርጫ / አብራራ) ----------
   var examData = null, examDraft = [], examTake = null, examOut = null, examView = "mine";
@@ -3227,9 +3274,30 @@
     var txt = S("«" + e.title + "» የሚል ምዘና ተመድቦልዎታል — በ", "You've been assigned the exam “" + e.title + "” — ") +
       S("BK/B/N መተግበሪያ በ«ምዘና» ትር ውስጥ በራስዎ ኮድና PIN ገብተው ይውሰዱ። (" + e.qs.length + " ጥያቄ, ⏱ " + xFmt(e.limit) + ")",
         "Open the BK/B/N app → “ምዘና” tab, log in with your code and PIN. (" + e.qs.length + " questions, ⏱ " + xFmt(e.limit) + ")");
-    if (navigator.share){ navigator.share({ title: e.title, text: txt }).catch(function(){}); return; }
-    if (navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(function(){ showToast(S("ተቀድቷል — ለ Telegram/WhatsApp ለጥፉት","Copied — paste it into Telegram/WhatsApp")); }); }
-    else showToast(txt);
+    var names = (e.targetNames || []).join("፣ ");
+    var ov = document.createElement("div");
+    ov.id = "x-sharemodal";
+    ov.style.cssText = "position:fixed;inset:0;background:rgba(10,20,40,.55);z-index:999;display:flex;align-items:center;justify-content:center;padding:18px";
+    ov.innerHTML = '<div style="background:#fff;border-radius:18px;max-width:420px;width:100%;padding:18px;box-shadow:0 20px 50px rgba(0,0,0,.35)">' +
+      '<h2 style="margin:0 0 6px;color:#14336E;font-size:17px">' + S("ምዘና አጋራ","Share exam") + '</h2>' +
+      '<p class="meta" style="margin:0 0 10px">' + S("ከአንድ ምንጭ ብቻ የሚላክ፤ ይደርሰዋል ለ፦","Sent from one source; reaches only:") + ' <b>' + esc(names || "—") + '</b></p>' +
+      '<textarea id="x-sharetxt" readonly style="width:100%;height:110px;font-size:13px;" onclick="this.select()"></textarea>' +
+      '<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">' +
+        (navigator.share ? '<button class="primary" id="x-sharenative" style="flex:1">' + S("📤 የማጋሪያ ምናሌ ክፈት","📤 Open share menu") + '</button>' : '') +
+        '<button class="ghost" id="x-sharecopy" style="flex:1">' + S("📋 ቅዳ","📋 Copy") + '</button>' +
+        '<button class="ghost" id="x-shareclose">' + S("ዝጋ","Close") + '</button>' +
+      '</div></div>';
+    document.body.appendChild(ov);
+    document.getElementById("x-sharetxt").value = txt;
+    ov.addEventListener("click", function(ev){ if (ev.target === ov) ov.remove(); });
+    document.getElementById("x-shareclose").onclick = function(){ ov.remove(); };
+    document.getElementById("x-sharecopy").onclick = function(){
+      var ta = document.getElementById("x-sharetxt"); ta.select();
+      function done(ok){ showToast(ok ? S("ተቀድቷል","Copied") : S("አልተሳካም — በእጅ ይምረጡ","Failed — select manually")); }
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(function(){ done(true); }, function(){ try{ done(document.execCommand("copy")); }catch(e2){ done(false); } });
+      else { try{ done(document.execCommand("copy")); }catch(e2){ done(false); } }
+    };
+    if (navigator.share) document.getElementById("x-sharenative").onclick = function(){ navigator.share({ title: e.title, text: txt }).catch(function(){}); };
   }
 
   function renderHistory(){
