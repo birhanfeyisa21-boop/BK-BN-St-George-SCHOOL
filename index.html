@@ -3192,20 +3192,77 @@
   var dirInfo = null, dirBusy = false;
   function dirCardHtml(me){
     var h = '<div class="card" id="dir-card"><h2>' + S("የጋራ መዝገብ (አባላት / ተማሪዎች / መምህራን)","Shared directory (members / students / teachers)") + '</h2>' +
-      '<p class="meta">' + S("ይህ የእርስዎን አካባቢያዊ ዝርዝር ከሌሎች አመራሮች ጋር ለማመሳሰል ነው።","This syncs your local lists with other leaders.") + '</p>' +
+      '<p class="meta">' + S("ይህ የእርስዎን አካባቢያዊ ዝርዝር ከሌሎች አመራሮች ጋር ለማመሳሰል ነው። ባዶ በሆነ አዲስ መሣሪያ ላይ በዚሁ ኮድ ሲገቡ የጋራው መረጃ በራሱ ይገባል።","This syncs your local lists with other leaders. On a fresh device, logging in with this same code auto-loads the shared data.") + '</p>' +
       '<p class="meta" id="dir-status">' + (dirInfo === null ? S("በመፈተሽ ላይ…","Checking…") :
         dirInfo ? S("የመጨረሻ ላኪ፦ ","Last pushed by: ") + esc(dirInfo.byName) + " · " + new Date(dirInfo.ts).toLocaleString() +
           " · " + dirInfo.members.length + " " + S("አባላት","members") + ", " + dirInfo.students.length + " " + S("ተማሪዎች","students") + ", " + dirInfo.teachers.length + " " + S("መምህራን","teachers")
         : S("ገና ምንም አልተላከም።","Nothing pushed yet.")) + '</p>';
     if (me.role !== "sub") h += '<button class="primary" id="dir-push">' + S("⬆️ የእኔን ወደ ጋራው ላክ (ይተካል)","⬆️ Push mine to shared (replaces it)") + '</button> ';
-    h += '<button class="ghost" id="dir-pull">' + S("⬇️ ከጋራው አምጣ (የእኔን ይተካል)","⬇️ Pull shared (replaces mine)") + '</button>';
+    h += '<button class="ghost" id="dir-pull">' + S("⬇️ ከጋራው አምጣ (የእኔን ይተካል)","⬇️ Pull shared (replaces mine)") + '</button></div>';
+    if (me.role === "office") h += fullCardHtml();
+    return h;
+  }
+  function fullCardHtml(){
+    var h = '<div class="card"><h2>🧰 ' + S("ሙሉ ምትኬ ወደ ደመና (ስልክ ቢጠፋ መልሶ ለማግኘት)","Full cloud backup (to recover if your phone is lost)") + '</h2>' +
+      '<p class="meta">' + S("ይህ ዳሽቦርድ፣ ክፍላት፣ አባላት፣ ተማሪዎች፣ መምህራን፣ ሰነዶች፣ ትምህርቶች — ያለውን ሁሉ ይጨምራል። ስልክዎ ቢጠፋ፣ አዲስ ስልክ ላይ ይህችኑ ድረ-ገጽ ከፍተው በዚሁ ኮድ/PIN ሲገቡ በራሱ ይመለሳል።","Includes everything: dashboard, parishes, members, students, teachers, documents, lessons. If your phone is lost, open this same site on a new phone and log in with this code/PIN — it restores automatically.") + '</p>' +
+      '<p class="meta" id="full-status">' + (fullInfo === null ? S("በመፈተሽ ላይ…","Checking…") : fullInfo ? S("የመጨረሻ ምትኬ፦ ","Last backup: ") + esc(fullInfo.by) + " · " + new Date(fullInfo.ts).toLocaleString() : S("ገና ምንም ምትኬ የለም።","No backup yet.")) + '</p>' +
+      '<button class="primary" id="full-push">' + S("⬆️ አሁን ሙሉ ምትኬ ላክ","⬆️ Back up everything now") + '</button></div>';
     return h;
   }
   function dirRefreshStatus(){
     if (!workMe) return;
     var u = wCfg().url;
     fetch(u + (u.indexOf("?") === -1 ? "?" : "&") + "type=dlist&code=" + encodeURIComponent(workMe.code) + "&pin=" + encodeURIComponent(workMe.hash) + "&_=" + Date.now())
-      .then(function(r){ return r.json(); }).then(function(j){ dirInfo = (j.ok && j.directory) ? j.directory : (j.ok ? false : null); renderWork(); }).catch(function(){});
+      .then(function(r){ return r.json(); }).then(function(j){
+        dirInfo = (j.ok && j.directory) ? j.directory : (j.ok ? false : null);
+        var localEmpty = state.members.length === 0 && state.students.length === 0 && state.teachers.length === 0;
+        if (dirInfo && localEmpty){
+          applyDirectory(dirInfo, true);
+          showToast(S("አዲስ መሣሪያ ታውቋል — የጋራው መረጃ በራሱ ገብቷል","New device detected — shared data loaded automatically"));
+        } else renderWork();
+      }).catch(function(){});
+  }
+  function applyDirectory(dir, silent){
+    return takeSnapshot("directory_pull").then(function(){
+      state.members = dir.members || []; state.students = dir.students || []; state.teachers = dir.teachers || [];
+      save(); dirInfo = dir; if (!silent) showToast(S("ተመጥቷል","Pulled")); renderAll();
+    });
+  }
+  // ---------- ሙሉ ምትኬ ወደ ደመና (ለባለቤት/office ብቻ — ስልክ ቢጠፋ ለማገገሚያ) ----------
+  var fullInfo = null, fullBusy = false;
+  function fullRefreshStatus(){
+    if (!workMe || workData.me.role !== "office") return;
+    var u = wCfg().url;
+    fetch(u + (u.indexOf("?") === -1 ? "?" : "&") + "type=flist&code=" + encodeURIComponent(workMe.code) + "&pin=" + encodeURIComponent(workMe.hash) + "&_=" + Date.now())
+      .then(function(r){ return r.json(); }).then(function(j){
+        fullInfo = (j.ok && j.meta) ? j.meta : (j.ok ? false : null);
+        if (fullInfo && !hasData()){
+          fullApplyFromCloud(true);
+        } else renderWork();
+      }).catch(function(){});
+  }
+  function fullApplyFromCloud(silent){
+    wPost({ code: workMe.code, pin: workMe.hash, type: "full_pull" }, function(r){
+      if (!r.ok){ if (!silent) showToast(r.error || wNet()); return; }
+      takeSnapshot("full_restore").then(function(){
+        try {
+          var incoming = r.state || {};
+          Object.keys(incoming).forEach(function(k){ state[k] = incoming[k]; });
+          save();
+          showToast(S("ሙሉ መረጃ ከደመና ተመልሷል","Full data restored from the cloud"));
+          renderAll();
+        } catch(e2){ showToast(S("አልተሳካም","Failed")); }
+      });
+    });
+  }
+  function fullPush(){
+    if (fullBusy || !workMe) return;
+    if (!confirm(S("የአሁኑን ሙሉ መረጃ (ዳሽቦርድ፣ ክፍላት፣ አባላት፣ ተማሪዎች፣ መምህራን፣ ሰነዶች፣ ትምህርቶች) ወደ ደመና ይልካል፣ ነባሩን ምትኬ ይተካል። ይቀጥሉ?","This sends your full current data to the cloud, replacing the previous backup. Continue?"))) return;
+    fullBusy = true; showToast(S("ሙሉ ምትኬ በመላክ ላይ…","Backing up everything…"));
+    wPost({ code: workMe.code, pin: workMe.hash, type: "full_push", state: state }, function(r){
+      fullBusy = false;
+      if (r.ok){ showToast(S("ሙሉ ምትኬ ተልኳል","Full backup sent")); fullRefreshStatus(); } else showToast(r.error || wNet());
+    });
   }
   function dirPush(){
     if (dirBusy || !workMe) return;
@@ -3226,10 +3283,7 @@
         dirBusy = false;
         if (!j.ok){ showToast(j.error || wNet()); return; }
         if (!j.directory){ showToast(S("ገና ምንም አልተላከም","Nothing pushed yet")); return; }
-        takeSnapshot("directory_pull").then(function(){
-          state.members = j.directory.members || []; state.students = j.directory.students || []; state.teachers = j.directory.teachers || [];
-          save(); dirInfo = j.directory; showToast(S("ተመጥቷል","Pulled")); renderAll();
-        });
+        applyDirectory(j.directory, false);
       }).catch(function(){ dirBusy = false; showToast(wNet()); });
   }
   // ---------- ምዘና (online exams: አዛምድ / እውነት-ሐሰት / ምርጫ / አብራራ) ----------
