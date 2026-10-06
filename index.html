@@ -11,6 +11,9 @@
 <link rel="manifest" href="manifest.json">
 <title>BK/B/N ለሰ/ት/ቤቶች መረጃ እና ትምህርት መለዋወጫ</title>
 <meta name="description" content="የለገበሪ ቅዱስ ጊዮርጊስ እና በዓታ ለማርያም ሆህተ ብርሃን ሰንበት ትምህርት ቤት ትምህርት ክፍል ድጂታል መረጃ ማደራጃ — አባላት፣ ተማሪዎች፣ መምህራን፣ ትምህርቶች፣ ምዘና እና የሰ/ት/ቤቱ ታሪክ በአንድ ላይ።">
+<link rel="canonical" href="https://birhanfeyisa21-boop.github.io/BK-BN-St-George-SCHOOL/">
+<meta property="og:url" content="https://birhanfeyisa21-boop.github.io/BK-BN-St-George-SCHOOL/">
+<meta property="og:type" content="website">
 <meta property="og:title" content="BK/B/N ለሰ/ት/ቤቶች መረጃ እና ትምህርት መለዋወጫ">
 <meta property="og:description" content="የለገበሪ ቅዱስ ጊዮርጊስ እና በዓታ ለማርያም ሰ/ት/ቤት ዲጂታል መረጃ ማደራጃ መተግበሪያ።">
 <meta property="og:type" content="website">
@@ -301,6 +304,32 @@
   .thanks-l1,.thanks-l2{margin:0;color:#0F2A63;font-size:15.5px;line-height:1.95;font-weight:800}
   .thanks-l1 b,.thanks-l2 b{color:#7A1F0E;font-weight:800}
   .thanks-c{opacity:1 !important;color:#3A4A63 !important;font-weight:700 !important}
+  /* ዳሽቦርድ — ባለቀለማት cards (ንድፍ ማስተካከያ) */
+  .db-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .db-kpi{position:relative;overflow:hidden;border-radius:16px}
+  .db-kpi::before{content:"";position:absolute;top:0;left:0;right:0;height:5px;border-radius:16px 16px 0 0}
+  .db-kpi:nth-of-type(5n+1)::before{background:linear-gradient(90deg,#1E4FA0,#3B7DD8)}
+  .db-kpi:nth-of-type(5n+2)::before{background:linear-gradient(90deg,#2E7D32,#66BB6A)}
+  .db-kpi:nth-of-type(5n+3)::before{background:linear-gradient(90deg,#7B1FA2,#BA68C8)}
+  .db-kpi:nth-of-type(5n+4)::before{background:linear-gradient(90deg,#E65100,#FFA726)}
+  .db-kpi:nth-of-type(5n+5)::before{background:linear-gradient(90deg,#00838F,#4DD0E1)}
+  .db-kpi:nth-of-type(5n+1) svg{stroke:#1E4FA0}
+  .db-kpi:nth-of-type(5n+2) svg{stroke:#2E7D32}
+  .db-kpi:nth-of-type(5n+3) svg{stroke:#7B1FA2}
+  .db-kpi:nth-of-type(5n+4) svg{stroke:#E65100}
+  .db-kpi:nth-of-type(5n+5) svg{stroke:#00838F}
+  .db-card{border-left:5px solid #1E4FA0;border-radius:0 16px 16px 0}
+  .db-card:nth-of-type(3n+1){border-left-color:#1E4FA0}
+  section.db-card:has(.db-quick){border-left-color:#E5B92E}
+  section.db-card:has(.db-gender){border-left-color:#7B1FA2}
+  section.db-card:has(.db-lv){border-left-color:#2E7D32}
+  section.db-card:has(.db-tl){border-left-color:#00838F}
+  .db-q{border-radius:999px;font-weight:700}
+  .db-q:nth-of-type(5n+1){background:#EAF1FC;color:#1E4FA0;border-color:#C9D9F0}
+  .db-q:nth-of-type(5n+2){background:#E8F5E9;color:#2E7D32;border-color:#C8E6C9}
+  .db-q:nth-of-type(5n+3){background:#F3E5F5;color:#7B1FA2;border-color:#E1BEE7}
+  .db-q:nth-of-type(5n+4){background:#FFF3E0;color:#E65100;border-color:#FFE0B2}
+  .db-q:nth-of-type(5n+5){background:#E0F7FA;color:#00838F;border-color:#B2EBF2}
   .hist-hero{text-align:center;background:linear-gradient(140deg,#0F2A63,#1E4FA0 60%,#3B7DD8);color:#fff;border:none}
   .hist-hero h2{color:#fff}
   .hist-hero .meta{color:rgba(255,255,255,.85)}
@@ -1758,24 +1787,41 @@
         saveButtons("m-save", "member", T("save")) + '</div>') :
       lockNote(TM("lockMsg"));
 
-    el.innerHTML = formHtml +
+    var unassigned = state.members.filter(function(m){ return !m.deptId; });
+    var bulkHtml = unassigned.length ? '<div class="card"><h2>📂 ' + S("ክፍል ያልተመደቡ አባላት","Members with no department") + ' (' + unassigned.length + ')</h2>' +
+      '<p class="meta">' + S("ከዚህ በታች ያሉትን ይምረጡና ክፍል ይስጧቸው።","Select members below and assign them a department.") + '</p>' +
+      unassigned.map(function(m){ return '<label style="display:flex;gap:8px;align-items:center;font-size:13px;padding:3px 0"><input type="checkbox" class="bulk-dept-chk" value="'+esc(m.id)+'"> '+esc(m.name)+'</label>'; }).join("") +
+      '<div class="field" style="margin-top:8px"><select id="bulk-dept-sel"><option value="">— '+S("ክፍል ይምረጡ","choose department")+' —</option>'+deptOptionsHtml("")+'</select></div>' +
+      '<button class="primary" id="bulk-dept-go">' + S("የተመረጡትን መድብ","Assign selected") + '</button></div>' : "";
+
+    el.innerHTML = formHtml + bulkHtml +
       '<div class="card"><h2>'+TM("registeredTitle")+' ('+state.members.length+')</h2>' +
       (state.members.length ? state.members.slice().reverse().map(function(m){
         var genderDisplay = m.gender === "ወንድ" ? T("male") : (m.gender === "ሴት" ? T("female") : "—");
         var gradeDisplay = m.education ? esc(m.education) : S("እየተመዘገበ","Registering");
-        return '<div class="row"><span><span class="badge role">'+esc(m.code||'—')+'</span> '+esc(m.name)+'<br><span class="meta">'+genderDisplay+' &middot; '+gradeDisplay+' &middot; '+esc(parishName(m.parishId))+'</span>'+rowActions("member", m.id)+'</span>' +
+        var deptDisplay = m.deptId ? esc(deptName(m.deptId)) : '<span style="color:#B3261E">'+S("ክፍል አልተመደበም","No department")+'</span>';
+        return '<div class="row"><span><span class="badge role">'+esc(m.code||'—')+'</span> '+esc(m.name)+'<br><span class="meta">'+genderDisplay+' &middot; '+gradeDisplay+' &middot; '+esc(parishName(m.parishId))+'</span><br><span class="meta">📂 '+deptDisplay+'</span>'+rowActions("member", m.id)+'</span>' +
           syncBadge(m)+'</div>';
       }).join('') : '<div class="empty">'+T("none")+'</div>') +
       '</div>';
 
     if (rec && document.getElementById("m-parish")){
       setVals({
-        "m-parish": rec.parishId, "m-name": rec.name, "m-gender": rec.gender, "m-residence": rec.residence,
+        "m-parish": rec.parishId, "m-dept": rec.deptId, "m-name": rec.name, "m-gender": rec.gender, "m-residence": rec.residence,
         "m-education": rec.education, "m-parent-edu": rec.parentEducation, "m-title": rec.specialTitle,
         "m-join": rec.joinDate, "m-status": rec.status
       });
       document.getElementById("m-parish").disabled = true;
     }
+
+    var bulkGo = document.getElementById("bulk-dept-go");
+    if (bulkGo) bulkGo.addEventListener("click", function(){
+      var dep = document.getElementById("bulk-dept-sel").value;
+      var chosen = Array.prototype.filter.call(el.querySelectorAll(".bulk-dept-chk"), function(c){ return c.checked; }).map(function(c){ return c.value; });
+      if (!dep || !chosen.length){ showToast(S("ክፍል እና ቢያንስ አንድ አባል ይምረጡ","Choose a department and at least one member")); return; }
+      state.members.forEach(function(m){ if (chosen.indexOf(m.id) !== -1) m.deptId = dep; });
+      save(); showToast(S("ተመድቧል","Assigned")); renderMembers();
+    });
 
     var saveBtn = document.getElementById("m-save");
     if (saveBtn){
@@ -1788,6 +1834,7 @@
         var fields = {
           name: name,
           gender: gender,
+          deptId: document.getElementById("m-dept").value,
           residence: document.getElementById("m-residence").value.trim(),
           education: document.getElementById("m-education").value.trim(),
           parentEducation: document.getElementById("m-parent-edu").value.trim(),

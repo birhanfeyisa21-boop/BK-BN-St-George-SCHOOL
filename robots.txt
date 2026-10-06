@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://birhanfeyisa21-boop.github.io/BK-BN-St-George-SCHOOL/sitemap.xml
