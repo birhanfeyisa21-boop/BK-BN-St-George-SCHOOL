@@ -418,6 +418,7 @@
     <button data-tab="documents">ደንብ / ሰነድ</button>
     <button data-tab="lessons">ትምህርት (ኦዲዮ/ቪዲዮ)</button>
     <button data-tab="roster">ሮስተር</button>
+    <button data-tab="grades">ውጤት/ነጥብ መዝገብ</button>
     <button data-tab="tools">መሳሪያዎች</button>
     <button data-tab="cert">ማረጋገጫ ሰነድ</button>
     <button data-tab="io">ውጤት እና ማስመጣት</button>
@@ -442,6 +443,7 @@
   <div id="tab-documents" class="tab hidden"></div>
   <div id="tab-lessons" class="tab hidden"></div>
   <div id="tab-roster" class="tab hidden"></div>
+  <div id="tab-grades" class="tab hidden"></div>
   <div id="tab-tools" class="tab hidden"></div>
   <div id="tab-cert" class="tab hidden"></div>
   <div id="tab-io" class="tab hidden"></div>
@@ -501,7 +503,8 @@
     installId: "",
     feedback: [],
     roster: [],
-    attendance: []
+    attendance: [],
+    grades: []
   };
   var role = "owner";
   var myStudent = null; // set when someone is logged in via personal student/parent/association login
@@ -1485,6 +1488,7 @@
     if (activeTab === "documents") renderDocuments();
     if (activeTab === "lessons") renderLessons();
     if (activeTab === "roster") renderRoster();
+    if (activeTab === "grades") renderGrades();
     if (activeTab === "tools") renderTools();
     if (activeTab === "cert") renderCert();
     if (activeTab === "io") renderIO();
@@ -2362,6 +2366,85 @@
     });
   }
 
+  var GRADE_SUBJECTS = ["መሠረተ ሃይማኖት","ሥርዓተ ቤተ ክርስቲያን","ክርስትያናዊ ሥነ-ምግባር","የቤተ ክርስቲያን ታሪክ","መ/ቅ/ጥ"];
+  var GR_MAX = 10+10+20+10+10+25;
+  var grSel = { level: "", subject: "" };
+  function grSum(g){ return (g.c1||0)+(g.c2||0)+(g.assign||0)+(g.c3||0)+(g.c4||0)+(g.final||0); }
+  function grAvg(g){ return Math.round(grSum(g) / GR_MAX * 1000) / 10; }
+  function renderGrades(){
+    var el = document.getElementById("tab-grades");
+    var h = '<div class="card"><h2>' + S("ውጤት/ነጥብ መዝገብ","Score Record") + '</h2>' +
+      '<p class="meta">' + S("ዓምዶች፦ የክፍል ምዘና /10 ×2 · አሳይመንት /20 · የክፍል ምዘና /10 ×2 · የማጠቃለያ ምዘና /25 (ድምር /" + GR_MAX + ")። ድምር፣ አማካይ እና ደረጃ በራሱ ይሰላል።","Columns: class assessment /10 ×2 · assignment /20 · class assessment /10 ×2 · final exam /25 (total /" + GR_MAX + "). Total, average and rank are auto-calculated.") + '</p>' +
+      '<div class="grid2">' +
+        '<div class="field"><label>' + S("ክፍል/ደረጃ","Level") + '</label><select id="gr-level"><option value="">— ' + S("ይምረጡ","choose") + ' —</option>' + LEVELS.map(function(l){ return '<option value="' + esc(l) + '"' + (l === grSel.level ? ' selected' : '') + '>' + esc(l) + '</option>'; }).join("") + '</select></div>' +
+        '<div class="field"><label>' + S("ትምህርት","Subject") + '</label><select id="gr-subject"><option value="">— ' + S("ይምረጡ","choose") + ' —</option>' + GRADE_SUBJECTS.map(function(s){ return '<option value="' + esc(s) + '"' + (s === grSel.subject ? ' selected' : '') + '>' + esc(s) + '</option>'; }).join("") + '</select></div>' +
+      '</div>';
+    var canEnter = grSel.level && grSel.subject;
+    var levelStudents = canEnter ? state.students.filter(function(s){ return s.level === grSel.level; }) : [];
+    if (canEnter){
+      h += '<div class="field"><label>' + S("ተማሪ","Student") + '</label><select id="gr-student"><option value="">— ' + S("ይምረጡ","choose") + ' —</option>' +
+        levelStudents.map(function(s){ return '<option value="' + esc(s.id) + '">' + esc(s.name) + '</option>'; }).join("") + '</select></div>' +
+        '<div class="grid2">' +
+          '<div class="field"><label>' + S("የክፍል ምዘና 1 (/10)","Class test 1 (/10)") + '</label><input type="number" id="gr-c1" min="0" max="10"></div>' +
+          '<div class="field"><label>' + S("የክፍል ምዘና 2 (/10)","Class test 2 (/10)") + '</label><input type="number" id="gr-c2" min="0" max="10"></div>' +
+          '<div class="field"><label>' + S("አሳይመንት (/20)","Assignment (/20)") + '</label><input type="number" id="gr-assign" min="0" max="20"></div>' +
+          '<div class="field"><label>' + S("የክፍል ምዘና 3 (/10)","Class test 3 (/10)") + '</label><input type="number" id="gr-c3" min="0" max="10"></div>' +
+          '<div class="field"><label>' + S("የክፍል ምዘና 4 (/10)","Class test 4 (/10)") + '</label><input type="number" id="gr-c4" min="0" max="10"></div>' +
+          '<div class="field"><label>' + S("የማጠቃለያ ምዘና (/25)","Final exam (/25)") + '</label><input type="number" id="gr-final" min="0" max="25"></div>' +
+        '</div><button class="primary" id="gr-save">' + S("አስቀምጥ","Save") + '</button></div>';
+    } else h += '<p class="meta">' + S("ክፍል እና ትምህርት ይምረጡ።","Choose a level and subject.") + '</p></div>';
+
+    if (canEnter){
+      var rows = state.grades.filter(function(g){ return g.level === grSel.level && g.subject === grSel.subject; })
+        .map(function(g){ var st = state.students.filter(function(s){ return s.id === g.studentId; })[0]; return { g: g, name: st ? st.name : "—", avg: grAvg(g) }; })
+        .sort(function(a,b){ return b.avg - a.avg; });
+      var rank = 0, lastAvg = null, shown = 0;
+      rows.forEach(function(r){ shown++; if (r.avg !== lastAvg){ rank = shown; lastAvg = r.avg; } r.rank = rank; });
+      h += '<div class="card"><h2>' + esc(grSel.level) + ' · ' + esc(grSel.subject) + ' (' + rows.length + ')</h2>' +
+        (rows.length ? '<div style="overflow-x:auto"><table class="mx"><tr><th>' + S("ተማሪ","Student") + '</th><th>1</th><th>2</th><th>' + S("አሳይ","Asg") + '</th><th>3</th><th>4</th><th>' + S("መጨ","Fin") + '</th><th>' + S("ድምር","Sum") + '</th><th>%</th><th>' + S("ደረጃ","Rank") + '</th><th></th></tr>' +
+          rows.map(function(r){
+            return '<tr><td>' + esc(r.name) + '</td><td>' + r.g.c1 + '</td><td>' + r.g.c2 + '</td><td>' + r.g.assign + '</td><td>' + r.g.c3 + '</td><td>' + r.g.c4 + '</td><td>' + r.g.final + '</td><td><b>' + grSum(r.g) + '</b></td><td><b>' + r.avg + '%</b></td><td>' + r.rank + '</td><td><button class="ghost danger" data-grdel="' + esc(r.g.id) + '">✕</button></td></tr>';
+          }).join("") + '</table></div>' : '<div class="empty">' + S("ገና ምንም የለም","Nothing yet") + '</div>') + '</div>';
+    }
+    if (grSel.level){
+      var allLevelStudents = state.students.filter(function(s){ return s.level === grSel.level; });
+      var osum = allLevelStudents.map(function(s){
+        var gs = state.grades.filter(function(g){ return g.level === grSel.level && g.studentId === s.id; });
+        var total = 0, cnt = 0;
+        gs.forEach(function(g){ total += grSum(g); cnt++; });
+        var maxTotal = cnt * GR_MAX;
+        var pct = cnt ? Math.round(total / maxTotal * 1000) / 10 : null;
+        return { name: s.name, cnt: cnt, total: total, pct: pct };
+      }).filter(function(r){ return r.cnt > 0; }).sort(function(a,b){ return b.pct - a.pct; });
+      var orank = 0, olast = null, oshown = 0;
+      osum.forEach(function(r){ oshown++; if (r.pct !== olast){ orank = oshown; olast = r.pct; } r.rank = orank; });
+      h += '<div class="card"><h2>' + S("ጠቅላላ ውጤት","Overall results") + ' — ' + esc(grSel.level) + ' (' + osum.length + ' ' + S("ተማሪ","students") + ')</h2>' +
+        '<p class="meta">' + S("በገባ ትምህርት ብዛት ላይ ተመስርቶ የእያንዳንዱ ተማሪ ጠቅላላ ድምር፣ አማካይ % እና ከክፍሉ ደረጃ።","Each student's total score, overall average % across entered subjects, and class rank.") + '</p>' +
+        (osum.length ? '<div style="overflow-x:auto"><table class="mx"><tr><th>' + S("ደረጃ","Rank") + '</th><th>' + S("ተማሪ","Student") + '</th><th>' + S("ትምህርት ብዛት","Subjects") + '</th><th>' + S("ድምር","Total") + '</th><th>' + S("አማካይ %","Average %") + '</th></tr>' +
+          osum.map(function(r){ return '<tr><td><b>' + r.rank + '</b></td><td>' + esc(r.name) + '</td><td>' + r.cnt + ' / ' + GRADE_SUBJECTS.length + '</td><td>' + r.total + '</td><td><b>' + r.pct + '%</b></td></tr>'; }).join("") +
+          '</table></div>' : '<div class="empty">' + S("ገና ምንም ነጥብ አልገባም","No scores entered yet") + '</div>') + '</div>';
+    }
+    el.innerHTML = h;
+    var $ = function(i){ return document.getElementById(i); };
+    $("gr-level").onchange = function(){ grSel.level = $("gr-level").value; renderGrades(); };
+    $("gr-subject").onchange = function(){ grSel.subject = $("gr-subject").value; renderGrades(); };
+    if ($("gr-save")) $("gr-save").onclick = function(){
+      var sid = $("gr-student").value; if (!sid){ showToast(S("ተማሪ ይምረጡ","Choose a student")); return; }
+      var num = function(id, max){ var v = parseFloat($(id).value); if (isNaN(v)) v = 0; return Math.max(0, Math.min(max, v)); };
+      var rec = { studentId: sid, level: grSel.level, subject: grSel.subject,
+        c1: num("gr-c1",10), c2: num("gr-c2",10), assign: num("gr-assign",20), c3: num("gr-c3",10), c4: num("gr-c4",10), final: num("gr-final",25) };
+      var existing = state.grades.filter(function(g){ return g.studentId === sid && g.subject === grSel.subject; })[0];
+      if (existing){ Object.assign(existing, rec); } else { rec.id = "G" + Date.now(); state.grades.push(rec); }
+      save(); showToast(S("ተመዝግቧል","Saved")); renderGrades();
+    };
+    el.onclick = function(e){
+      var b = e.target.closest ? e.target.closest("button") : null; if (!b) return;
+      var did = b.getAttribute("data-grdel");
+      if (did && confirm(S("ይህን ነጥብ ማስወገድ ይፈልጋሉ?","Remove this score?"))){
+        state.grades = state.grades.filter(function(g){ return g.id !== did; }); save(); renderGrades();
+      }
+    };
+  }
   function renderRoster(){
     var el = document.getElementById("tab-roster");
     var teacherOpts = state.teachers.map(function(t){ return '<option value="' + esc(t.name) + '">' + esc(t.name) + '</option>'; }).join("");
@@ -4240,6 +4323,7 @@
   STRINGS.tabs.depts = mk("ክፍላት እና አመራር","Departments");
   STRINGS.tabs.access = mk("ፈቃድ እና ደኅንነት","Access & Security");
   STRINGS.tabs.roster = mk("ሮስተር (የትምህርት ክፍል)","Roster (Education)");
+  STRINGS.tabs.grades = mk("ውጤት/ነጥብ መዝገብ","Score Record");
   STRINGS.tabs.attendance = mk("አቴንዳንስ (ቁጥጥር ክፍል)","Attendance (Control)");
   STRINGS.tabs.exchange = mk("መረጃ ልውውጥ","Information Exchange");
   STRINGS.tabs.exchange = mk("መረጃ ልውውጥ","Info Exchange");
@@ -4249,7 +4333,7 @@
     STRINGS.act[k] = mk(["የተሳሳተ PIN ሙከራ","በPIN ገብቷል","የክፍል ፈቃድ ተቀየረ","PIN ተቀየረ","መተግበሪያው ተቆልፏል","የክፍል ሥራ ድርሻ ተመደበ"][i],["Wrong PIN attempt","Signed in with PIN","Section permission changed","PIN changed","App locked","Department assignment set"][i]);
   });
   var RANK = {owner:3, admin:2, collector:1, viewer:0};
-  var SECTIONS = ["dashboard","depts","parishes","members","students","teachers","documents","lessons","roster","attendance","tools","cert","io","storage","audit","comms","messages","work","exam","exchange"];
+  var SECTIONS = ["dashboard","depts","parishes","members","students","teachers","documents","lessons","roster","attendance","grades","tools","cert","io","storage","audit","comms","messages","work","exam","exchange"];
   var DEPTS = [
     {id:"office", n:"የሰ/ት/ቤቱ ጽሕፈት ቤት (ዋና አመራር)", roles:[["chair","ሰብሳቢ"],["vice","ምክትል ሰብሳቢ"],["secr","ጸሐፊ"]], subs:[]},
     {id:"edu", n:"ትምህርትና ሥርዓተ ትምህርት ክፍል", roles:[["head","ኃላፊ"],["secr","ጸሐፊ"]], subs:["ሥርዓተ ትምህርት ዝግጅት|የደረጃ ትምህርቶችን ማዘጋጀትና ማሻሻል","መምህራን ምደባና ሥልጠና|መምህራንን መመደብ፣ መከታተልና ማሠልጠን","ፈተናና ውጤት|ፈተና ማዘጋጀት፣ ውጤት መያዝና ምረቃ","ቤተ መጻሕፍት|መጻሕፍትና የትምህርት መርጃዎችን ማስተዳደር"]},
