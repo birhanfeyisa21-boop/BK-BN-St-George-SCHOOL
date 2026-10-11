@@ -420,6 +420,7 @@
     <button data-tab="roster">ሮስተር</button>
     <button data-tab="grades">ውጤት/ነጥብ መዝገብ</button>
     <button data-tab="idcard">መታወቂያ ካርድ</button>
+    <button data-tab="chat">የቡድን ውይይት</button>
     <button data-tab="tools">መሳሪያዎች</button>
     <button data-tab="cert">ማረጋገጫ ሰነድ</button>
     <button data-tab="io">ውጤት እና ማስመጣት</button>
@@ -446,6 +447,7 @@
   <div id="tab-roster" class="tab hidden"></div>
   <div id="tab-grades" class="tab hidden"></div>
   <div id="tab-idcard" class="tab hidden"></div>
+  <div id="tab-chat" class="tab hidden"></div>
   <div id="tab-tools" class="tab hidden"></div>
   <div id="tab-cert" class="tab hidden"></div>
   <div id="tab-io" class="tab hidden"></div>
@@ -1493,6 +1495,7 @@
     if (activeTab === "roster") renderRoster();
     if (activeTab === "grades") renderGrades();
     if (activeTab === "idcard") renderIdCard();
+    if (activeTab === "chat") renderChat();
     if (activeTab === "tools") renderTools();
     if (activeTab === "cert") renderCert();
     if (activeTab === "io") renderIO();
@@ -3568,13 +3571,22 @@
       h += '<div class="card"><h2>' + esc(me.name) + '</h2><p class="meta">' + esc(me.role === "office" ? S("ጽሕፈት ቤት","Office") : me.role === "head" ? S("የክፍል አመራር","Department leader") : S("ንዑስ አባል","Sub-member")) + (me.dept ? " · " + esc(me.dept) : "") + '</p>' +
         '<button class="ghost" id="w-refresh">' + S("🔄 አድስ","🔄 Refresh") + '</button> <button class="ghost" id="w-out">' + S("ውጣ","Log out") + '</button></div>';
       h += dirCardHtml(me);
-      if (me.role !== "sub"){
+      {
         var others = workData.people.filter(function(p){ return p.code !== me.code; });
-        h += '<div class="card"><h2>' + S("አዲስ ሥራ","New task") + '</h2>' +
-          '<div class="field"><input type="text" id="w-title" placeholder="' + S("የሥራው ርዕስ","Task title") + '"></div>' +
+        var canDown = me.role !== "sub";
+        var canUp = me.role !== "office";
+        h += '<div class="card"><h2>' + S("አዲስ ሥራ/ሰነድ","New task/document") + '</h2>' +
+          '<p class="meta">' + S("ሰነድ ወይም ሥራ ከላይ ወደ ታች (ለበታች ክፍል/ሰው) ወይም ከታች ወደ ላይ (ለበላይ ኃላፊ/ጽሕፈት ቤት) መላክ ይችላሉ።","Send a document or task top-down (to a subordinate section/person) or bottom-up (to your superior/the office).") + '</p>' +
+          (canDown && canUp ? '<div class="field"><label>' + S("አቅጣጫ","Direction") + '</label><select id="w-dir">' +
+            '<option value="down">' + S("⬇️ ከላይ ወደ ታች (ለተመረጡት)","⬇️ Top-down (to selected)") + '</option>' +
+            '<option value="up">' + S("⬆️ ከታች ወደ ላይ (ለጽሕፈት ቤት)","⬆️ Bottom-up (to the office)") + '</option>' +
+          '</select></div>' : '<input type="hidden" id="w-dir" value="' + (canUp ? "up" : "down") + '">') +
+          (!canUp ? '<p class="meta">' + S("እርስዎ ጽሕፈት ቤት ስለሆኑ ከዚህ በላይ ኃላፊ የለም — ወደ ታች ብቻ ይላካል።","As the office, there is no one above you — this always routes down.") + '</p>' : '') +
+          (!canDown ? '<p class="meta">' + S("ይህ ወደ እርስዎ የበላይ ኃላፊ ይላካል።","This will be routed to your immediate superior.") + '</p>' : '') +
+          '<div class="field"><input type="text" id="w-title" placeholder="' + S("የሥራው/ሰነዱ ርዕስ","Task/document title") + '"></div>' +
           '<div class="field"><textarea id="w-note" placeholder="' + S("ዝርዝር (አማራጭ)","Details (optional)") + '"></textarea></div>' +
-          '<div class="field"><label>' + S("የሚተላለፍለት","Assign to") + '</label>' +
-          (others.length ? others.map(function(p){ return '<label style="display:flex;gap:8px;align-items:center;font-size:13px"><input type="checkbox" class="w-as" value="' + esc(p.code) + '"> ' + esc(p.name) + '</label>'; }).join("") : '<p class="meta">' + S("ለማስተላለፍ የሚችሉት ሰው የለም።","No one to assign to.") + '</p>') + '</div>' +
+          (canDown ? '<div class="field" id="w-as-wrap"><label>' + S("የሚተላለፍለት (ወደ ታች ሲላክ)","Assign to (when sent down)") + '</label>' +
+          (others.length ? others.map(function(p){ return '<label style="display:flex;gap:8px;align-items:center;font-size:13px"><input type="checkbox" class="w-as" value="' + esc(p.code) + '"> ' + esc(p.name) + '</label>'; }).join("") : '<p class="meta">' + S("ለማስተላለፍ የሚችሉት ሰው የለም።","No one to assign to.") + '</p>') + '</div>' : '') +
           '<div class="field"><input type="date" id="w-due"></div>' +
           '<div class="field"><label>' + S("ሰነድ አያይዝ (አማራጭ፣ ≤250KB)","Attach a document (optional, ≤250KB)") + '</label><input type="file" id="w-file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"></div>' +
           '<button class="primary" id="w-add">' + S("መዝግብ","Save") + '</button></div>';
@@ -3667,6 +3679,166 @@
       else if (b.id === "dir-pull") dirPull();
       else if (b.id === "full-push") fullPush();
     };
+  }
+  // ---------- የቡድን ውይይት (Telegram-like group chat, በጽ/ቤት ቁጥጥር ስር) ----------
+  var chatState = { groupId: null, groups: [], people: [], msgs: [], editingId: null };
+  function chatQS(extra){
+    var o = Object.assign({ code: workMe.code, pin: workMe.hash }, extra);
+    return Object.keys(o).map(function(k){ return k + "=" + encodeURIComponent(o[k]); }).join("&");
+  }
+  function fetchChatGroups(cb){
+    var u = wCfg().url;
+    fetch(u + (u.indexOf("?") === -1 ? "?" : "&") + "type=glist&" + chatQS({}) + "&_=" + Date.now())
+      .then(function(r){ return r.json(); })
+      .then(function(j){ if (j.ok){ chatState.groups = j.groups || []; chatState.people = j.people || []; } cb(!!j.ok); })
+      .catch(function(){ cb(false); });
+  }
+  function fetchChatMsgs(groupId, cb){
+    var u = wCfg().url;
+    fetch(u + (u.indexOf("?") === -1 ? "?" : "&") + "type=gmsgs&" + chatQS({ groupId: groupId }) + "&_=" + Date.now())
+      .then(function(r){ return r.json(); })
+      .then(function(j){ if (j.ok) chatState.msgs = j.msgs || []; cb(j); })
+      .catch(function(){ cb({ ok:false }); });
+  }
+  function chatPersonName(code){
+    var p = chatState.people.find(function(x){ return x.code === code; });
+    return p ? p.name : code;
+  }
+  function renderChat(){
+    var el = document.getElementById("tab-chat");
+    var c = wCfg();
+    if (!c.url){
+      el.innerHTML = '<div class="card"><h2>' + S("የቡድን ውይይት","Group Chat") + '</h2><p class="meta">' + S("ባለቤቱ ገና «ሥራ ክትትል» አላዋቀረውም — ይህ ባህሪ ያንኑ መዋቅር ይጠቀማል።","The owner hasn't set up Work Tracking yet — this feature uses that same setup.") + '</p></div>';
+      return;
+    }
+    if (!workMe){
+      el.innerHTML = '<div class="card"><h2>' + S("የቡድን ውይይት — መግቢያ","Group Chat — login") + '</h2>' +
+        '<p class="meta">' + S("ይህ «ሥራ ክትትል» ከሚጠቀመው ተመሳሳይ ኮድ/PIN ይጠቀማል። ጽሕፈት ቤቱ የሰጠዎትን ኮድ እና PIN ያስገቡ።","This uses the same code/PIN as Work Tracking. Enter the code the office gave you and your PIN.") + '</p>' +
+        '<div class="field"><input type="text" id="ch-code" placeholder="W01" autocomplete="off" style="text-transform:uppercase"></div>' +
+        '<div class="field"><input type="password" id="ch-pin" inputmode="numeric" maxlength="12" placeholder="PIN"></div>' +
+        '<p class="error" id="ch-er" style="display:block"></p>' +
+        '<button class="primary" id="ch-login">' + S("ግባ","Log in") + '</button></div>';
+      document.getElementById("ch-login").onclick = function(){
+        var code = document.getElementById("ch-code").value.trim().toUpperCase(), pin = document.getElementById("ch-pin").value, er = document.getElementById("ch-er");
+        if (!code || !/^[0-9]{4,12}$/.test(pin)){ er.textContent = S("ኮድና ቢያንስ 4 ቁጥር PIN ያስገቡ","Enter your code and a PIN of 4+ digits"); return; }
+        er.textContent = "…";
+        hashStudentPin(pin, "W:" + code).then(function(hash){
+          wGet(code, hash, function(j){
+            if (j.ok){ workMe = { code: code, hash: hash }; workData = j; renderChat(); }
+            else er.textContent = j.error === "nopin" ? S("ይህ ኮድ ገና PIN የለውም — መጀመሪያ «ሥራ ክትትል» ትር ላይ ይግቡ","This code has no PIN yet — log in on the Work Tracking tab first") : (j.error || "");
+          });
+        });
+      };
+      return;
+    }
+    el.innerHTML = '<p class="meta">' + S("በመጫን ላይ...","Loading...") + '</p>';
+    fetchChatGroups(function(ok){
+      if (!ok){ el.innerHTML = '<p class="error">' + S("ማምጣት አልተቻለም — ኢንተርኔት ያረጋግጡ","Could not load — check your connection") + '</p>'; return; }
+      buildChatMain();
+    });
+    function buildChatMain(){
+    var meRole = workData && workData.me ? workData.me.role : "sub";
+    el.innerHTML =
+      '<div class="note">' + S("ይህ የውይይት ቡድኖች ጽ/ቤት ብቻ ይፈጥራል/ያርማል፤ አባል የሆኑት ቡድኖች ብቻ ይታያሉ።","Only the office creates/edits chat groups; you only see groups you're a member of.") + '</div>' +
+      (meRole === "office" ? '<div class="card" id="ch-newgroup"><h2 id="ch-form-title">' + S("አዲስ ቡድን ፍጠር","New group") + '</h2>' +
+        '<div class="field"><label>' + S("የቡድን ስም","Group name") + '</label><input type="text" id="ch-gname"></div>' +
+        '<div class="field"><label>' + S("አባላት","Members") + '</label><div style="max-height:160px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;padding:8px;">' +
+          chatState.people.map(function(p){ return '<label style="display:flex;gap:8px;align-items:center;font-size:13px;padding:2px 0;"><input type="checkbox" class="ch-mem" value="' + esc(p.code) + '"> ' + esc(p.name) + ' <span class="meta">(' + esc(p.code) + ')</span></label>'; }).join("") +
+        '</div></div>' +
+        '<button class="primary" id="ch-gsave">' + S("አስቀምጥ","Save") + '</button> <button class="ghost" id="ch-gcancel" style="display:none;">' + S("ይቅር","Cancel") + '</button></div>' : '') +
+      '<div class="card"><h2>' + S("ቡድኖችዎ","Your groups") + ' (' + chatState.groups.length + ')</h2><div id="ch-grouplist"></div></div>' +
+      '<div id="ch-convo"></div>';
+
+    function paintGroups(){
+      var box = document.getElementById("ch-grouplist");
+      box.innerHTML = chatState.groups.length ? chatState.groups.map(function(g){
+        var active = g.id === chatState.groupId;
+        return '<div class="row" style="cursor:pointer;' + (active ? 'background:#EEF3FB;' : '') + '" data-chopen="' + esc(g.id) + '"><span><b>' + esc(g.name) + '</b><br><span class="meta">' + (g.members||[]).length + ' ' + S("አባላት","members") + '</span></span>' +
+          (meRole === "office" ? '<span><button class="ghost" data-chedit="' + esc(g.id) + '">✏️</button> <button class="ghost danger" data-chdel="' + esc(g.id) + '">✕</button></span>' : '') + '</div>';
+      }).join("") : '<div class="empty">' + T("none") + '</div>';
+    }
+    paintGroups();
+
+    function paintConvo(){
+      var box = document.getElementById("ch-convo");
+      if (!chatState.groupId){ box.innerHTML = ""; return; }
+      var g = chatState.groups.find(function(x){ return x.id === chatState.groupId; });
+      box.innerHTML = '<div class="card"><h2>💬 ' + esc(g ? g.name : "") + '</h2>' +
+        '<div id="ch-msgs" style="max-height:320px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;padding:10px;background:#F7F9FC;margin-bottom:10px;">' +
+          (chatState.msgs.length ? chatState.msgs.map(function(m){
+            var mine = m.by === workMe.code;
+            return '<div style="margin-bottom:10px;text-align:' + (mine ? "right" : "left") + ';">' +
+              '<div style="display:inline-block;max-width:80%;background:' + (mine ? "#1E4FA0" : "#fff") + ';color:' + (mine ? "#fff" : "#14202E") + ';border:1px solid ' + (mine ? "#1E4FA0" : "var(--border)") + ';border-radius:10px;padding:8px 12px;text-align:right;">' +
+                (mine ? "" : '<div style="font-size:11px;font-weight:bold;opacity:.7;">' + esc(m.byName) + '</div>') +
+                '<div style="white-space:pre-wrap;font-size:13.5px;">' + esc(m.text) + '</div>' +
+                '<div style="font-size:10px;opacity:.6;margin-top:2px;">' + esc(m.ts ? new Date(m.ts).toLocaleString() : "") + '</div>' +
+              '</div></div>';
+          }).join("") : '<div class="empty">' + S("ገና ምንም መልእክት የለም","No messages yet") + '</div>') +
+        '</div>' +
+        '<div style="display:flex;gap:8px;"><textarea id="ch-text" placeholder="' + S("መልእክት ይጻፉ...","Write a message...") + '" style="flex:1;min-height:44px;"></textarea>' +
+        '<button class="primary" id="ch-send">' + S("ላክ","Send") + '</button></div></div>';
+      var msgsBox = document.getElementById("ch-msgs"); msgsBox.scrollTop = msgsBox.scrollHeight;
+      document.getElementById("ch-send").onclick = function(){
+        var txt = document.getElementById("ch-text").value.trim();
+        if (!txt) return;
+        var btn = document.getElementById("ch-send"); btn.disabled = true;
+        wPost({ type: "g_send", code: workMe.code, pin: workMe.hash, groupId: chatState.groupId, text: txt }, function(r){
+          btn.disabled = false;
+          if (r.ok){ fetchChatMsgs(chatState.groupId, function(){ paintConvo(); }); }
+          else showToast(r.error || wNet());
+        });
+      };
+    }
+    if (chatState.groupId) fetchChatMsgs(chatState.groupId, function(j){ if (j.ok) paintConvo(); });
+    else paintConvo();
+
+    el.onclick = function(e){
+      var b = e.target.closest ? e.target.closest("button, [data-chopen]") : null; if (!b) return;
+      var openId = b.getAttribute && b.getAttribute("data-chopen");
+      if (openId){ chatState.groupId = openId; paintGroups(); fetchChatMsgs(openId, function(j){ if (j.ok) paintConvo(); }); return; }
+      var editId = b.getAttribute && b.getAttribute("data-chedit");
+      if (editId){
+        var g = chatState.groups.find(function(x){ return x.id === editId; });
+        if (!g) return;
+        chatState.editingId = editId;
+        document.getElementById("ch-form-title").textContent = S("ቡድን አርም","Edit group");
+        document.getElementById("ch-gname").value = g.name;
+        el.querySelectorAll(".ch-mem").forEach(function(cb){ cb.checked = (g.members||[]).indexOf(cb.value) !== -1; });
+        document.getElementById("ch-gcancel").style.display = "inline-block";
+        document.getElementById("ch-newgroup").scrollIntoView({ behavior:"smooth" });
+        return;
+      }
+      var delId = b.getAttribute && b.getAttribute("data-chdel");
+      if (delId){
+        if (!confirm(S("ይህን ቡድን እና ውይይቱን ሙሉ በሙሉ ማጥፋት ይፈልጋሉ?","Delete this group and its whole conversation?"))) return;
+        wPost({ type: "g_delete", code: workMe.code, pin: workMe.hash, groupId: delId }, function(r){
+          if (r.ok){ if (chatState.groupId === delId) chatState.groupId = null; fetchChatGroups(function(){ renderChat(); }); }
+          else showToast(r.error || wNet());
+        });
+        return;
+      }
+      if (b.id === "ch-gcancel"){
+        chatState.editingId = null;
+        document.getElementById("ch-form-title").textContent = S("አዲስ ቡድን ፍጠር","New group");
+        document.getElementById("ch-gname").value = "";
+        el.querySelectorAll(".ch-mem").forEach(function(cb){ cb.checked = false; });
+        b.style.display = "none";
+        return;
+      }
+      if (b.id === "ch-gsave"){
+        var name = document.getElementById("ch-gname").value.trim();
+        if (!name){ showToast(S("የቡድኑን ስም ይጻፉ","Enter the group name")); return; }
+        var members = Array.prototype.map.call(el.querySelectorAll(".ch-mem:checked"), function(cb){ return cb.value; });
+        var payload = { code: workMe.code, pin: workMe.hash, name: name, members: members };
+        payload.type = chatState.editingId ? "g_update" : "g_create";
+        if (chatState.editingId) payload.groupId = chatState.editingId;
+        wPost(payload, function(r){
+          if (r.ok){ chatState.editingId = null; fetchChatGroups(function(){ renderChat(); }); showToast(S("ተቀምጧል","Saved")); }
+          else showToast(r.error || wNet());
+        });
+      }
+    };
+    } // buildChatMain
   }
   // ---------- የጋራ መዝገብ (አባላት/ተማሪዎች/መምህራን ለሁሉም ተመሳሳይ እንዲሆኑ) ----------
   var dirInfo = null, dirBusy = false;
@@ -4519,6 +4691,7 @@
   STRINGS.tabs.roster = mk("ሮስተር (የትምህርት ክፍል)","Roster (Education)");
   STRINGS.tabs.grades = mk("ውጤት/ነጥብ መዝገብ","Score Record");
   STRINGS.tabs.idcard = mk("መታወቂያ ካርድ","ID Card");
+  STRINGS.tabs.chat = mk("የቡድን ውይይት","Group Chat");
   STRINGS.tabs.attendance = mk("አቴንዳንስ (ቁጥጥር ክፍል)","Attendance (Control)");
   STRINGS.tabs.exchange = mk("መረጃ ልውውጥ","Information Exchange");
   STRINGS.tabs.exchange = mk("መረጃ ልውውጥ","Info Exchange");
@@ -4528,7 +4701,7 @@
     STRINGS.act[k] = mk(["የተሳሳተ PIN ሙከራ","በPIN ገብቷል","የክፍል ፈቃድ ተቀየረ","PIN ተቀየረ","መተግበሪያው ተቆልፏል","የክፍል ሥራ ድርሻ ተመደበ"][i],["Wrong PIN attempt","Signed in with PIN","Section permission changed","PIN changed","App locked","Department assignment set"][i]);
   });
   var RANK = {owner:3, admin:2, collector:1, viewer:0};
-  var SECTIONS = ["dashboard","depts","parishes","members","students","teachers","documents","lessons","roster","attendance","grades","idcard","tools","cert","io","storage","audit","comms","messages","work","exam","exchange"];
+  var SECTIONS = ["dashboard","depts","parishes","members","students","teachers","documents","lessons","roster","attendance","grades","idcard","chat","tools","cert","io","storage","audit","comms","messages","work","exam","exchange"];
   var DEPTS = [
     {id:"office", n:"የሰ/ት/ቤቱ ጽሕፈት ቤት (ዋና አመራር)", roles:[["chair","ሰብሳቢ"],["vice","ምክትል ሰብሳቢ"],["secr","ጸሐፊ"]], subs:[]},
     {id:"edu", n:"ትምህርትና ሥርዓተ ትምህርት ክፍል", roles:[["head","ኃላፊ"],["secr","ጸሐፊ"]], subs:["ሥርዓተ ትምህርት ዝግጅት|የደረጃ ትምህርቶችን ማዘጋጀትና ማሻሻል","መምህራን ምደባና ሥልጠና|መምህራንን መመደብ፣ መከታተልና ማሠልጠን","ፈተናና ውጤት|ፈተና ማዘጋጀት፣ ውጤት መያዝና ምረቃ","ቤተ መጻሕፍት|መጻሕፍትና የትምህርት መርጃዎችን ማስተዳደር"]},
