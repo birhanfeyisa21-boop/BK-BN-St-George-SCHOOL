@@ -3625,7 +3625,11 @@
       '<label class="meta">' + esc(S("የተቀዳ ማዛወሪያ ኮድ እዚህ ለጥፉ","Paste a transfer code here")) + '</label>' +
       '<textarea id="w-xfer-paste" rows="2" placeholder="BKBN1-…" style="width:100%;margin:4px 0 8px;font-family:monospace;font-size:12px;"></textarea>' +
       '<button class="ghost" id="w-xfer-apply">' + esc(S("ተግብር","Apply")) + '</button>' +
-      '<p class="meta" id="w-xfer-msg" style="margin-top:8px;"></p></div>';
+      '<p class="meta" id="w-xfer-msg" style="margin-top:8px;"></p>' +
+      '<hr style="margin:14px 0;border:none;border-top:1px solid var(--line,#2a3040);">' +
+      '<p class="meta">' + esc(S("አንድ ስክሪፕት ብቻ ካሎት፣ ይኸው ራሱ ለ«ራስ-ሰር ምትኬ» እና «የመልእክት አገልግሎት» (ማከማቻና ምትኬ ትር) ጭምር እንዲያገለግል አንድ ጠቅ ያድርጉ — ተጨማሪ ስክሪፕት መፍጠር አያስፈልግም።","Only have one script? Tap this to make it also power Auto-backup and Messaging (Storage tab) — no extra script needed.")) + '</p>' +
+      '<button class="ghost" id="w-xfer-share">' + esc(S("🔗 ለምትኬ እና ለመልእክትም ተጠቀም","🔗 Use for backup & messaging too")) + '</button>' +
+      '<p class="meta" id="w-xfer-share-msg" style="margin-top:8px;"></p></div>';
   }
   function renderWork(){
     var el = document.getElementById("tab-work"), c = wCfg(), h = "";
@@ -3722,6 +3726,16 @@
       if (!obj || !obj.u || !obj.a){ showToast(S("ልክ ያልሆነ ኮድ","Invalid code")); return; }
       $("w-url").value = obj.u; $("w-adm").value = obj.a;
       msg.textContent = S("ገብቷል — አሁን ከላይ ‹አስቀምጥ እና ዝርዝሩን ላክ› ይጫኑ","Filled in — now tap Save & publish list above");
+    };
+    var wShareBtn = $("w-xfer-share");
+    if (wShareBtn) wShareBtn.onclick = function(){
+      var msg = $("w-xfer-share-msg");
+      var u = $("w-url").value.trim(), a = $("w-adm").value.trim();
+      if (!u || !a){ showToast(S("መጀመሪያ ሊንኩን እና የአስተዳዳሪ ሚስጥሩን ይሙሉ እና ‹አስቀምጥ እና ዝርዝሩን ላክ› ይጫኑ።","Fill in the link and admin secret, and tap Save & publish list first.")); return; }
+      state.msgScript = { url: u, key: a };
+      var ac = autoCfg(); ac.url = u; ac.key = a; autoCfgSave(ac);
+      save();
+      msg.textContent = S("✅ ተከናውኗል — «ማከማቻና ምትኬ» ትር ላይ ሁለቱም ክፍሎች አሁን ይህንኑ ይጠቀማሉ። ለ«ራስ-ሰር ምትኬ» የምትኬ ይለፍ ቃል ብቻ ገብተው ያብሩት።","✅ Done — on the Storage tab, both sections now use this same script. For Auto-backup, just enter a backup password and turn it on.");
     };
     if ($("w-login")) $("w-login").onclick = function(){
       var code = $("w-code").value.trim().toUpperCase(), pin = $("w-pin").value, er = $("w-er");
