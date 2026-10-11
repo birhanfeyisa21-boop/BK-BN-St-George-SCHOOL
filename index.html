@@ -3616,7 +3616,16 @@
       '<p class="meta">' + S("ሚና፦ office = ጽሕፈት ቤት (ሁሉንም ያያል)፣ head = የክፍል አመራር፣ sub = ንዑስ አባል (የተላለፈለትን ብቻ ያያል)።","Role: office = sees everything, head = department leader, sub = sub-member (sees only what is assigned).") + '</p>' +
       '<p class="error" id="w-aerr"></p>' +
       '<button class="primary" id="w-save">' + S("አስቀምጥ እና ዝርዝሩን ላክ","Save & publish list") + '</button> ' +
-      '<button class="ghost" id="w-reset">' + S("PIN ዳግም አስጀምር","Reset a PIN") + '</button></div>';
+      '<button class="ghost" id="w-reset">' + S("PIN ዳግም አስጀምር","Reset a PIN") + '</button>' +
+      '<hr style="margin:14px 0;border:none;border-top:1px solid var(--line,#2a3040);">' +
+      '<p class="meta">' + esc(S("ሌላ ስልክ/ኮምፒውተር ላይ ይህንኑ ማዋቀሪያ (ሊንክ + የአስተዳዳሪ ሚስጥር) ለመመለስ የማዛወሪያ ኮድ ይጠቀሙ — ሁለቱንም መስኮች እንደገና መተየብ አያስፈልግም። (የሰው ዝርዝር አይጨምርም — ያ ራሱ ከደመና ይመጣል።)","Setting this up on another phone/computer? Use a transfer code instead of retyping the link and admin secret. (The roster isn't included — that comes from the cloud itself.)")) + '</p>' +
+      '<button class="ghost" id="w-xfer-gen">' + esc(S("🔗 የማዛወሪያ ኮድ አውጣ","🔗 Get transfer code")) + '</button> ' +
+      '<button class="ghost" id="w-xfer-copy" style="display:none;">' + esc(S("ቅዳ","Copy")) + '</button>' +
+      '<textarea id="w-xfer-code" readonly rows="2" style="display:none;width:100%;margin:8px 0;font-family:monospace;font-size:12px;"></textarea>' +
+      '<label class="meta">' + esc(S("የተቀዳ ማዛወሪያ ኮድ እዚህ ለጥፉ","Paste a transfer code here")) + '</label>' +
+      '<textarea id="w-xfer-paste" rows="2" placeholder="BKBN1-…" style="width:100%;margin:4px 0 8px;font-family:monospace;font-size:12px;"></textarea>' +
+      '<button class="ghost" id="w-xfer-apply">' + esc(S("ተግብር","Apply")) + '</button>' +
+      '<p class="meta" id="w-xfer-msg" style="margin-top:8px;"></p></div>';
   }
   function renderWork(){
     var el = document.getElementById("tab-work"), c = wCfg(), h = "";
@@ -3690,6 +3699,29 @@
     if ($("w-reset")) $("w-reset").onclick = function(){
       var code = prompt(S("የማን ኮድ PIN ይጥፋ?","Whose code should get a PIN reset?")); if (!code || !wCfg().url) return;
       wPost({ type: "a_resetpin", admin: wCfg().admin, code: code.trim().toUpperCase() }, function(r){ showToast(r.ok ? S("ተደርጓል","Done") : (r.error || wNet())); });
+    };
+    var wXferGen = $("w-xfer-gen");
+    if (wXferGen) wXferGen.onclick = function(){
+      var box = $("w-xfer-code"), copyBtn = $("w-xfer-copy");
+      var u = $("w-url").value.trim(), a = $("w-adm").value.trim();
+      if (!u || !a){ showToast(S("መጀመሪያ ሊንኩን እና የአስተዳዳሪ ሚስጥሩን ይሙሉ።","Fill in the link and admin secret first.")); return; }
+      var code = "BKBN1W-" + btoa(unescape(encodeURIComponent(JSON.stringify({ u: u, a: a }))));
+      box.value = code; box.style.display = "block"; copyBtn.style.display = "inline-block";
+    };
+    var wXferCopy = $("w-xfer-copy");
+    if (wXferCopy) wXferCopy.onclick = function(){
+      var box = $("w-xfer-code"); box.select();
+      try { navigator.clipboard ? navigator.clipboard.writeText(box.value) : document.execCommand("copy"); showToast(S("ተቀድቷል","Copied")); } catch(x){}
+    };
+    var wXferApply = $("w-xfer-apply");
+    if (wXferApply) wXferApply.onclick = function(){
+      var raw = ($("w-xfer-paste").value || "").trim(), msg = $("w-xfer-msg");
+      if (raw.indexOf("BKBN1W-") !== 0){ showToast(S("ልክ ያልሆነ ኮድ","Invalid code")); return; }
+      var obj;
+      try { obj = JSON.parse(decodeURIComponent(escape(atob(raw.slice(7))))); } catch(x){ showToast(S("ልክ ያልሆነ ኮድ","Invalid code")); return; }
+      if (!obj || !obj.u || !obj.a){ showToast(S("ልክ ያልሆነ ኮድ","Invalid code")); return; }
+      $("w-url").value = obj.u; $("w-adm").value = obj.a;
+      msg.textContent = S("ገብቷል — አሁን ከላይ ‹አስቀምጥ እና ዝርዝሩን ላክ› ይጫኑ","Filled in — now tap Save & publish list above");
     };
     if ($("w-login")) $("w-login").onclick = function(){
       var code = $("w-code").value.trim().toUpperCase(), pin = $("w-pin").value, er = $("w-er");
