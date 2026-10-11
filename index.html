@@ -3597,8 +3597,9 @@
         var auditBadge = me.role === "office"
           ? '<button class="ghost" data-waudit="' + esc(t.id) + '" data-cur="' + (aud ? "done" : "pending") + '" style="' + (aud ? "color:#2E7D32;border-color:#2E7D32" : "color:#B3261E;border-color:#B3261E") + '">' + (aud ? "✅ " + S("ኦዲት ተደርጓል","Audited") : "⏳ " + S("ኦዲት ያልተደረገ","Not audited")) + '</button>'
           : '<span class="badge role" style="' + (aud ? "color:#2E7D32" : "color:#B3261E") + '">' + (aud ? "✅ " + S("ኦዲት ተደርጓል","Audited") : "⏳ " + S("ኦዲት ያልተደረገ","Not audited")) + '</span>';
-        return '<div class="row" style="display:block"><strong>' + esc(t.title) + '</strong> <span class="badge role">' + st[0] + " " + esc(S(st[1], st[2])) + '</span> ' + auditBadge +
-          '<div class="meta">' + esc(t.byName || "") + (t.due ? " · " + esc(t.due) : "") + (t.assignees.length ? " → " + esc(t.assignees.map(wName).join("، ")) : "") + '</div>' +
+        var dirBadge = t.direction === "up" ? '<span class="badge role" title="' + S("ከታች ወደ ላይ","Bottom-up") + '">⬆️</span>' : '<span class="badge role" title="' + S("ከላይ ወደ ታች","Top-down") + '">⬇️</span>';
+        return '<div class="row" style="display:block"><strong>' + esc(t.title) + '</strong> ' + dirBadge + ' <span class="badge role">' + st[0] + " " + esc(S(st[1], st[2])) + '</span> ' + auditBadge +
+          '<div class="meta">' + (t.docCode ? '<b>' + esc(t.docCode) + '</b> · ' : "") + esc(t.byName || "") + (t.due ? " · " + esc(t.due) : "") + (t.assignees.length ? " → " + esc(t.assignees.map(wName).join("، ")) : "") + '</div>' +
           (t.note ? '<p style="margin:6px 0;font-size:13px;white-space:pre-wrap">' + esc(t.note) + '</p>' : "") +
           (t.file ? '<div class="meta">📎 <a href="' + t.file.dataUrl + '" download="' + esc(t.file.name) + '">' + esc(t.file.name) + '</a></div>' : "") +
           (t.comments || []).map(function(m){ return '<div class="meta">💬 <b>' + esc(m.by) + '</b>: ' + esc(m.text) + (m.file ? ' 📎 <a href="' + m.file.dataUrl + '" download="' + esc(m.file.name) + '">' + esc(m.file.name) + '</a>' : "") + '</div>'; }).join("") +
@@ -3642,10 +3643,14 @@
     };
     if ($("w-refresh")) $("w-refresh").onclick = function(){ wGet(workMe.code, workMe.hash, function(j){ if (j.ok) workData = j; renderWork(); dirRefreshStatus(); fullRefreshStatus(); }); };
     if ($("w-out")) $("w-out").onclick = function(){ workMe = null; workData = null; dirInfo = null; fullInfo = null; renderWork(); };
+    if ($("w-dir")) $("w-dir").onchange = function(){
+      var wrap = $("w-as-wrap"); if (wrap) wrap.style.display = $("w-dir").value === "up" ? "none" : "block";
+    };
     if ($("w-add")) $("w-add").onclick = function(){
       var title = $("w-title").value.trim(); if (!title){ showToast(S("ርዕስ ይጻፉ","Enter a title")); return; }
       var as = Array.prototype.map.call(el.querySelectorAll(".w-as:checked"), function(x){ return x.value; });
-      var base = { type: "w_task", title: title, note: $("w-note").value, due: $("w-due").value, assignees: as };
+      var dir = $("w-dir") ? $("w-dir").value : "down";
+      var base = { type: "w_task", title: title, note: $("w-note").value, due: $("w-due").value, assignees: as, direction: dir };
       wFileInput($("w-file"), function(file){
         if (file === false) return; // too large, already warned
         if (file) base.file = file;
