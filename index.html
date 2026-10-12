@@ -4541,7 +4541,11 @@
       fld("msg-cfg-key", "text", c.key, S("የመልእክት ሚስጥር ቃል","Messaging secret word")) +
       '<p class="meta">' + esc(S("ማሳሰቢያ፦ ይህ ቃል እንደ ምትኬ ይለፍ ቃል ሚስጥር አይደለም (በኮዱ ውስጥ ስለሚቀመጥ ማንም ሊያየው ይችላል) — ዓላማው ከዘፈቀደ ኢንተርኔት ቦት ብቻ መከላከል ነው።","Note: unlike the backup password, this isn't truly secret (it ends up in public code) — its only job is to keep random internet bots out.")) + '</p>' +
       '<button class="primary" id="msg-cfg-save">' + esc(S("አስቀምጥ","Save")) + '</button>' +
-      '<p class="error" id="msg-cfg-err"></p></div>';
+      '<p class="error" id="msg-cfg-err"></p>' +
+      '<hr style="margin:14px 0;border:none;border-top:1px solid var(--line,#2a3040);">' +
+      '<p class="meta">' + esc(S("ተማሪዎች/ወላጆች በራሳቸው ስልክ (እርስዎ ባልመዘገቡበት መሣሪያ) በራሳቸው ኮድ እንዲገቡ፣ እና አዳዲስ ትምህርቶች/ሰነዶች እንዲያዩ፣ የተማሪ ዝርዝሩን ለደመና መላክ አለብዎት። ተማሪ ሲጨምሩ/ሲያርሙ ሁሉ ይድገሙት።","So students/parents can log in with their own code on a phone you didn't register them on, and see new lessons/documents, you must publish the student list to the cloud. Repeat this whenever you add or edit a student.")) + '</p>' +
+      '<button class="primary" id="msg-publish-btn">' + esc(S("🌐 የተማሪ ዝርዝር ለደመና ላክ","🌐 Publish student list to the cloud")) + '</button>' +
+      '<p class="meta" id="msg-publish-msg" style="margin-top:8px;"></p></div>';
   }
   function autoCardHtml(){
     var c = autoCfg();
@@ -4688,6 +4692,17 @@
       save();
       err.textContent = "";
       showToast(S("ተቀምጧል","Saved"));
+    };
+    var msgPubBtn = document.getElementById("msg-publish-btn");
+    if (msgPubBtn) msgPubBtn.onclick = function(){
+      var pmsg = document.getElementById("msg-publish-msg");
+      if (!msgCfg().url || !msgCfg().key){ pmsg.textContent = S("❌ መጀመሪያ ከላይ ያለውን ሊንክ/ሚስጥር ቃል ያስቀምጡ።","❌ Save the link/secret above first."); return; }
+      msgPubBtn.disabled = true;
+      pmsg.textContent = S("በመላክ ላይ…","Sending…");
+      publishPublicContent(function(ok){
+        msgPubBtn.disabled = false;
+        pmsg.textContent = ok ? S("✅ ተልኳል — ተማሪዎች አሁን በራሳቸው ስልክ መግባት ይችላሉ።","✅ Sent — students can now log in on their own phones.") : S("❌ አልተሳካም። ሊንኩን እና ሚስጥር ቃሉን ያረጋግጡ።","❌ Failed. Check the link and secret word.");
+      });
     };
     var backupBtn = document.getElementById("st-backup-btn");
     if (backupBtn) backupBtn.addEventListener("click", function(){ makeBackup(false); });
