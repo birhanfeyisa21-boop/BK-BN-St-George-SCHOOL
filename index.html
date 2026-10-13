@@ -2566,13 +2566,23 @@
       var seenIds = {}; var myRows = [];
       localRows.concat(cloudRows).forEach(function(x){ if (!seenIds[x.id]){ seenIds[x.id]=true; myRows.push(x); } });
       var myDocs = (cloudPublic && cloudPublic.documents ? cloudPublic.documents : []);
-      var myRoster = (state.students.find(function(s){ return s.code === myStudent.code; })) ||
-        (cloudPublic && cloudPublic.roster ? cloudPublic.roster.find(function(s){ return s.code === myStudent.code; }) : null) || {};
-      var resultHtml = (myRoster.score || myRoster.graduated === "ተመርቋል") ?
-        '<div class="card"><h2>' + esc(S("የእርስዎ ውጤት","Your results")) + '</h2>' +
-          (myRoster.score ? '<p>' + esc(S("ውጤት፦ ","Score: ")) + esc(myRoster.score) + '%</p>' : '') +
-          (myRoster.graduated === "ተመርቋል" ? '<p>🎓 ' + esc(S("ተመርቀዋል","Graduated")) + '</p>' : '') +
-        '</div>' : '';
+      var localMatch = state.students.find(function(s){ return s.code === myStudent.code; });
+      var myRoster = localMatch || (cloudPublic && cloudPublic.roster ? cloudPublic.roster.find(function(s){ return s.code === myStudent.code; }) : null) || {};
+      var myGrades = (localMatch ? state.grades : (cloudPublic && cloudPublic.grades ? cloudPublic.grades : []))
+        .filter(function(g){ return g.studentId === myRoster.id; });
+      var mySubjects = subjectsForLevel(myStudent.level);
+      var gradesRows = mySubjects.map(function(s){ return myGrades.find(function(g){ return g.subject === s; }) || null; }).filter(Boolean);
+      var myTotal = 0, myCnt = 0;
+      gradesRows.forEach(function(g){ myTotal += grSum(g); myCnt++; });
+      var resultHtml = '<div class="card"><h2>' + esc(S("የእርስዎ ውጤት","Your results")) + '</h2>' +
+        (myRoster.graduated === "ተመርቋል" ? '<p>🎓 ' + esc(S("ተመርቀዋል","Graduated")) + '</p>' : '') +
+        (gradesRows.length ?
+          '<div style="overflow-x:auto"><table class="mx"><tr><th>' + S("ትምህርት","Subject") + '</th><th>' + S("ድምር","Total") + '</th><th>%</th></tr>' +
+            gradesRows.map(function(g){ return '<tr><td>' + esc(g.subject) + '</td><td>' + grSum(g) + ' / ' + GR_MAX + '</td><td><b>' + grAvg(g) + '%</b></td></tr>'; }).join('') +
+          '</table></div>' +
+          '<p class="meta" style="margin-top:8px;">' + esc(S("ጠቅላላ አማካይ","Overall average")) + ': <b>' + (myCnt ? Math.round(myTotal / (myCnt * GR_MAX) * 1000) / 10 : 0) + '%</b> (' + myCnt + ' / ' + mySubjects.length + ' ' + S("ትምህርት","subjects") + ')</p>'
+          : '<p class="meta">' + S("ገና ምንም ውጤት አልገባም","No results entered yet") + '</p>') +
+        '</div>';
       el.innerHTML =
         '<div class="card"><h2>' + esc(fillTpl(S("ሰላም, %NAME%","Welcome, %NAME%"), {NAME: myStudent.name}, false)) + '</h2>' +
           '<p class="meta">' + esc(TL(myStudent.level)) + '</p>' +
@@ -2580,6 +2590,14 @@
           '<button class="ghost" id="stl-signout">' + esc(S("🔒 ውጣ","🔒 Sign out")) + '</button>' +
         '</div>' +
         resultHtml +
+        '<div class="card"><h2>' + esc(S("የክፍል ውይይት","Class discussion")) + '</h2>' +
+          '<p class="meta">' + esc(S("ይህ ከ«" + TL(myStudent.level) + "» ጓደኞችዎ ጋር ብቻ የሚጋራ ነው።","This is shared only with your classmates in \"" + TL(myStudent.level) + "\".")) + '</p>' +
+          '<div class="field"><textarea id="sc-text" placeholder="' + esc(S("መልእክትዎን እዚህ ይጻፉ...","Write your message here...")) + '"></textarea></div>' +
+          '<p class="error" id="sc-err"></p>' +
+          '<button class="primary" id="sc-send">' + esc(S("ላክ","Send")) + '</button> ' +
+          '<button class="ghost" id="sc-refresh">' + esc(S("🔄 አድስ","🔄 Refresh")) + '</button>' +
+          '<div id="sc-list" style="margin-top:10px;"><p class="meta">' + esc(S("በመጫን ላይ...","Loading...")) + '</p></div>' +
+        '</div>' +
         '<div class="card"><h2>' + esc(TL(myStudent.level)) + ' — ' + TLes("contentWord") + ' (' + myRows.length + ')</h2>' +
           (myRows.length ? myRows.slice().reverse().map(function(x){
             return '<div class="row" style="display:block;">' +
@@ -2601,6 +2619,31 @@
       if (so) so.onclick = function(){ lockApp("manual"); };
       var rf = document.getElementById("stl-refresh");
       if (rf) rf.onclick = function(){ rf.disabled = true; fetchPublicContent(function(){ rf.disabled = false; renderLessons(); }); };
+      function paintSChat(){
+        var box = document.getElementById("sc-list"); if (!box) return;
+        box.innerHTML = schatCache.length ? schatCache.slice().reverse().map(function(m){
+          var mine = m.by === myStudent.code;
+          return '<div class="row" style="display:block;' + (mine ? 'background:var(--chip,#eef3ff);' : '') + '"><strong>' + esc(m.byName || m.by || "—") + '</strong>' +
+            '<p style="margin:4px 0;font-size:13px;white-space:pre-wrap;">' + esc(m.text || "") + '</p>' +
+            '<span class="meta">' + esc(m.ts ? new Date(m.ts).toLocaleString() : "") + '</span></div>';
+        }).join('') : '<div class="empty">' + T("none") + '</div>';
+      }
+      fetchSChat(myStudent.level, function(ok){ if (!ok) document.getElementById("sc-list").innerHTML = '<p class="error">' + esc(S("ማምጣት አልተቻለም","Could not load")) + '</p>'; else paintSChat(); });
+      var scRefresh = document.getElementById("sc-refresh");
+      if (scRefresh) scRefresh.onclick = function(){ document.getElementById("sc-list").innerHTML = '<p class="meta">' + esc(S("በመጫን ላይ...","Loading...")) + '</p>'; fetchSChat(myStudent.level, function(ok){ if (ok) paintSChat(); }); };
+      var scSend = document.getElementById("sc-send");
+      if (scSend) scSend.onclick = function(){
+        var txt = document.getElementById("sc-text").value.trim();
+        var err = document.getElementById("sc-err");
+        if (!txt){ err.textContent = S("መልእክት ይጻፉ","Write a message"); return; }
+        err.textContent = ""; scSend.disabled = true;
+        sendSChat(myStudent.level, txt, function(ok){
+          scSend.disabled = false;
+          if (!ok){ err.textContent = S("አልተላከም — ኢንተርኔት ያረጋግጡ","Not sent — check your connection"); return; }
+          document.getElementById("sc-text").value = "";
+          fetchSChat(myStudent.level, function(ok2){ if (ok2) paintSChat(); });
+        });
+      };
       return;
     }
     var rec = editRec("lesson");
@@ -5070,13 +5113,16 @@
   function buildPublicPackage(){
     return {
       roster: state.students.filter(function(s){ return s.code; }).map(function(s){
-        return { code: s.code, name: s.name, level: s.level, pinHash: s.pinHash || null, score: s.score || "", graduated: s.graduated || "" };
+        return { id: s.id, code: s.code, name: s.name, level: s.level, pinHash: s.pinHash || null, score: s.score || "", graduated: s.graduated || "" };
       }),
       lessons: state.lessons.filter(function(x){ return x.url; }).map(function(x){
         return { id: x.id, title: x.title, desc: x.desc || "", level: x.level, type: x.type, url: x.url };
       }),
       documents: state.documents.filter(function(x){ return x.body || x.url; }).map(function(x){
         return { id: x.id, title: x.title, type: x.type, body: x.body || "", url: x.url || "", date: x.date || "" };
+      }),
+      grades: state.grades.map(function(g){
+        return { studentId: g.studentId, level: g.level, subject: g.subject, c1: g.c1||0, c2: g.c2||0, assign: g.assign||0, c3: g.c3||0, c4: g.c4||0, c5: g.c5||0, final: g.final||0 };
       })
     };
   }
@@ -5095,6 +5141,25 @@
       cloudPublic = (j && j.ok && j.content) ? JSON.parse(j.content) : null;
       cb(cloudPublic);
     }).catch(function(){ cb(null); });
+  }
+  // ---- የክፍል/ደረጃ የጋራ ውይይት (ተማሪዎች/ወላጆች/ማህበራት፣ በራሳቸው ኮድ+PIN) ----
+  var schatCache = [];
+  function fetchSChat(level, cb){
+    var cfg = msgCfg();
+    if (!cfg.url || !cfg.key || !myStudent || !myStudent.pinHash){ cb(false); return; }
+    var url = cfg.url + (cfg.url.indexOf("?") === -1 ? "?" : "&") + "type=s_chat&level=" + encodeURIComponent(level) +
+      "&code=" + encodeURIComponent(myStudent.code) + "&pinHash=" + encodeURIComponent(myStudent.pinHash) + "&_=" + Date.now();
+    fetch(url).then(function(r){ return r.json(); }).then(function(j){
+      schatCache = (j && j.ok && j.msgs) ? j.msgs : [];
+      cb(true);
+    }).catch(function(){ cb(false); });
+  }
+  function sendSChat(level, text, cb){
+    var cfg = msgCfg();
+    if (!cfg.url || !cfg.key || !myStudent || !myStudent.pinHash){ cb(false); return; }
+    fetch(cfg.url, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({
+      type: "s_chat_send", key: cfg.key, code: myStudent.code, pinHash: myStudent.pinHash, name: myStudent.name, level: level, text: text
+    })}).then(function(r){ return r.json(); }).then(function(j){ cb(!!(j && j.ok)); }).catch(function(){ cb(false); });
   }
   function setPinRemote(code, hash){
     var cfg = msgCfg();
@@ -5145,7 +5210,7 @@
       hashStudentPin(p1, st.code).then(function(h){
         st.pinHash = h; save();
         setPinRemote(st.code, h);
-        myStudent = { id: st.id, code: st.code, level: st.level, name: st.name };
+        myStudent = { id: st.id, code: st.code, level: st.level, name: st.name, pinHash: h };
         done("student");
       });
     };
@@ -5161,7 +5226,7 @@
       var p = document.getElementById("stl-p").value;
       var er = document.getElementById("stl-er3");
       hashStudentPin(p, st.code).then(function(h){
-        if (h === st.pinHash){ myStudent = { id: st.id, code: st.code, level: st.level, name: st.name }; done("student"); }
+        if (h === st.pinHash){ myStudent = { id: st.id, code: st.code, level: st.level, name: st.name, pinHash: h }; done("student"); }
         else { er.textContent = S("PIN ትክክል አይደለም","Wrong PIN"); document.getElementById("stl-p").value = ""; }
       });
     }
