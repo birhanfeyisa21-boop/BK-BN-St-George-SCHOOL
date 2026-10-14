@@ -1541,38 +1541,49 @@
 
 
   // ---------- render root ----------
+  // አንዱ ትር ላይ ስህተት ቢፈጠር እንኳ ባዶ ሆኖ እንዳይቀር (ስሙ ብቻ እየታየ ፎርሙ እንዳይጠፋ) — ስህተቱ ለዚያ ትር ብቻ በግልጽ ይታያል፣ ሌሎች ትሮች ይቀጥላሉ
+  function safeRender_(tabId, fn){
+    try { fn(); }
+    catch(err){
+      try { console.error("render error on " + tabId, err); } catch(e2){}
+      var el = document.getElementById("tab-" + tabId);
+      if (el) el.innerHTML = '<div class="card"><h2>⚠️ ' + esc(S("ይህን ገጽ ማሳየት አልተቻለም","Could not display this page")) + '</h2>' +
+        '<p class="meta">' + esc(S("ያልተጠበቀ ስህተት ተፈጥሯል። እባክዎ ዳግም ይሞክሩ ወይም ይህን መልእክት ለአዘጋጁ ያሳዩ፦","An unexpected error occurred. Please try again, or show this message to the developer:")) + '</p>' +
+        '<p class="meta" style="white-space:pre-wrap;font-family:monospace;font-size:11px;">' + esc(String((err && err.message) || err)) + '</p></div>';
+    }
+  }
   function renderAll(){
     revokeBlobUrls();
     if (!saveOk) setSaveStatus(false);
     document.querySelectorAll(".tab").forEach(function(t){ t.classList.add("hidden"); });
     applyAccess();
     document.getElementById("tab-" + activeTab).classList.remove("hidden");
-    if (activeTab === "depts") renderDepts();
-    if (activeTab === "access") renderAccess();
-    if (activeTab === "history") renderHistory();
-    if (activeTab === "dashboard"){ renderDashboard(); dashExtras(); }
-    if (activeTab === "parishes") renderParishes();
-    if (activeTab === "attendance") renderAttendance();
-    if (activeTab === "members") renderMembers();
-    if (activeTab === "students") renderStudents();
-    if (activeTab === "teachers") renderTeachers();
-    if (activeTab === "documents") renderDocuments();
-    if (activeTab === "lessons") renderLessons();
-    if (activeTab === "roster") renderRoster();
-    if (activeTab === "grades") renderGrades();
-    if (activeTab === "idcard") renderIdCard();
-    if (activeTab === "chat") renderChat();
-    if (activeTab === "tools") renderTools();
-    if (activeTab === "cert") renderCert();
-    if (activeTab === "io") renderIO();
-    if (activeTab === "storage") renderStorage();
-    if (activeTab === "audit") renderAudit();
-    if (activeTab === "comms") renderComms();
-    if (activeTab === "messages") renderMessages();
-    if (activeTab === "work") renderWork();
-    if (activeTab === "exchange") renderExchange();
-    if (activeTab === "exam") renderExam();
-    if (activeTab === "agenda") renderAgenda();
+    if (activeTab === "depts") safeRender_("depts", renderDepts);
+    if (activeTab === "access") safeRender_("access", renderAccess);
+    if (activeTab === "history") safeRender_("history", renderHistory);
+    if (activeTab === "dashboard") safeRender_("dashboard", function(){ renderDashboard(); dashExtras(); });
+    if (activeTab === "parishes") safeRender_("parishes", renderParishes);
+    if (activeTab === "attendance") safeRender_("attendance", renderAttendance);
+    if (activeTab === "members") safeRender_("members", renderMembers);
+    if (activeTab === "students") safeRender_("students", renderStudents);
+    if (activeTab === "teachers") safeRender_("teachers", renderTeachers);
+    if (activeTab === "documents") safeRender_("documents", renderDocuments);
+    if (activeTab === "lessons") safeRender_("lessons", renderLessons);
+    if (activeTab === "roster") safeRender_("roster", renderRoster);
+    if (activeTab === "grades") safeRender_("grades", renderGrades);
+    if (activeTab === "idcard") safeRender_("idcard", renderIdCard);
+    if (activeTab === "chat") safeRender_("chat", renderChat);
+    if (activeTab === "tools") safeRender_("tools", renderTools);
+    if (activeTab === "cert") safeRender_("cert", renderCert);
+    if (activeTab === "io") safeRender_("io", renderIO);
+    if (activeTab === "storage") safeRender_("storage", renderStorage);
+    if (activeTab === "audit") safeRender_("audit", renderAudit);
+    if (activeTab === "comms") safeRender_("comms", renderComms);
+    if (activeTab === "messages") safeRender_("messages", renderMessages);
+    if (activeTab === "work") safeRender_("work", renderWork);
+    if (activeTab === "exchange") safeRender_("exchange", renderExchange);
+    if (activeTab === "exam") safeRender_("exam", renderExam);
+    if (activeTab === "agenda") safeRender_("agenda", renderAgenda);
   }
 
   // ---------- dashboard ----------
