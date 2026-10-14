@@ -472,6 +472,7 @@
       <button data-tab="messages"><span class="nav-ic">✉️</span><span class="nav-label">መልእክቶች</span></button>
       <button data-tab="work"><span class="nav-ic">🗂️</span><span class="nav-label">ሥራ ክትትል</span></button>
       <button data-tab="exchange"><span class="nav-ic">🔁</span><span class="nav-label">መረጃ ልውውጥ</span></button>
+      <button data-tab="agenda"><span class="nav-ic">🗣️</span><span class="nav-label">የጋራ ውይይት</span></button>
     </div>
     <div class="nav-group"><div class="nav-group-label">መሳሪያዎች እና ሰነዶች</div>
       <button data-tab="tools"><span class="nav-ic">🧰</span><span class="nav-label">መሳሪያዎች</span></button>
@@ -510,6 +511,7 @@
   <div id="tab-work" class="tab hidden"></div>
   <div id="tab-exchange" class="tab hidden"></div>
   <div id="tab-exam" class="tab hidden"></div>
+  <div id="tab-agenda" class="tab hidden"></div>
   <div id="tab-access" class="tab hidden"></div>
   <div id="tab-history" class="tab hidden"></div>
 
@@ -1570,6 +1572,7 @@
     if (activeTab === "work") renderWork();
     if (activeTab === "exchange") renderExchange();
     if (activeTab === "exam") renderExam();
+    if (activeTab === "agenda") renderAgenda();
   }
 
   // ---------- dashboard ----------
@@ -5161,6 +5164,113 @@
     fetch(cfg.url, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({
       type: "s_chat_send", key: cfg.key, code: myStudent.code, pinHash: myStudent.pinHash, name: myStudent.name, level: level, text: text
     })}).then(function(r){ return r.json(); }).then(function(j){ cb(!!(j && j.ok)); }).catch(function(){ cb(false); });
+  }
+  // ---- የጋራ ውይይት፦ አመራር/መምህራን/ተማሪዎች በአንድ አጀንዳ ላይ ሂስ/ሃሳብ የሚለዋወጡበት መድረክ ----
+  var agendaCache = [];
+  function agendaCfg(){ var c = msgCfg(); return (c && c.url) ? c : wCfg(); }
+  function myAgendaAuth(extra){
+    if (role === "student" && myStudent && myStudent.pinHash){
+      return Object.assign({ authKind: "student", code: myStudent.code, pinHash: myStudent.pinHash, name: myStudent.name }, extra || {});
+    }
+    if (workMe){
+      return Object.assign({ authKind: "staff", code: workMe.code, pin: workMe.hash }, extra || {});
+    }
+    return null;
+  }
+  function fetchAgenda(cb){
+    var cfg = agendaCfg(), auth = myAgendaAuth();
+    if (!cfg.url || !auth){ cb(false); return; }
+    var qs = Object.keys(auth).map(function(k){ return k + "=" + encodeURIComponent(auth[k]); }).join("&");
+    var url = cfg.url + (cfg.url.indexOf("?") === -1 ? "?" : "&") + "type=agenda_list&" + qs + "&_=" + Date.now();
+    fetch(url).then(function(r){ return r.json(); }).then(function(j){
+      agendaCache = (j && j.ok && j.items) ? j.items : [];
+      cb(true);
+    }).catch(function(){ cb(false); });
+  }
+  function createAgenda(title, body, cb){
+    var cfg = agendaCfg(), auth = myAgendaAuth({ type: "agenda_create", title: title, body: body });
+    if (!cfg.url || !auth){ cb(false); return; }
+    fetch(cfg.url, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(auth) })
+      .then(function(r){ return r.json(); }).then(function(j){ cb(!!(j && j.ok), j && j.error); }).catch(function(){ cb(false); });
+  }
+  function replyAgenda(agendaId, text, cb){
+    var cfg = agendaCfg(), auth = myAgendaAuth({ type: "agenda_reply", agendaId: agendaId, text: text });
+    if (!cfg.url || !auth){ cb(false); return; }
+    fetch(cfg.url, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(auth) })
+      .then(function(r){ return r.json(); }).then(function(j){ cb(!!(j && j.ok), j && j.error); }).catch(function(){ cb(false); });
+  }
+  function renderAgenda(){
+    var el = document.getElementById("tab-agenda");
+    var auth = myAgendaAuth();
+    if (!auth){
+      el.innerHTML = '<div class="card"><h2>' + esc(STRINGS.tabs.agenda[lang]) + '</h2><p class="meta">' +
+        esc(S("ይህ ከ«ሥራ ክትትል» ከሚጠቀመው ተመሳሳይ ኮድ/PIN ይጠቀማል (ወይም የተማሪ መግቢያ)። እባክዎ መጀመሪያ ይግቡ።","This uses the same code/PIN as Work Tracking (or the student login). Please log in first.")) + '</p></div>';
+      return;
+    }
+    var canCreate = auth.authKind === "staff" && workData && workData.me && (workData.me.role === "office" || workData.me.role === "head");
+    el.innerHTML = '<div class="card"><h2>' + esc(STRINGS.tabs.agenda[lang]) + '</h2>' +
+        '<p class="meta">' + esc(S("አመራር፣ መምህራን እና ተማሪዎች በአንድ አጀንዳ ላይ ሂሳቸውን/ሃሳባቸውን የሚለዋወጡበት የጋራ መድረክ ነው።","Leadership, teachers and students share feedback and ideas on common topics here.")) + '</p>' +
+        '<button class="ghost" id="ag-refresh">' + esc(S("🔄 አድስ","🔄 Refresh")) + '</button></div>' +
+      (canCreate ? '<div class="card"><h2>' + esc(S("አዲስ አጀንዳ ክፈት","Open a new agenda")) + '</h2>' +
+        '<div class="field"><input type="text" id="ag-title" placeholder="' + esc(S("ርዕስ","Title")) + '"></div>' +
+        '<div class="field"><textarea id="ag-body" placeholder="' + esc(S("ዝርዝር (አማራጭ)","Details (optional)")) + '"></textarea></div>' +
+        '<p class="error" id="ag-err"></p>' +
+        '<button class="primary" id="ag-create">' + esc(S("ክፈት","Open")) + '</button></div>' : '') +
+      '<div id="ag-list"><p class="meta">' + esc(S("በመጫን ላይ...","Loading...")) + '</p></div>';
+
+    function paint(){
+      var box = document.getElementById("ag-list");
+      if (!agendaCache.length){ box.innerHTML = '<div class="card"><div class="empty">' + T("none") + '</div></div>'; return; }
+      box.innerHTML = agendaCache.slice().reverse().map(function(ag){
+        return '<div class="card"><h2>' + esc(ag.title) + '</h2>' +
+          '<p class="meta">' + esc(ag.byName || "—") + ' · <span class="badge role">' + esc(ag.byRole || "") + '</span> · ' + esc(ag.ts ? new Date(ag.ts).toLocaleString() : "") + '</p>' +
+          (ag.body ? '<p style="margin:6px 0;font-size:13px;white-space:pre-wrap;">' + esc(ag.body) + '</p>' : '') +
+          '<div style="margin:10px 0;border-top:1px solid var(--line,#2a3040);padding-top:8px;">' +
+            (ag.replies && ag.replies.length ? ag.replies.map(function(r){
+              return '<div class="row" style="display:block;"><strong>' + esc(r.byName || "—") + '</strong> <span class="badge role">' + esc(r.byRole || "") + '</span>' +
+                '<p style="margin:4px 0;font-size:13px;white-space:pre-wrap;">' + esc(r.text || "") + '</p>' +
+                '<span class="meta">' + esc(r.ts ? new Date(r.ts).toLocaleString() : "") + '</span></div>';
+            }).join("") : '<p class="meta">' + esc(S("ገና ምላሽ የለም","No replies yet")) + '</p>') +
+          '</div>' +
+          '<div class="field"><textarea data-ag-reply="' + esc(ag.id) + '" placeholder="' + esc(S("ሂስ/ሃሳብዎን ይጻፉ...","Write your feedback/idea...")) + '" style="min-height:50px"></textarea></div>' +
+          '<p class="error" data-ag-err="' + esc(ag.id) + '"></p>' +
+          '<button class="primary" data-ag-send="' + esc(ag.id) + '">' + esc(S("ላክ","Send")) + '</button></div>';
+      }).join("");
+    }
+    fetchAgenda(function(ok){ if (!ok) document.getElementById("ag-list").innerHTML = '<p class="error">' + esc(S("ማምጣት አልተቻለም — ኢንተርኔት ያረጋግጡ","Could not load — check your connection")) + '</p>'; else paint(); });
+
+    document.getElementById("ag-refresh").onclick = function(){
+      document.getElementById("ag-list").innerHTML = '<p class="meta">' + esc(S("በመጫን ላይ...","Loading...")) + '</p>';
+      fetchAgenda(function(ok){ if (ok) paint(); });
+    };
+    var createBtn = document.getElementById("ag-create");
+    if (createBtn) createBtn.onclick = function(){
+      var title = document.getElementById("ag-title").value.trim();
+      var body = document.getElementById("ag-body").value.trim();
+      var err = document.getElementById("ag-err");
+      if (!title){ err.textContent = S("ርዕስ ያስፈልጋል","Title is required"); return; }
+      err.textContent = ""; createBtn.disabled = true;
+      createAgenda(title, body, function(ok, em){
+        createBtn.disabled = false;
+        if (!ok){ err.textContent = em || S("አልተሳካም","Failed"); return; }
+        document.getElementById("ag-title").value = ""; document.getElementById("ag-body").value = "";
+        fetchAgenda(function(ok2){ if (ok2) paint(); });
+      });
+    };
+    el.addEventListener("click", function(e){
+      var b = e.target.closest ? e.target.closest("button") : null; if (!b) return;
+      var agId = b.getAttribute("data-ag-send"); if (!agId) return;
+      var ta = el.querySelector('[data-ag-reply="' + agId + '"]');
+      var err = el.querySelector('[data-ag-err="' + agId + '"]');
+      var txt = ta.value.trim();
+      if (!txt){ err.textContent = S("ጽሑፍ ይጻፉ","Write something"); return; }
+      err.textContent = ""; b.disabled = true;
+      replyAgenda(agId, txt, function(ok, em){
+        b.disabled = false;
+        if (!ok){ err.textContent = em || S("አልተላከም","Not sent"); return; }
+        fetchAgenda(function(ok2){ if (ok2) paint(); });
+      });
+    });
   }
   function setPinRemote(code, hash){
     var cfg = msgCfg();
