@@ -1242,7 +1242,13 @@
       collector: ["add-member","add-student","add-teacher","edit-member","edit-student","edit-teacher","send-report"],
       viewer: []
     };
-    return (perms[role] || []).indexOf(action) !== -1;
+    var allowed = (perms[role] || []).indexOf(action) !== -1;
+    // «መረጃ ማስተካከል» ፈቃድ፦ የአባላት/ተማሪዎች/መምህራን የተመዘገበ መረጃ ማስተካከል ለአመራር ብቻ እንዲሆን ባለቤቱ ለየሚናው ሊዘጋው ይችላል
+    if (allowed && role !== "owner" && (action === "edit-member" || action === "edit-student" || action === "edit-teacher")){
+      var acc = (state.access || {})[role];
+      if (acc && acc.editData === false) return false;
+    }
+    return allowed;
   }
 
   // ---------- helpers ----------
@@ -1755,10 +1761,11 @@
 
   // ---------- parishes ----------
   var attSel = { parishId: "", date: "" }, attExpanded = null;
+  var attDraft = { key: "", present: {}, excused: [] };
   function renderAttendance(){
     var el = document.getElementById("tab-attendance");
     var h = '<div class="card"><h2>' + S("አቴንዳንስ (የስ/ት/ቤቱ ቁጥጥር ክፍል)","Attendance (Control section)") + '</h2>' +
-      '<p class="meta">' + S("በቁጥጥር ክፍል (ደብር) እና በቀን የተደራጀ የተገኙ/ያልተገኙ መዝገብ።","Present/absent records organized by parish and date.") + '</p>' +
+      '<p class="meta">' + S("በቁጥጥር ክፍል (ደብር) እና በቀን የተደራጀ መዝገብ። ምልክት የተደረገበት = መጥቷል፤ ምልክት ያልተደረገበት = ቀርቷል፤ ፈቃድ የወሰዱ ደግሞ ከታች ባለው ፎርም ይመዘገባሉ።","Records by parish and date. Ticked = present; unticked = absent; people with permission are added in the form below.") + '</p>' +
       '<div class="field"><label>' + S("ቁጥጥር ክፍል (ደብር)","Parish") + '</label><select id="at-parish">' +
         '<option value="">— ' + S("ይምረጡ","choose") + ' —</option>' + opt(state.parishes, "id", "name") + '</select></div>' +
       '<div class="field"><label>' + S("ቀን","Date") + '</label><input type="date" id="at-date"></div>';
@@ -1767,16 +1774,34 @@
       people = state.members.filter(function(m){ return String(m.parishId) === String(attSel.parishId); }).map(function(m){ return { id: "m:" + m.id, name: m.name, kind: S("አባል","Member") }; })
         .concat(state.students.filter(function(s){ return String(s.parishId) === String(attSel.parishId); }).map(function(s){ return { id: "s:" + s.id, name: s.name, kind: S("ተማሪ","Student") }; }));
     }
-    // ተመሳሳይ ቁጥጥር ክፍል + ቀን ቀደም ብሎ ከተመዘገበ፣ ያንን መዝገብ ለማስተካከል (ለማሻሻል) አስቀድሞ ምልክት ያድርግ እንጂ ድግግሞሽ አይፍጠር
     var existingRec = (attSel.parishId && attSel.date) ? state.attendance.filter(function(r){ return String(r.parishId) === String(attSel.parishId) && r.date === attSel.date; })[0] : null;
+    // ረቂቁ (ምልክት + ፈቃድ ያላቸው) በተመሳሳይ ደብር+ቀን ሲቀጥል ይቆያል፤ ሲቀየር ከተቀመጠው መዝገብ (ካለ) ይጫናል
+    var dkey = attSel.parishId + "|" + attSel.date;
+    if (attDraft.key !== dkey){
+      attDraft = { key: dkey, present: {}, excused: [] };
+      people.forEach(function(p){ attDraft.present[p.id] = existingRec ? (existingRec.presentIds || []).indexOf(p.id) !== -1 : true; });
+      if (existingRec) attDraft.excused = (existingRec.excused || []).map(function(x){ return { id: x.id, name: x.name, reason: x.reason || "" }; });
+    }
+    function isExcused(id){ return attDraft.excused.some(function(x){ return x.id === id; }); }
     if (attSel.parishId && people.length){
       h += (existingRec ? '<p class="meta">✏️ ' + S("ለዚህ ቀን ቀድሞ የተመዘገበ አለ — ማስተካከያ ያድርጉና እንደገና መዝግብ ይጫኑ።","A record already exists for this date — adjust and press Save again to update it.") + '</p>' : '') +
-        '<div class="field"><label>' + S("የተገኙ ሰዎች (ያልተገኙትን ምልክት ያንሱ)","Present (uncheck absentees)") + '</label>' +
+        '<div class="field"><label>' + S("መጥተዋል (ያልመጡትን ምልክት ያንሱ)","Present (uncheck those absent)") + '</label>' +
         people.map(function(p){
-          var isPresent = existingRec ? existingRec.presentIds.indexOf(p.id) !== -1 : true;
-          return '<label style="display:flex;gap:8px;align-items:center;font-size:13px;padding:3px 0"><input type="checkbox" class="at-chk" value="' + esc(p.id) + '"' + (isPresent ? ' checked' : '') + '> ' + esc(p.name) + ' <span class="meta">(' + p.kind + ')</span></label>';
-        }).join("") +
-        '</div><button class="primary" id="at-save">' + (existingRec ? S("ለውጡን አስቀምጥ","Update attendance") : S("መዝግብ","Save attendance")) + '</button>';
+          var ex = isExcused(p.id);
+          var on = !ex && attDraft.present[p.id] !== false;
+          return '<label style="display:flex;gap:8px;align-items:center;font-size:13px;padding:3px 0"><input type="checkbox" class="at-chk" value="' + esc(p.id) + '"' + (on ? ' checked' : '') + (ex ? ' disabled' : '') + '> ' + esc(p.name) + ' <span class="meta">(' + p.kind + ')</span>' +
+            (ex ? ' <span class="badge synced">' + S("ፈቃድ","Excused") + '</span>' : (on ? '' : ' <span class="badge pending">' + S("ቀርቷል","Absent") + '</span>')) + '</label>';
+        }).join("") + '</div>' +
+        '<div class="card" style="margin:10px 0;background:var(--chip,#F3F7FD)"><h2 style="font-size:15px">🙏 ' + S("ፈቃድ የወሰዱ","Permission / excused") + '</h2>' +
+          '<div class="field"><label>' + S("ስም","Name") + '</label><select id="at-ex-person"><option value="">— ' + S("ይምረጡ","choose") + ' —</option>' +
+            people.filter(function(p){ return !isExcused(p.id); }).map(function(p){ return '<option value="' + esc(p.id) + '">' + esc(p.name) + '</option>'; }).join("") + '</select></div>' +
+          '<div class="field"><label>' + S("ምክንያት","Reason") + '</label><input type="text" id="at-ex-reason" placeholder="' + S("ለምሳሌ፦ ህመም፣ ጉዞ","e.g. illness, travel") + '"></div>' +
+          '<button class="ghost" id="at-ex-add">' + S("ፈቃድ ጨምር","Add permission") + '</button>' +
+          (attDraft.excused.length ? '<div style="margin-top:8px">' + attDraft.excused.map(function(x){
+            return '<div class="row" style="display:flex;justify-content:space-between;align-items:center"><span>' + esc(x.name) + (x.reason ? ' <span class="meta">— ' + esc(x.reason) + '</span>' : '') + '</span><button class="ghost danger" data-exdel="' + esc(x.id) + '">✕</button></div>';
+          }).join("") + '</div>' : '') +
+        '</div>' +
+        '<button class="primary" id="at-save">' + (existingRec ? S("ለውጡን አስቀምጥ","Update attendance") : S("መዝግብ","Save attendance")) + '</button>';
     } else if (attSel.parishId){
       h += '<p class="meta">' + S("በዚህ ቁጥጥር ክፍል ስር የተመዘገበ አባል/ተማሪ የለም።","No registered members/students under this parish.") + '</p>';
     }
@@ -1786,34 +1811,48 @@
       (recs.length ? recs.map(function(r){
         var pName = (state.parishes.filter(function(p){ return String(p.id) === String(r.parishId); })[0] || {}).name || "—";
         var open = attExpanded === r.id;
+        var nP = (r.presentIds || []).length, nE = (r.excused || []).length, nA = Math.max(0, (r.totalCount || 0) - nP - nE);
         return '<div class="row" style="display:block"><div style="display:flex;justify-content:space-between;align-items:center">' +
-          '<div><b>' + esc(r.date) + '</b> · ' + esc(pName) + '<div class="meta">' + (r.presentIds || []).length + ' / ' + r.totalCount + ' ' + S("ተገኝተዋል","present") + '</div></div>' +
+          '<div><b>' + esc(r.date) + '</b> · ' + esc(pName) + '<div class="meta">' + S("መጥተዋል","Present") + ' ' + nP + ' · ' + S("ፈቃድ","Excused") + ' ' + nE + ' · ' + S("ቀርተዋል","Absent") + ' ' + nA + ' / ' + (r.totalCount || 0) + '</div></div>' +
           '<div><button class="ghost" data-atview="' + esc(r.id) + '">' + (open ? S("ዝጋ","Hide") : S("እይ","View")) + '</button> <button class="ghost danger" data-atdel="' + esc(r.id) + '">' + S("አስወግድ","Remove") + '</button></div></div>' +
-          (open ? '<div class="meta" style="margin-top:6px">' + (r.presentNames || []).join("، ") + '</div>' : "") + '</div>';
+          (open ? '<div class="meta" style="margin-top:6px"><b>' + S("መጥተዋል","Present") + ':</b> ' + esc((r.presentNames || []).join("، ") || "—") +
+            '<br><b>' + S("ፈቃድ","Excused") + ':</b> ' + esc((r.excused || []).map(function(x){ return x.name + (x.reason ? " (" + x.reason + ")" : ""); }).join("، ") || "—") +
+            '<br><b>' + S("ቀርተዋል","Absent") + ':</b> ' + esc((r.absentNames || []).join("፣ ") || "—") + '</div>' : "") + '</div>';
       }).join("") : '<div class="empty">' + S("ገና ምንም የለም","Nothing yet") + '</div>') + '</div>';
     el.innerHTML = h;
     var $ = function(i){ return document.getElementById(i); };
     $("at-parish").value = attSel.parishId; $("at-date").value = attSel.date;
     $("at-parish").onchange = function(){ attSel.parishId = $("at-parish").value; renderAttendance(); };
     $("at-date").onchange = function(){ attSel.date = $("at-date").value; renderAttendance(); };
+    el.querySelectorAll(".at-chk").forEach(function(c){ c.onchange = function(){ attDraft.present[c.value] = c.checked; renderAttendance(); }; });
+    if ($("at-ex-add")) $("at-ex-add").onclick = function(){
+      var id = $("at-ex-person").value;
+      if (!id){ showToast(S("ስም ይምረጡ","Choose a name")); return; }
+      var person = people.filter(function(p){ return p.id === id; })[0];
+      attDraft.excused.push({ id: id, name: person ? person.name : id, reason: $("at-ex-reason").value.trim() });
+      attDraft.present[id] = false; renderAttendance();
+    };
+    el.querySelectorAll("[data-exdel]").forEach(function(b){ b.onclick = function(){
+      var id = b.getAttribute("data-exdel");
+      attDraft.excused = attDraft.excused.filter(function(x){ return x.id !== id; }); attDraft.present[id] = false; renderAttendance();
+    }; });
     if ($("at-save")) $("at-save").onclick = function(){
       if (!attSel.date){ showToast(S("ቀን ይምረጡ","Choose a date")); return; }
-      var checked = Array.prototype.filter.call(el.querySelectorAll(".at-chk"), function(c){ return c.checked; });
-      var presentIds = checked.map(function(c){ return c.value; });
-      var presentNames = checked.map(function(c){ return c.parentElement.textContent.trim().replace(/\s*\(.*\)$/, ""); });
-      if (existingRec){
-        existingRec.presentIds = presentIds; existingRec.presentNames = presentNames; existingRec.totalCount = people.length; existingRec.ts = Date.now();
-      } else {
-        state.attendance.push({ id: "A" + Date.now(), parishId: attSel.parishId, date: attSel.date, presentIds: presentIds, presentNames: presentNames, totalCount: people.length, ts: Date.now() });
-      }
-      save(); showToast(S("ተመዝግቧል","Saved")); renderAttendance();
+      var presentP = people.filter(function(p){ return !isExcused(p.id) && attDraft.present[p.id] !== false; });
+      var absentP = people.filter(function(p){ return !isExcused(p.id) && attDraft.present[p.id] === false; });
+      var data = { presentIds: presentP.map(function(p){ return p.id; }), presentNames: presentP.map(function(p){ return p.name; }),
+        excused: attDraft.excused.map(function(x){ return { id: x.id, name: x.name, reason: x.reason }; }),
+        absentNames: absentP.map(function(p){ return p.name; }), totalCount: people.length, ts: Date.now() };
+      if (existingRec) Object.keys(data).forEach(function(k){ existingRec[k] = data[k]; });
+      else state.attendance.push(Object.assign({ id: "A" + Date.now(), parishId: attSel.parishId, date: attSel.date }, data));
+      save(); showToast(S("ተመዝግቧል","Saved")); attDraft.key = ""; renderAttendance();
     };
     el.onclick = function(e){
       var b = e.target.closest ? e.target.closest("button") : null; if (!b) return;
       var vid = b.getAttribute("data-atview"), did = b.getAttribute("data-atdel");
       if (vid){ attExpanded = attExpanded === vid ? null : vid; renderAttendance(); }
       else if (did && confirm(S("ይህን መዝገብ ማስወገድ ይፈልጋሉ?","Remove this record?"))){
-        state.attendance = state.attendance.filter(function(r){ return r.id !== did; }); save(); renderAttendance();
+        state.attendance = state.attendance.filter(function(r){ return r.id !== did; }); save(); attDraft.key = ""; renderAttendance();
       }
     };
   }
@@ -2564,6 +2603,12 @@
       '<div class="field"><label>' + S("ርዕስ/ትምህርት","Subject / topic") + '</label><input type="text" id="ro-topic"></div>' +
       '<div class="field"><label>' + S("ማስታወሻ","Note") + '</label><input type="text" id="ro-note"></div>' +
       '<button class="primary" id="ro-add">' + S("ጨምር","Add") + '</button></div>';
+    h += '<div class="card"><h2>📄 ' + S("ሮስተር ማውረድ እና ማስገባት","Download / import roster") + '</h2>' +
+      '<p class="meta">' + S("የተመዘገበውን ሮስተር በPDF ወይም በWord ያውርዱ። ሌሎች መምህራን የሰሩትን ሮስተር (Word .docx፣ .doc፣ Excel/CSV ወይም ከዚህ መተግበሪያ ያወረዱት ፋይል) እዚህ በመጫን ወደ ሮስተሩ ማስገባት ይችላሉ።","Download the roster as PDF or Word. To add rosters made by other teachers, upload their file here (Word .docx/.doc, Excel/CSV, or a file exported from this app).") + '</p>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">' +
+        '<button class="ghost" id="ro-pdf">📕 PDF</button><button class="ghost" id="ro-doc">📘 Word</button><button class="ghost" id="ro-csv">📗 CSV</button></div>' +
+      '<div class="field"><label>' + S("የሌላ መምህር ሮስተር ፋይል ያስገቡ","Import a roster file from another teacher") + '</label><input type="file" id="ro-import" accept=".docx,.doc,.html,.htm,.csv,.txt,.tsv,.json"></div>' +
+      '<p class="meta" id="ro-import-msg"></p></div>';
     var list = state.roster.slice().reverse();
     h += '<div class="card"><h2>' + S("የተመዘገበ ሮስተር","Registered roster") + ' (' + list.length + ')</h2>' +
       (list.length ? list.map(function(r){
@@ -2579,6 +2624,111 @@
       if (!day || !level){ showToast(S("ቀን እና ክፍል ያስፈልጋሉ","Day and class are required")); return; }
       state.roster.push({ id: "R" + Date.now(), day: day, level: level, teacher: $("ro-teacher").value.trim(), topic: $("ro-topic").value.trim(), note: $("ro-note").value.trim(), ts: Date.now() });
       save(); renderRoster(); showToast(S("ታክሏል","Added"));
+    };
+    function rosterTableHtml(){
+      return '<table border="1" cellspacing="0" cellpadding="6" style="border-collapse:collapse;font-family:sans-serif;font-size:13px"><tr style="background:#DCE7F7"><th>' +
+        [S("ቀን/ዕለት","Day"),S("ክፍል/ደረጃ","Level"),S("መምህር","Teacher"),S("ርዕስ/ትምህርት","Topic"),S("ማስታወሻ","Note")].join('</th><th>') + '</th></tr>' +
+        state.roster.map(function(r){ return '<tr><td>' + esc(r.day||"") + '</td><td>' + esc(r.level||"") + '</td><td>' + esc(r.teacher||"") + '</td><td>' + esc(r.topic||"") + '</td><td>' + esc(r.note||"") + '</td></tr>'; }).join("") + '</table>';
+    }
+    function rosterDocHtml(){
+      return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + esc(S("ሮስተር","Roster")) + '</title></head><body><h2>' + esc(SCHOOL_NAME_FULL) + '</h2><h3>' + esc(S("ሮስተር — የማስተማሪያ ተራ","Roster — teaching schedule")) + '</h3>' + rosterTableHtml() + '</body></html>';
+    }
+    $("ro-pdf").onclick = function(){
+      if (!state.roster.length){ showToast(S("ሮስተሩ ባዶ ነው","Roster is empty")); return; }
+      var w = window.open("", "_blank"); if (!w) return;
+      w.document.write(rosterDocHtml()); w.document.close(); w.focus(); setTimeout(function(){ w.print(); }, 300);
+    };
+    $("ro-doc").onclick = function(){
+      if (!state.roster.length){ showToast(S("ሮስተሩ ባዶ ነው","Roster is empty")); return; }
+      downloadTextFile("roster.doc", rosterDocHtml(), "application/msword");
+    };
+    $("ro-csv").onclick = function(){
+      if (!state.roster.length){ showToast(S("ሮስተሩ ባዶ ነው","Roster is empty")); return; }
+      downloadTextFile("roster.csv", toCSV(["day","level","teacher","topic","note"], state.roster.map(function(r){ return [r.day||"", r.level||"", r.teacher||"", r.topic||"", r.note||""]; })));
+    };
+    function rosterRowsFromTable(tbl){
+      var out = [];
+      tbl.querySelectorAll("tr").forEach(function(tr){ out.push(Array.prototype.map.call(tr.children, function(c){ return (c.textContent || "").replace(/\s+/g, " ").trim(); })); });
+      return out;
+    }
+    // .docx = zip፤ word/document.xml ን አውጥቶ ሠንጠረዡን ያነባል (ተጨማሪ ላይብረሪ አያስፈልግም)
+    function readDocxRows(buf){
+      var dv = new DataView(buf), u8 = new Uint8Array(buf), eocd = -1;
+      for (var i = u8.length - 22; i >= 0; i--){ if (dv.getUint32(i, true) === 0x06054b50){ eocd = i; break; } }
+      if (eocd < 0) return Promise.reject(new Error("zip"));
+      var cnt = dv.getUint16(eocd + 10, true), off = dv.getUint32(eocd + 16, true), found = null;
+      for (var n = 0; n < cnt; n++){
+        var nl = dv.getUint16(off + 28, true), el2 = dv.getUint16(off + 30, true), cl = dv.getUint16(off + 32, true);
+        var name = new TextDecoder().decode(u8.subarray(off + 46, off + 46 + nl));
+        if (name === "word/document.xml"){ found = { method: dv.getUint16(off + 10, true), csize: dv.getUint32(off + 20, true), lh: dv.getUint32(off + 42, true) }; break; }
+        off += 46 + nl + el2 + cl;
+      }
+      if (!found) return Promise.reject(new Error("nodoc"));
+      var lnl = dv.getUint16(found.lh + 26, true), lel = dv.getUint16(found.lh + 28, true), start = found.lh + 30 + lnl + lel;
+      var data = u8.subarray(start, start + found.csize);
+      var p = found.method === 0 ? Promise.resolve(new Blob([data]).arrayBuffer()) :
+        new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer();
+      return p.then(function(ab){
+        var xml = new DOMParser().parseFromString(new TextDecoder().decode(ab), "application/xml");
+        var rows = [];
+        Array.prototype.forEach.call(xml.getElementsByTagName("w:tr"), function(tr){
+          var cells = [];
+          Array.prototype.forEach.call(tr.getElementsByTagName("w:tc"), function(tc){
+            cells.push(Array.prototype.map.call(tc.getElementsByTagName("w:t"), function(t){ return t.textContent; }).join("").trim());
+          });
+          rows.push(cells);
+        });
+        return rows;
+      });
+    }
+    function rosterHeaderMap(row){
+      var m = {};
+      row.forEach(function(c, i){
+        var t = String(c).toLowerCase();
+        if (/ቀን|ዕለት|day|date/.test(t)) m.day = i;
+        else if (/ክፍል|ደረጃ|level|class/.test(t)) m.level = i;
+        else if (/መምህር|teacher/.test(t)) m.teacher = i;
+        else if (/ርዕስ|ትምህርት|topic|subject/.test(t)) m.topic = i;
+        else if (/ማስታወሻ|note/.test(t)) m.note = i;
+      });
+      return (m.day !== undefined || m.level !== undefined || m.teacher !== undefined) ? m : null;
+    }
+    function importRosterRows(rows){
+      if (!rows.length) return 0;
+      var map = rosterHeaderMap(rows[0]), start = 0;
+      if (map) start = 1; else map = { day: 0, level: 1, teacher: 2, topic: 3, note: 4 };
+      var added = 0;
+      rows.slice(start).forEach(function(r){
+        function g(k){ return map[k] === undefined ? "" : String(r[map[k]] || "").trim(); }
+        var item = { day: g("day"), level: g("level"), teacher: g("teacher"), topic: g("topic"), note: g("note") };
+        if (!item.day && !item.level) return;
+        var dup = state.roster.some(function(x){ return x.day === item.day && x.level === item.level && x.teacher === item.teacher && x.topic === item.topic; });
+        if (dup) return;
+        item.id = "R" + Date.now() + "_" + added; item.ts = Date.now();
+        state.roster.push(item); added++;
+      });
+      return added;
+    }
+    $("ro-import").onchange = function(){
+      var f = this.files && this.files[0], msg = $("ro-import-msg"); if (!f) return;
+      msg.textContent = S("በማንበብ ላይ…","Reading…");
+      function done(rows){
+        var n = importRosterRows(rows);
+        if (n){ save(); renderRoster(); showToast(fillTpl(S("%N% ረድፎች ገብተዋል","%N% rows imported"), { N: n }, false)); }
+        else msg.textContent = S("ምንም አዲስ ረድፍ አልተገኘም (ፋይሉ ባዶ ነው ወይም ሁሉም ቀድሞ አሉ)።","No new rows found (file empty or all already present).");
+      }
+      function fail(){ msg.textContent = S("ፋይሉን ማንበብ አልተቻለም። Word (.docx)፣ CSV ወይም ከዚህ መተግበሪያ ያወረዱትን ፋይል ይጠቀሙ።","Could not read this file. Use Word (.docx), CSV or a file exported from this app."); }
+      var name = f.name.toLowerCase();
+      if (/\.docx$/.test(name)) f.arrayBuffer().then(readDocxRows).then(done).catch(fail);
+      else f.text().then(function(t){
+        if (/\.json$/.test(name)){
+          var arr = JSON.parse(t); arr = Array.isArray(arr) ? arr : (arr.roster || []);
+          done(arr.map(function(x){ return [x.day, x.level, x.teacher, x.topic, x.note]; }));
+        } else if (/\.(doc|html?)$/.test(name) || /<table/i.test(t)){
+          var d = new DOMParser().parseFromString(t, "text/html"), tb = d.querySelector("table");
+          if (!tb) return fail(); done(rosterRowsFromTable(tb));
+        } else done(parseCSV(t));
+      }).catch(fail);
     };
     el.onclick = function(e){
       var b = e.target.closest ? e.target.closest("button") : null; if (!b) return;
@@ -4946,12 +5096,13 @@
   var RANK = {owner:3, admin:2, collector:1, viewer:0};
   var SECTIONS = ["dashboard","depts","parishes","members","students","teachers","documents","lessons","roster","attendance","grades","idcard","chat","tools","cert","io","storage","audit","comms","messages","work","exam","exchange","agenda"];
   var DEPTS = [
-    {id:"office", n:"የሰ/ት/ቤቱ ጽሕፈት ቤት (ዋና አመራር)", roles:[["chair","ሰብሳቢ"],["vice","ምክትል ሰብሳቢ"],["secr","ጸሐፊ"]], subs:[]},
-    {id:"edu", n:"ትምህርትና ሥርዓተ ትምህርት ክፍል", roles:[["head","ኃላፊ"],["secr","ጸሐፊ"]], subs:["ሥርዓተ ትምህርት ዝግጅት|የደረጃ ትምህርቶችን ማዘጋጀትና ማሻሻል","መምህራን ምደባና ሥልጠና|መምህራንን መመደብ፣ መከታተልና ማሠልጠን","ፈተናና ውጤት|ፈተና ማዘጋጀት፣ ውጤት መያዝና ምረቃ","ቤተ መጻሕፍት|መጻሕፍትና የትምህርት መርጃዎችን ማስተዳደር"]},
+    {id:"office", n:"የሰ/ት/ቤቱ ጽሕፈት ቤት (ዋና አመራር)", roles:[["chair","ሰብሳቢ"],["vice","ምክትል ሰብሳቢ"],["secr","ጸሐፊ"]], subs:["የሰበካ ጉባኤ ተወካይ|ከሰበካ ጉባኤ ጋር ማገናኘት፣ የሰ/ት/ቤቱን ሪፖርት ማቅረብ፣ ድጋፍና ክትትል ማስተባበር"]},
+    {id:"edu", n:"ትምህርትና ሥርዓተ ትምህርት ክፍል", roles:[["head","ኃላፊ"],["secr","ጸሐፊ"]], subs:["ሥርዓተ ትምህርት ዝግጅት|የደረጃ ትምህርቶችን ማዘጋጀትና ማሻሻል","መምህራን ምደባና ሥልጠና|መምህራንን መመደብ፣ መከታተልና ማሠልጠን","ፈተናና ውጤት|ፈተና ማዘጋጀት፣ ውጤት መያዝና ምረቃ","ቤተ መጻሕፍት|መጻሕፍትና የትምህርት መርጃዎችን ማስተዳደር","አብነት ክፍል|የአብነት ትምህርት (ንባብ፣ ዳዊት፣ ዜማ) ማስተባበር"]},
     {id:"art", n:"መዝሙርና ኪነ ጥበብ ክፍል", roles:[["head","ኃላፊ"],["secr","ጸሐፊ"]], subs:["መዘምራን|የመዘምራን ቡድን መምራትና ልምምድ","ኪነ ጥበብ|ትያትር፣ ግጥምና ሥነ ጽሑፍ ዝግጅቶች","ዝማሬ ሥልጠና|ለሕፃናትና ለወጣቶች የዝማሬ ትምህርት"]},
-    {id:"mem", n:"አባላት አስተዳደር ክፍል", roles:[["head","ኃላፊ"],["secr","ጸሐፊ"]], subs:["ምዝገባና መረጃ|አባላትን መመዝገብና መረጃ ማደራጀት","ክትትልና ጉብኝት|የቀሩና የታመሙ አባላትን መጎብኘት","አዲስ አባላት አቀባበል|አዲስ የገቡትን መቀበልና ማስተዋወቅ"]},
-    {id:"fin", n:"ፋይናንስ ክፍል", roles:[["head","ኃላፊ"],["secr","ጸሐፊ"]], subs:["ገንዘብ ያዥ|ገቢና ወጪ መቀበልና መጠበቅ","ሒሳብ መዝጋቢ|የሒሳብ መዝገብ መያዝና ሪፖርት","ገቢ ማሰባሰብ|ልዩ ልዩ የገቢ ምንጮችን ማፈላለግ"]},
-    {id:"dev", n:"ልማት ክፍል", roles:[["head","ኃላፊ"],["secr","ጸሐፊ"]], subs:["ፕሮጀክቶች|የልማት ፕሮጀክቶችን መቅረጽና መከታተል","ንብረት አስተዳደር|የሰ/ት/ቤቱን ንብረት መመዝገብና መጠበቅ","ሀብት ማፍራት|ገቢ የሚያስገኙ ሥራዎችን ማስተባበር"]},
+    {id:"mem", n:"አባላት አስተዳደር ክፍል", roles:[["head","ኃላፊ"],["secr","ጸሐፊ"]], subs:["ምዝገባና መረጃ|አባላትን መመዝገብና መረጃ ማደራጀት","ክትትልና ጉብኝት|የቀሩና የታመሙ አባላትን መጎብኘት","አዲስ አባላት አቀባበል|አዲስ የገቡትን መቀበልና ማስተዋወቅ","መማክርት (የንስሐ አባት)|የንስሐ አባት አገልግሎትና መንፈሳዊ ምክር ማስተባበር"]},
+    {id:"fin", n:"ገንዘብ ክፍል", roles:[["head","ኃላፊ"],["secr","ጸሐፊ"]], subs:["ገንዘብ ያዥ|ገቢና ወጪ መቀበልና መጠበቅ","ሒሳብ መዝጋቢ|የሒሳብ መዝገብ መያዝና ሪፖርት","ገቢ ማሰባሰብ|ልዩ ልዩ የገቢ ምንጮችን ማፈላለግ"]},
+    {id:"dev", n:"ልማት ክፍል", roles:[["head","ኃላፊ"],["secr","ጸሐፊ"]], subs:["ፕሮጀክቶች|የልማት ፕሮጀክቶችን መቅረጽና መከታተል","ተሳትፎ ማስተባበር|የአባላትንና የምእመናንን የልማት ተሳትፎ ማሰባሰብና ማስተባበር","ሀብት ማፍራት|ገቢ የሚያስገኙ ሥራዎችን ማስተባበር"]},
+    {id:"prop", n:"ንብረት ክፍል", roles:[["head","ኃላፊ"],["secr","ጸሐፊ"]], subs:["ንብረት መዝጋቢ|የሰ/ት/ቤቱን ንብረት መመዝገብና መጠበቅ","ጥገናና እድሳት|ንብረት መጠገንና ማደስ","አጠቃቀም ክትትል|ንብረት የሚወሰድበትና የሚመለስበትን መከታተል"]},
     {id:"plan", n:"ዕቅድና ሪፖርት ክፍል", roles:[["head","ኃላፊ"],["secr","ጸሐፊ"]], subs:["ዕቅድ ዝግጅት|ዓመታዊና ወርኃዊ ዕቅድ ማዘጋጀት","ግምገማና ሪፖርት|አፈጻጸምን መገምገምና ሪፖርት ማቅረብ","ስታቲስቲክስ|የአባላትና የተማሪዎች አኃዝ መያዝ"]},
     {id:"aud", n:"ኦዲትና ኢንስፔክሽን ክፍል", roles:[["head","ኃላፊ"],["secr","ጸሐፊ"]], subs:["የሒሳብ ኦዲት|ገቢና ወጪን መመርመር","ሥነ ሥርዓት ክትትል|ደንብና መመሪያ መከበሩን መቆጣጠር"]}
   ];
@@ -4999,6 +5150,16 @@
   function renderDepts(){
     var el = document.getElementById("tab-depts");
     var edit = (role === "owner" || role === "admin");
+    if (!state.depts) state.depts = {};
+    if (!state.depts._mig1){
+      state.depts._mig1 = 1;
+      if (state.depts.dev && state.depts.dev.s1 && !(state.depts.prop && state.depts.prop.head)){
+        state.depts.prop = state.depts.prop || {};
+        state.depts.prop.s0 = state.depts.dev.s1;
+        delete state.depts.dev.s1;
+      }
+      save();
+    }
     var h = '<div class="card"><h2>' + S("ክፍላት፣ የአመራር ሚናዎችና የንዑስ ክፍል ሥራ ድርሻ","Departments, leadership roles & sub-department duties") + '</h2>' +
       '<p class="meta">' + S("ለእያንዳንዱ ሚናና ንዑስ ክፍል ከተመዘገቡ አባላት ይመድቡ።","Assign a registered member to every role and sub-department.") + '</p>' +
       (state.members.length ? '' : '<div class="note">' + S("መጀመሪያ በ«አባላት» ትር አባላትን ይመዝግቡ።","Register members in the Members tab first.") + '</div>') + '</div>';
@@ -5123,7 +5284,7 @@
       };
       var stBtn = document.getElementById("lk-student");
       if (stBtn) stBtn.onclick = function(){ clearTimeout(tm); studentLoginStep1(el, done); };
-      tick(); setTimeout(function(){ pin.focus(); }, 50);
+      tick(); setTimeout(function(){ if (pin) pin.focus(); }, 50);
     });
   }
   function setupOwnerPin(){
@@ -5386,7 +5547,7 @@
         else { er.textContent = S("ኮድ አልተገኘም","Code not found"); }
       });
     };
-    setTimeout(function(){ document.getElementById("stl-code").focus(); }, 50);
+    setTimeout(function(){ var f = document.getElementById("stl-code"); if (f) f.focus(); }, 50);
   }
   function studentLoginStep2Setup(el, done, st){
     el.innerHTML = '<div class="lb"><img alt="" src="'+LOGO+'"><h3>'+esc(st.name)+'</h3>' +
@@ -5427,7 +5588,7 @@
     }
     document.getElementById("stl-ok").onclick = go;
     document.getElementById("stl-p").onkeydown = function(e){ if (e.key === "Enter") go(); };
-    setTimeout(function(){ document.getElementById("stl-p").focus(); }, 50);
+    setTimeout(function(){ var f = document.getElementById("stl-p"); if (f) f.focus(); }, 50);
   }
   function pullSharedData(cfg, elForMsg){
     return fetch(cfg.url, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ key: cfg.key, action: "pull" }) })
@@ -5536,6 +5697,11 @@
           var on = !((state.access[r]||{})[t] === false);
           return '<td><input type="checkbox" data-r="'+r+'" data-t="'+t+'"'+(on?' checked':'')+'></td>'; }).join("") + '</tr>'; }).join("") +
       '</table></div><p class="meta">' + S("ባለቤት ሁልጊዜ ሁሉንም ያያል። ምልክት የሌለበት ክፍል ለዚያ ሚና ይደበቃል።","The owner always sees everything. An unticked section is hidden for that role.") + '</p></div>' +
+      '<div class="card"><h2>📝 ' + S("መረጃ ማስተካከል","Edit data") + '</h2>' +
+        '<p class="meta">' + S("የተመዘገቡ አባላት፣ ተማሪዎች እና መምህራን መረጃ ማስተካከል የሚችሉት ምልክት የተደረገባቸው ሚናዎች ብቻ ናቸው። ምልክት ካነሱ ያ ሚና መረጃውን ማየት እና መጠቀም (ለአቴንዳንስ፣ ሮስተር፣ መታወቅያ) ይችላል፤ ማስተካከል ግን አይችልም። ባለቤት ሁልጊዜ ይችላል።","Only ticked roles may edit registered member, student and teacher data. Unticked roles can still view and use it (attendance, roster, ID card) but cannot change it. The owner always can.") + '</p>' +
+        roles.map(function(r){
+          var on = !((state.access[r]||{}).editData === false);
+          return '<label class="toggle" style="display:block;padding:4px 0"><input type="checkbox" data-r="'+r+'" data-edit="1"'+(on?' checked':'')+'> '+esc(roleName(r))+'</label>'; }).join("") + '</div>' +
       '<div class="card"><h2>PIN</h2>' + ["owner","admin","collector","viewer"].map(function(r){
         return '<div class="field"><label>'+esc(roleName(r))+' — '+(sec.h[r] ? '✔ ' + S("ተዘጋጅቷል","set") : S("አልተዘጋጀም","not set"))+'</label>' +
           '<div class="grid2"><input type="password" inputmode="numeric" maxlength="12" id="pn-'+r+'" placeholder="'+S("አዲስ PIN","new PIN")+'"><button class="primary" data-setpin="'+r+'">'+S("አስቀምጥ","Save")+'</button></div></div>'; }).join("") +
@@ -5549,6 +5715,9 @@
     el.querySelectorAll('input[data-t]').forEach(function(c){ c.onchange = function(){
       var r = c.getAttribute("data-r"), t = c.getAttribute("data-t");
       if (!state.access[r]) state.access[r] = {}; state.access[r][t] = c.checked; save(); logAction("sec_perm", r + "/" + t + "=" + c.checked); }; });
+    el.querySelectorAll('input[data-edit]').forEach(function(c){ c.onchange = function(){
+      var r = c.getAttribute("data-r");
+      if (!state.access[r]) state.access[r] = {}; state.access[r].editData = c.checked; save(); logAction("sec_perm", r + "/editData=" + c.checked); }; });
     el.querySelectorAll("[data-setpin]").forEach(function(b){ b.onclick = function(){
       var r = b.getAttribute("data-setpin"), v = document.getElementById("pn-"+r).value, er = document.getElementById("pn-err");
       if (!/^[0-9]{4,12}$/.test(v)){ er.style.display = "block"; er.textContent = S("4–12 ቁጥሮች ብቻ","4–12 digits only"); return; }
