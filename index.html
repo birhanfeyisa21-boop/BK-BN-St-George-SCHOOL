@@ -3097,7 +3097,7 @@
   }
   function letterHeader(refNo, eth, todayStr){
     return '<div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;">' +
-        '<img src="'+LOGO+'" style="width:58px;height:58px;object-fit:contain;flex:none;">' +
+        schoolLogoImg(58) +
         '<div style="flex:1;text-align:center;">' +
           '<h3 style="margin:0;">' + esc(SCHOOL_NAME_FULL) + '</h3>' +
           '<div style="font-size:11px;color:#5F6B7F;margin-top:2px;">' + S("ትምህርት ክፍል","Education Department") + '</div>' +
@@ -3124,7 +3124,7 @@
     var el = document.getElementById("tab-cert");
 
     el.innerHTML =
-      '<div class="note">'+TCert("tabNote")+'</div>' +
+      '<div class="note">'+TCert("tabNote")+'</div>' + schoolLogoCardHtml() +
       '<div class="card">' +
         '<div class="field"><label>'+TCert("typeLabel")+'</label><select id="cert-type">' +
           LETTER_TYPES.map(function(t){ return '<option value="'+t+'">'+esc(letterTypeLabel(t))+'</option>'; }).join('') +
@@ -3283,7 +3283,7 @@
   function renderIdCard(){
     var el = document.getElementById("tab-idcard");
     el.innerHTML =
-      '<div class="note">' + S("ለተማሪ፣ ለአባል ወይም ለመምህር የሚያገለግል በራሪ መታወቂያ ካርድ እዚህ ያዘጋጁ፤ ያትሙ።","Prepare a printable ID/badge for a student, member or teacher here, and print it.") + '</div>' +
+      '<div class="note">' + S("ለተማሪ፣ ለአባል ወይም ለመምህር የሚያገለግል በራሪ መታወቂያ ካርድ እዚህ ያዘጋጁ፤ ያትሙ።","Prepare a printable ID/badge for a student, member or teacher here, and print it.") + '</div>' + schoolLogoCardHtml() +
       '<div class="card">' +
         '<div class="grid2">' +
           '<div class="field"><label>' + S("ዓይነት","Type") + '</label><select id="id-type">' +
@@ -3335,7 +3335,7 @@
       var photo = rec && rec.photo && rec.photo.dataUrl ? rec.photo.dataUrl : "";
       return '<div style="width:340px;max-width:100%;margin:0 auto;border:2px solid #1E4FA0;border-radius:14px;overflow:hidden;font-family:inherit;background:#fff;">' +
         '<div style="background:linear-gradient(135deg,#0F2A63,#1E4FA0);color:#fff;padding:10px 12px;display:flex;align-items:center;gap:8px;">' +
-          '<img src="' + LOGO + '" style="width:34px;height:34px;object-fit:contain;flex:none;">' +
+          schoolLogoImg(34) +
           '<div style="font-size:11px;line-height:1.3;">' + esc(SCHOOL_NAME_FULL) + '</div>' +
         '</div>' +
         '<div style="display:flex;gap:12px;padding:14px;">' +
@@ -3838,6 +3838,40 @@
     reader.onerror = function(){ cb(null); };
     reader.readAsDataURL(file);
   }
+  // የሰ/ት/ቤቱ አርማ፦ ተጠቃሚው ራሱ የሚያስገባው (የመተግበሪያው LOGO የሰ/ት/ቤቱ አርማ አይደለም)
+  function schoolLogoImg(px){
+    if (state.schoolLogo) return '<img src="' + state.schoolLogo + '" style="width:' + px + 'px;height:' + px + 'px;object-fit:contain;flex:none;">';
+    return '<div style="width:' + px + 'px;height:' + px + 'px;flex:none;border:1px dashed #B3261E;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#B3261E;font-size:9px;line-height:1.1;text-align:center;">' + S("አርማ ያስገቡ","Add logo") + '</div>';
+  }
+  function schoolLogoCardHtml(){
+    return '<div class="card"><h2>' + S("የሰ/ት/ቤቱ አርማ","School logo") + '</h2>' +
+      (state.schoolLogo
+        ? '<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;"><img src="' + state.schoolLogo + '" style="width:64px;height:64px;object-fit:contain;"><span class="meta">' + S("በደብዳቤና በመታወቂያ ላይ ይታያል።","Shown on letters and ID cards.") + '</span></div>'
+        : '<div class="note" style="border-left:4px solid #B3261E;">' + S("⚠️ እባክዎ የሰንበት ትምህርት ቤቱን አርማ ያስገቡ። በደብዳቤና በመታወቂያ ላይ የሚታየው የሰ/ት/ቤቱ አርማ አልገባም።","⚠️ Please insert the Sunday school's logo. The school logo has not been added yet, so letters and ID cards show an empty logo box.") + '</div>') +
+      '<input type="file" class="sl-file" accept="image/*"> ' +
+      (state.schoolLogo ? '<button class="ghost sl-clear">' + S("አርማውን አስወግድ","Remove logo") + '</button>' : '') + '</div>';
+  }
+  document.addEventListener("change", function(e){
+    var t = e.target;
+    if (!t || !t.classList || !t.classList.contains("sl-file") || !t.files || !t.files[0]) return;
+    readImageResized(t.files[0], 400, 0.92, function(url){
+      if (!url){ showToast(S("ምስሉን ማንበብ አልተቻለም","Could not read the image")); return; }
+      state.schoolLogo = url; save(); showToast(S("አርማው ተቀምጧል","Logo saved")); renderAll();
+    });
+  });
+  document.addEventListener("click", function(e){
+    var t = e.target;
+    if (t && t.classList && t.classList.contains("sl-clear")){ state.schoolLogo = ""; save(); renderAll(); }
+  });
+  function wRegPeople(){
+    var out = [];
+    [["members",S("አባል","Member")],["teachers",S("መምህር","Teacher")],["students",S("ተማሪ","Student")]].forEach(function(g){
+      (state[g[0]] || []).forEach(function(x){
+        if (x && x.code && x.name) out.push({ code: String(x.code).toUpperCase(), name: String(x.name).replace(/\|/g," "), kind: g[1], dept: x.deptId ? deptName(x.deptId) : "" });
+      });
+    });
+    return out;
+  }
   function wFileInput(inputEl, cb){
     var f = inputEl && inputEl.files && inputEl.files[0];
     if (!f) return cb(null);
@@ -3873,8 +3907,18 @@
     return '<div class="card"><h2>' + S("ሥራ ክትትል — ማዋቀር (ባለቤት)","Work tracking — setup (owner)") + '</h2>' +
       '<div class="field"><label>Script URL (…/exec)</label><input type="text" id="w-url" value="' + esc(c.url || "") + '"></div>' +
       '<div class="field"><label>' + S("የአስተዳዳሪ ሚስጥር","Admin secret") + '</label><input type="password" id="w-adm" value="' + esc(c.admin || "") + '"></div>' +
-      '<div class="field"><label>' + S("ሰዎች — በየመስመሩ፦ ኮድ|ስም|ሚና|ክፍል|የበላይ ኮድ","People — one per line: code|name|role|dept|boss code") + '</label>' +
-      '<textarea id="w-roster" placeholder="W01|ስም|office||\nW02|ስም|head|ትምህርት|\nW03|ስም|sub|ትምህርት|W02"></textarea></div>' +
+      '<div class="note">' + S("ሰዎችን ከተመዘገቡት መርጠው ይጨምሩ — እያንዳንዱ ሰው በምዝገባ ኮዱ ይገባል (ኮድ መፍጠር ወይም መጻፍ አያስፈልግም)።","Pick people from the registered list — each person logs in with their registration code (no need to invent or type codes).") + '</div>' +
+      '<div class="field"><label>' + S("የተመዘገበ ሰው","Registered person") + '</label><select id="w-pp"><option value="">— ' + S("ይምረጡ","choose") + ' —</option>' +
+        wRegPeople().map(function(x){ return '<option value="' + esc(x.code) + '">' + esc(x.name) + ' · ' + esc(x.kind) + ' · ' + esc(x.code) + '</option>'; }).join("") + '</select></div>' +
+      '<div class="grid2"><div class="field"><label>' + S("ሚና","Role") + '</label><select id="w-pr">' +
+        '<option value="sub">' + S("ንዑስ አባል","Sub-member") + '</option><option value="head">' + S("የክፍል አመራር","Department leader") + '</option><option value="office">' + S("ጽሕፈት ቤት","Office") + '</option></select></div>' +
+      '<div class="field"><label>' + S("ክፍል","Department") + '</label><select id="w-pd"><option value="">—</option>' +
+        DEPTS.map(function(d){ return '<option value="' + esc(d.n) + '">' + esc(d.n) + '</option>'; }).join("") + '</select></div></div>' +
+      '<div class="field"><label>' + S("የበላይ (ለንዑስ አባል)","Boss (for sub-members)") + '</label><select id="w-pb"><option value="">—</option></select></div>' +
+      '<button class="primary" id="w-padd">' + S("➕ ጨምር","➕ Add") + '</button> ' +
+      '<button class="ghost" id="w-pall">' + S("ሁሉንም የተመዘገቡ እንደ ንዑስ አባል ጨምር","Add all registered as sub-members") + '</button>' +
+      '<div class="field" style="margin-top:12px;"><label>' + S("የተመረጡት ዝርዝር (ከላይ ሲጨምሩ ራሱ ይሞላል፤ በእጅም ማስተካከል ይቻላል) — ኮድ|ስም|ሚና|ክፍል|የበላይ ኮድ","Selected list (fills automatically; editable) — code|name|role|dept|boss code") + '</label>' +
+      '<textarea id="w-roster" placeholder="P01-M0001|ስም|office||\nP01-M0002|ስም|head|ትምህርት|\nP01-S0003|ስም|sub|ትምህርት|P01-M0002"></textarea></div></div>' +
       '<p class="meta">' + S("ሚና፦ office = ጽሕፈት ቤት (ሁሉንም ያያል)፣ head = የክፍል አመራር፣ sub = ንዑስ አባል (የተላለፈለትን ብቻ ያያል)።","Role: office = sees everything, head = department leader, sub = sub-member (sees only what is assigned).") + '</p>' +
       '<p class="error" id="w-aerr"></p>' +
       '<button class="primary" id="w-save">' + S("አስቀምጥ እና ዝርዝሩን ላክ","Save & publish list") + '</button> ' +
@@ -3900,8 +3944,8 @@
       h += role === "owner" ? "" : '<div class="card"><h2>' + S("ሥራ ክትትል","Work tracking") + '</h2><p class="meta">' + S("ባለቤቱ ገና አላዘጋጀውም።","The owner hasn't set this up yet.") + '</p></div>';
     } else if (!workMe){
       h += '<div class="card"><h2>' + S("ሥራ ክትትል — መግቢያ","Work tracking — login") + '</h2>' +
-        '<p class="meta">' + S("ጽሕፈት ቤቱ የሰጠዎትን ኮድ እና የራስዎን PIN ያስገቡ። የመጀመሪያ ጊዜ ከሆነ PIN እርስዎ ይፈጥራሉ።","Enter the code the office gave you and your own PIN. First time: you create the PIN.") + '</p>' +
-        '<div class="field"><input type="text" id="w-code" placeholder="W01" autocomplete="off" style="text-transform:uppercase"></div>' +
+        '<p class="meta">' + S("በምዝገባ ጊዜ የተሰጠዎትን ኮድ እና የራስዎን PIN ያስገቡ። የመጀመሪያ ጊዜ ከሆነ PIN እርስዎ ይፈጥራሉ።","Enter the code the office gave you and your own PIN. First time: you create the PIN.") + '</p>' +
+        '<div class="field"><input type="text" id="w-code" placeholder="P01-M0001" autocomplete="off" style="text-transform:uppercase"></div>' +
         '<div class="field"><input type="password" id="w-pin" inputmode="numeric" maxlength="12" placeholder="PIN"></div>' +
         '<p class="error" id="w-er" style="display:block"></p>' +
         '<button class="primary" id="w-login">' + S("ግባ","Log in") + '</button></div>';
@@ -3962,6 +4006,41 @@
         .filter(function(r){ return r.code && r.name && /^(office|head|sub)$/.test(r.role); });
       wPost({ type: "a_roster", admin: adm, roster: roster }, function(r){ if (r.ok){ showToast(S("ዝርዝሩ ተላከ","List published") + " (" + roster.length + ")"); renderWork(); } else { er.textContent = r.error; er.style.display = "block"; } });
     };
+    if ($("w-padd")){
+      var wLines = function(){ return $("w-roster").value.split("\n").map(function(l){ return l.trim(); }).filter(Boolean); };
+      var wBossRefresh = function(){
+        var sel = $("w-pb"), cur = sel.value, o = '<option value="">— ' + S("የበላይ የለም","no boss") + ' —</option>';
+        wLines().forEach(function(l){ var p = l.split("|").map(function(x){ return x.trim(); });
+          if (p[0] && (p[2] === "office" || p[2] === "head")) o += '<option value="' + esc(p[0].toUpperCase()) + '">' + esc(p[1] || p[0]) + ' · ' + esc(p[0]) + '</option>'; });
+        sel.innerHTML = o; sel.value = cur;
+      };
+      var wUpsert = function(lines, code, line){
+        var done = false;
+        for (var i = 0; i < lines.length; i++) if (lines[i].split("|")[0].trim().toUpperCase() === code){ lines[i] = line; done = true; }
+        if (!done) lines.push(line);
+      };
+      wBossRefresh();
+      $("w-roster").oninput = wBossRefresh;
+      $("w-padd").onclick = function(){
+        var code = $("w-pp").value;
+        if (!code){ showToast(S("መጀመሪያ ሰው ይምረጡ","Choose a person first")); return; }
+        var pr = wRegPeople().filter(function(x){ return x.code === code; })[0]; if (!pr) return;
+        var rl = $("w-pr").value, dp = $("w-pd").value || pr.dept;
+        var lines = wLines();
+        wUpsert(lines, code, [code, pr.name, rl, dp, rl === "sub" ? $("w-pb").value : ""].join("|"));
+        $("w-roster").value = lines.join("\n"); wBossRefresh();
+        showToast(S("ተጨምሯል — «አስቀምጥ እና ዝርዝሩን ላክ» ይጫኑ","Added — now tap Save & publish list"));
+      };
+      $("w-pall").onclick = function(){
+        var lines = wLines(), n = 0;
+        wRegPeople().forEach(function(pr){
+          var exists = lines.some(function(l){ return l.split("|")[0].trim().toUpperCase() === pr.code; });
+          if (!exists){ lines.push([pr.code, pr.name, "sub", pr.dept, ""].join("|")); n++; }
+        });
+        $("w-roster").value = lines.join("\n"); wBossRefresh();
+        showToast(n + " " + S("ሰዎች ተጨምረዋል — «አስቀምጥ እና ዝርዝሩን ላክ» ይጫኑ","added — now tap Save & publish list"));
+      };
+    }
     if ($("w-reset")) $("w-reset").onclick = function(){
       var code = prompt(S("የማን ኮድ PIN ይጥፋ?","Whose code should get a PIN reset?")); if (!code || !wCfg().url) return;
       wPost({ type: "a_resetpin", admin: wCfg().admin, code: code.trim().toUpperCase() }, function(r){ showToast(r.ok ? S("ተደርጓል","Done") : (r.error || wNet())); });
@@ -4091,7 +4170,7 @@
     if (!workMe){
       el.innerHTML = '<div class="card"><h2>' + S("የቡድን ውይይት — መግቢያ","Group Chat — login") + '</h2>' +
         '<p class="meta">' + S("ይህ «ሥራ ክትትል» ከሚጠቀመው ተመሳሳይ ኮድ/PIN ይጠቀማል። ጽሕፈት ቤቱ የሰጠዎትን ኮድ እና PIN ያስገቡ።","This uses the same code/PIN as Work Tracking. Enter the code the office gave you and your PIN.") + '</p>' +
-        '<div class="field"><input type="text" id="ch-code" placeholder="W01" autocomplete="off" style="text-transform:uppercase"></div>' +
+        '<div class="field"><input type="text" id="ch-code" placeholder="P01-M0001" autocomplete="off" style="text-transform:uppercase"></div>' +
         '<div class="field"><input type="password" id="ch-pin" inputmode="numeric" maxlength="12" placeholder="PIN"></div>' +
         '<p class="error" id="ch-er" style="display:block"></p>' +
         '<button class="primary" id="ch-login">' + S("ግባ","Log in") + '</button></div>';
