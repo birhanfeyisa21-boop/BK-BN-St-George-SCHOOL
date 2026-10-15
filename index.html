@@ -2631,7 +2631,7 @@
         state.roster.map(function(r){ return '<tr><td>' + esc(r.day||"") + '</td><td>' + esc(r.level||"") + '</td><td>' + esc(r.teacher||"") + '</td><td>' + esc(r.topic||"") + '</td><td>' + esc(r.note||"") + '</td></tr>'; }).join("") + '</table>';
     }
     function rosterDocHtml(){
-      return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + esc(S("ሮስተር","Roster")) + '</title></head><body><h2>' + esc(SCHOOL_NAME_FULL) + '</h2><h3>' + esc(S("ሮስተር — የማስተማሪያ ተራ","Roster — teaching schedule")) + '</h3>' + rosterTableHtml() + '</body></html>';
+      return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + esc(S("ሮስተር","Roster")) + '</title></head><body><h2>' + esc(schoolNameFull()) + '</h2><h3>' + esc(S("ሮስተር — የማስተማሪያ ተራ","Roster — teaching schedule")) + '</h3>' + rosterTableHtml() + '</body></html>';
     }
     $("ro-pdf").onclick = function(){
       if (!state.roster.length){ showToast(S("ሮስተሩ ባዶ ነው","Roster is empty")); return; }
@@ -3089,7 +3089,8 @@
 
 
   // ---------- certificates (official printable documents) ----------
-  var SCHOOL_NAME_FULL = S("የለገበሪ ቅዱስ ጊዮርጊስ እና በዓታ ለማርያም ሆህተ ብርሃን ሰንበት ትምህርት ቤት","Legeberi St. George & Beata LeMariam \"Hohite Birhan\" Sunday School");
+  var SCHOOL_NAME_DEFAULT = S("የለገበሪ ቅዱስ ጊዮርጊስ እና በዓታ ለማርያም ሆህተ ብርሃን ሰንበት ትምህርት ቤት","Legeberi St. George & Beata LeMariam \"Hohite Birhan\" Sunday School");
+  function schoolNameFull(){ return (state.schoolName && String(state.schoolName).trim()) || SCHOOL_NAME_DEFAULT; }
   function nextLetterRef(){
     var eth = todayStrings();
     state.letterSeq = (state.letterSeq || 0) + 1;
@@ -3099,7 +3100,7 @@
     return '<div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;">' +
         schoolLogoImg(58) +
         '<div style="flex:1;text-align:center;">' +
-          '<h3 style="margin:0;">' + esc(SCHOOL_NAME_FULL) + '</h3>' +
+          '<h3 style="margin:0;">' + esc(schoolNameFull()) + '</h3>' +
           '<div style="font-size:11px;color:#5F6B7F;margin-top:2px;">' + S("ትምህርት ክፍል","Education Department") + '</div>' +
         '</div>' +
         '<div style="width:58px;flex:none;"></div>' +
@@ -3111,7 +3112,7 @@
   function letterSignOff(signLabel){
     return '<div style="margin-top:46px;font-size:13px;">' +
         '<div>' + S("ከመንፈሳዊ ሰላምታ ጋር፣","With spiritual greetings,") + '</div>' +
-        '<div style="margin-top:28px;">' + esc(signLabel || SCHOOL_NAME_FULL) + '</div>' +
+        '<div style="margin-top:28px;">' + esc(signLabel || schoolNameFull()) + '</div>' +
         '<div style="margin-top:6px;">' + S("ፊርማ","Signature") + ': ____________________</div>' +
       '</div>';
   }
@@ -3207,8 +3208,8 @@
         html = letterHeader(ref.refNo, ref.eth, todayStr) +
           '<h4 style="text-align:center;margin:0 0 18px;text-decoration:underline">' + TCert("titleMembership") + '</h4>' +
           '<p>' + S(
-            esc(titleHonor) + ' <b>' + esc(m.name) + '</b> በመዝገባችን ቁጥር <b>' + esc(m.code || "—") + '</b> ስር በሕጋዊ መንገድ የተመዘገቡ፣ በ<b>' + esc(deptTxt) + '</b> ውስጥ በማገልገል/በመማር ላይ የሚገኙ ንቁ አባል መሆናቸውን በዚህ ደብዳቤ እንገልጻለን። ይህ ሰነድ በ' + esc(todayStr) + ' ዕለት ተዘጋጅቶ በ' + esc(SCHOOL_NAME_FULL) + ' ስም ለተጠቀሰው አባል ተሰጥቷቸዋል።',
-            titleHonor + ' <b>' + esc(m.name) + '</b>, registered under record number <b>' + esc(m.code || "—") + '</b>, serving/studying in <b>' + esc(deptTxt) + '</b>, is hereby confirmed as a duly registered active member. This document was issued on ' + esc(todayStr) + ' in the name of ' + esc(SCHOOL_NAME_FULL) + '.'
+            esc(titleHonor) + ' <b>' + esc(m.name) + '</b> በመዝገባችን ቁጥር <b>' + esc(m.code || "—") + '</b> ስር በሕጋዊ መንገድ የተመዘገቡ፣ በ<b>' + esc(deptTxt) + '</b> ውስጥ በማገልገል/በመማር ላይ የሚገኙ ንቁ አባል መሆናቸውን በዚህ ደብዳቤ እንገልጻለን። ይህ ሰነድ በ' + esc(todayStr) + ' ዕለት ተዘጋጅቶ በ' + esc(schoolNameFull()) + ' ስም ለተጠቀሰው አባል ተሰጥቷቸዋል።',
+            titleHonor + ' <b>' + esc(m.name) + '</b>, registered under record number <b>' + esc(m.code || "—") + '</b>, serving/studying in <b>' + esc(deptTxt) + '</b>, is hereby confirmed as a duly registered active member. This document was issued on ' + esc(todayStr) + ' in the name of ' + esc(schoolNameFull()) + '.'
           ) + '</p>' + letterSignOff(S("የሰ/ት/ቤቱ ሰብሳቢ","Sunday School Chairperson"));
       } else if (type === "graduation"){
         var s = state.students.find(function(x){ return x.id === personId; });
@@ -3231,8 +3232,8 @@
         html = letterHeader(ref.refNo, ref.eth, todayStr) +
           '<h4 style="text-align:center;margin:0 0 18px;text-decoration:underline">' + S("የዝውውር/መልቀቂያ ደብዳቤ","Transfer / Release Letter") + '</h4>' +
           '<p>' + S(
-            '<b>' + esc(s2.name) + '</b> በመዝገብ ቁጥር <b>' + esc(s2.code||'—') + '</b> በ' + esc(TL(s2.level)) + ' ደረጃ በ' + esc(SCHOOL_NAME_FULL) + ' ይማሩ የነበሩ መሆናቸውን በመግለጽ፣' + (dest ? ' ' + esc(dest) + ' ገብተው እንዲማሩ' : '') + ' ምንም ዓይነት የሚያግድ ጉዳይ እንደሌለባቸው እንገልጻለን።' + (reason ? ' ምክንያት፦ ' + esc(reason) + '።' : ''),
-            '<b>' + esc(s2.name) + '</b>, record number <b>' + esc(s2.code||'—') + '</b>, was a student at ' + esc(SCHOOL_NAME_FULL) + ' at the ' + esc(TL(s2.level)) + ' level.' + (dest ? ' This letter releases them to continue at ' + esc(dest) + '.' : '') + ' There is no outstanding matter preventing their transfer.' + (reason ? ' Reason: ' + esc(reason) + '.' : '')
+            '<b>' + esc(s2.name) + '</b> በመዝገብ ቁጥር <b>' + esc(s2.code||'—') + '</b> በ' + esc(TL(s2.level)) + ' ደረጃ በ' + esc(schoolNameFull()) + ' ይማሩ የነበሩ መሆናቸውን በመግለጽ፣' + (dest ? ' ' + esc(dest) + ' ገብተው እንዲማሩ' : '') + ' ምንም ዓይነት የሚያግድ ጉዳይ እንደሌለባቸው እንገልጻለን።' + (reason ? ' ምክንያት፦ ' + esc(reason) + '።' : ''),
+            '<b>' + esc(s2.name) + '</b>, record number <b>' + esc(s2.code||'—') + '</b>, was a student at ' + esc(schoolNameFull()) + ' at the ' + esc(TL(s2.level)) + ' level.' + (dest ? ' This letter releases them to continue at ' + esc(dest) + '.' : '') + ' There is no outstanding matter preventing their transfer.' + (reason ? ' Reason: ' + esc(reason) + '.' : '')
           ) + '</p>' + letterSignOff(S("የትምህርት ክፍል ኃላፊ","Head of Education Department"));
       } else {
         var to = (document.getElementById("cl-to").value || "").trim();
@@ -3336,7 +3337,7 @@
       return '<div style="width:340px;max-width:100%;margin:0 auto;border:2px solid #1E4FA0;border-radius:14px;overflow:hidden;font-family:inherit;background:#fff;">' +
         '<div style="background:linear-gradient(135deg,#0F2A63,#1E4FA0);color:#fff;padding:10px 12px;display:flex;align-items:center;gap:8px;">' +
           schoolLogoImg(34) +
-          '<div style="font-size:11px;line-height:1.3;">' + esc(SCHOOL_NAME_FULL) + '</div>' +
+          '<div style="font-size:11px;line-height:1.3;">' + esc(schoolNameFull()) + '</div>' +
         '</div>' +
         '<div style="display:flex;gap:12px;padding:14px;">' +
           (photo ? '<img src="' + photo + '" style="width:84px;height:100px;object-fit:cover;border-radius:6px;border:1px solid #D9E5F6;flex:none;">' :
@@ -3844,12 +3845,15 @@
     return '<div style="width:' + px + 'px;height:' + px + 'px;flex:none;border:1px dashed #B3261E;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#B3261E;font-size:9px;line-height:1.1;text-align:center;">' + S("አርማ ያስገቡ","Add logo") + '</div>';
   }
   function schoolLogoCardHtml(){
-    return '<div class="card"><h2>' + S("የሰ/ት/ቤቱ አርማ","School logo") + '</h2>' +
+    return '<div class="card"><h2>' + S("የሰ/ት/ቤቱ አርማ እና ስም","School logo & name") + '</h2>' +
       (state.schoolLogo
         ? '<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;"><img src="' + state.schoolLogo + '" style="width:64px;height:64px;object-fit:contain;"><span class="meta">' + S("በደብዳቤና በመታወቂያ ላይ ይታያል።","Shown on letters and ID cards.") + '</span></div>'
-        : '<div class="note" style="border-left:4px solid #B3261E;">' + S("⚠️ እባክዎ የሰንበት ትምህርት ቤቱን አርማ ያስገቡ። በደብዳቤና በመታወቂያ ላይ የሚታየው የሰ/ት/ቤቱ አርማ አልገባም።","⚠️ Please insert the Sunday school's logo. The school logo has not been added yet, so letters and ID cards show an empty logo box.") + '</div>') +
+        : '<div class="note" style="border-left:4px solid #B3261E;">' + S("⚠️ እባክዎ የሰንበት ትምህርት ቤቱን አርማ እና ስም ያስገቡ። አርማው አልገባም፤ በደብዳቤና በመታወቂያ ላይ ባዶ ሳጥን ይታያል።","⚠️ Please insert the Sunday school's logo and name. The logo has not been added yet, so letters and ID cards show an empty logo box.") + '</div>') +
       '<input type="file" class="sl-file" accept="image/*"> ' +
-      (state.schoolLogo ? '<button class="ghost sl-clear">' + S("አርማውን አስወግድ","Remove logo") + '</button>' : '') + '</div>';
+      (state.schoolLogo ? '<button class="ghost sl-clear">' + S("አርማውን አስወግድ","Remove logo") + '</button>' : '') +
+      '<div class="field" style="margin-top:12px;"><label>' + S("የሰ/ት/ቤቱ ሙሉ ስም (በደብዳቤና በመታወቂያ ላይ ይታያል፤ ስሙ ቢቀየር እዚህ ያስተካክሉ)","Full school name (shown on letters and ID cards; edit here if the name changes)") + '</label>' +
+      '<input type="text" class="sl-name" value="' + esc(schoolNameFull()) + '"></div>' +
+      '<button class="primary sl-name-save">' + S("ስሙን አስቀምጥ","Save name") + '</button></div>';
   }
   document.addEventListener("change", function(e){
     var t = e.target;
@@ -3862,6 +3866,11 @@
   document.addEventListener("click", function(e){
     var t = e.target;
     if (t && t.classList && t.classList.contains("sl-clear")){ state.schoolLogo = ""; save(); renderAll(); }
+    if (t && t.classList && t.classList.contains("sl-name-save")){
+      var inp = t.parentNode.querySelector(".sl-name"), v = inp ? inp.value.trim() : "";
+      state.schoolName = (v && v !== SCHOOL_NAME_DEFAULT) ? v : ""; save();
+      showToast(S("ስሙ ተቀምጧል","Name saved")); renderAll();
+    }
   });
   function wRegPeople(){
     var out = [];
@@ -5176,6 +5185,7 @@
   var SECTIONS = ["dashboard","depts","parishes","members","students","teachers","documents","lessons","roster","attendance","grades","idcard","chat","tools","cert","io","storage","audit","comms","messages","work","exam","exchange","agenda"];
   var DEPTS = [
     {id:"office", n:"የሰ/ት/ቤቱ ጽሕፈት ቤት (ዋና አመራር)", roles:[["chair","ሰብሳቢ"],["vice","ምክትል ሰብሳቢ"],["secr","ጸሐፊ"]], subs:["የሰበካ ጉባኤ ተወካይ|ከሰበካ ጉባኤ ጋር ማገናኘት፣ የሰ/ት/ቤቱን ሪፖርት ማቅረብ፣ ድጋፍና ክትትል ማስተባበር"]},
+    {id:"council", n:"መማክርት ጉባኤ", roles:[["chair","ሰብሳቢ"],["secr","ጸሐፊ"]], subs:["ተሰብሳቢዎች|የጉባኤ አባላትን መመዝገብና የስብሰባ ተሳትፎ መያዝ","ጽሑፎች (ቃለ ጉባኤ)|የስብሰባ ቃለ ጉባኤና ሰነዶችን መጻፍና መያዝ","አጀንዳ|የስብሰባ አጀንዳ ማዘጋጀትና ማሰራጨት","መራጮች|የመራጮችን ዝርዝር መያዝና ምርጫ ማስተባበር"]},
     {id:"edu", n:"ትምህርትና ሥርዓተ ትምህርት ክፍል", roles:[["head","ኃላፊ"],["secr","ጸሐፊ"]], subs:["ሥርዓተ ትምህርት ዝግጅት|የደረጃ ትምህርቶችን ማዘጋጀትና ማሻሻል","መምህራን ምደባና ሥልጠና|መምህራንን መመደብ፣ መከታተልና ማሠልጠን","ፈተናና ውጤት|ፈተና ማዘጋጀት፣ ውጤት መያዝና ምረቃ","ቤተ መጻሕፍት|መጻሕፍትና የትምህርት መርጃዎችን ማስተዳደር","አብነት ክፍል|የአብነት ትምህርት (ንባብ፣ ዳዊት፣ ዜማ) ማስተባበር"]},
     {id:"art", n:"መዝሙርና ኪነ ጥበብ ክፍል", roles:[["head","ኃላፊ"],["secr","ጸሐፊ"]], subs:["መዘምራን|የመዘምራን ቡድን መምራትና ልምምድ","ኪነ ጥበብ|ትያትር፣ ግጥምና ሥነ ጽሑፍ ዝግጅቶች","ዝማሬ ሥልጠና|ለሕፃናትና ለወጣቶች የዝማሬ ትምህርት"]},
     {id:"mem", n:"አባላት አስተዳደር ክፍል", roles:[["head","ኃላፊ"],["secr","ጸሐፊ"]], subs:["ምዝገባና መረጃ|አባላትን መመዝገብና መረጃ ማደራጀት","ክትትልና ጉብኝት|የቀሩና የታመሙ አባላትን መጎብኘት","አዲስ አባላት አቀባበል|አዲስ የገቡትን መቀበልና ማስተዋወቅ","መማክርት (የንስሐ አባት)|የንስሐ አባት አገልግሎትና መንፈሳዊ ምክር ማስተባበር"]},
