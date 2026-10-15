@@ -3936,6 +3936,9 @@
       '<div class="field"><label>' + S("የበላይ (ለንዑስ አባል)","Boss (for sub-members)") + '</label><select id="w-pb"><option value="">—</option></select></div>' +
       '<button class="primary" id="w-padd">' + S("➕ ጨምር","➕ Add") + '</button> ' +
       '<button class="ghost" id="w-pall">' + S("ሁሉንም የተመዘገቡ እንደ ንዑስ አባል ጨምር","Add all registered as sub-members") + '</button>' +
+      '<div class="note" style="margin-top:12px;">' + S("ሁሉም የተመዘገቡ (D01-P01-… ኮድ ያላቸው) በራሳቸው የምዝገባ ኮድ እና PIN ወደ ሥራ ክትትል፣ ምዘና፣ የጋራ ውይይት እና ቡድን ውይይት እንዲገቡ — ገና በዝርዝሩ ያልነበሩትን ብቻ ይጨምራል፤ ያሉትን አይነካም።","Let everyone registered (codes like D01-P01-…) sign in to Work, Exams, Shared Discussion and Group Chat with their own registration code and PIN — only adds people not yet on the list; existing entries are untouched.") + '</div>' +
+      '<button class="primary" id="w-allreg">' + S("✅ ሁሉም የተመዘገቡ በኮዳቸው ይግቡ","✅ Let all registered sign in with their code") + '</button>' +
+      '<p class="meta" id="w-allreg-msg"></p>' +
       '<div class="field" style="margin-top:12px;"><label>' + S("የተመረጡት ዝርዝር (ከላይ ሲጨምሩ ራሱ ይሞላል፤ በእጅም ማስተካከል ይቻላል) — ኮድ|ስም|ሚና|ክፍል|የበላይ ኮድ","Selected list (fills automatically; editable) — code|name|role|dept|boss code") + '</label>' +
       '<textarea id="w-roster" placeholder="P01-M0001|ስም|office||\nP01-M0002|ስም|head|ትምህርት|\nP01-S0003|ስም|sub|ትምህርት|P01-M0002"></textarea></div></div>' +
       '<p class="meta">' + S("ሚና፦ office = ጽሕፈት ቤት (ሁሉንም ያያል)፣ head = የክፍል አመራር፣ sub = ንዑስ አባል (የተላለፈለትን ብቻ ያያል)።","Role: office = sees everything, head = department leader, sub = sub-member (sees only what is assigned).") + '</p>' +
@@ -4029,6 +4032,18 @@
           : r.error;
         er.style.display = "block";
       } });
+    };
+    if ($("w-allreg")) $("w-allreg").onclick = function(){
+      var url = $("w-url").value.trim(), adm = $("w-adm").value.trim(), msg = $("w-allreg-msg");
+      if (!/^https:\/\/script\.google\.com\//.test(url) || !adm){ msg.textContent = S("መጀመሪያ Script URL እና የአስተዳዳሪ ሚስጥር ይሙሉ።","Fill in the Script URL and admin secret first."); return; }
+      var people = wRegPeople().map(function(x){ return { code: x.code, name: x.name, dept: x.dept }; });
+      if (!people.length){ msg.textContent = S("የተመዘገበ ሰው የለም።","No registered people."); return; }
+      state.workCfg = { url: url, admin: adm }; save();
+      msg.textContent = "…";
+      wPost({ type: "a_addmissing", admin: adm, people: people }, function(r){
+        if (r.ok) msg.textContent = S("✅ ተጠናቋል — አዲስ የተጨመሩ፦ ","✅ Done — newly added: ") + r.added + S(" · በዝርዝሩ ያሉ በአጠቃላይ፦ "," · total on the list: ") + r.total + S("። አሁን እያንዳንዱ ሰው በምዝገባ ኮዱ ይገባል (የመጀመሪያ ጊዜ PIN ራሱ ይፈጥራል)።",". Everyone can now sign in with their registration code (first time they create their own PIN).");
+        else msg.textContent = "❌ " + wHintErr(r.error) + (r.error === "ያልተፈቀደ" ? S(" — «ግንኙነትና ሚስጥር ፈትሽ» ን ይጫኑ።"," — tap Test connection & secret.") : "");
+      });
     };
     if ($("w-show")) $("w-show").onchange = function(){ $("w-adm").type = this.checked ? "text" : "password"; };
     if ($("w-test")) $("w-test").onclick = function(){
