@@ -3225,8 +3225,10 @@
       };
       var fileEl = $("id-photo");
       if (fileEl.files && fileEl.files[0]){
-        wFileInput(fileEl, function(res){
-          if (res && res.dataUrl) rec.photo = { dataUrl: res.dataUrl };
+        // ለህትመት ጥራት በቂ ሆኖ ግን ለማስቀመጥ ቀላል እንዲሆን እስከ 900px ረጅም ጎን ድረስ ይቀንሳል (ማንኛውም የፎቶ መጠን ይቀበላል)
+        readImageResized(fileEl.files[0], 900, 0.88, function(dataUrl){
+          if (dataUrl) rec.photo = { dataUrl: dataUrl };
+          else showToast(S("ፎቶ ማንበብ አልተቻለም","Couldn't read the photo"));
           finish();
         });
       } else finish();
@@ -3665,6 +3667,27 @@
   var workMe = null, workData = null, workSetPin = false;
   var W_ST = { open: ["🔵","ክፍት","Open"], doing: ["🟡","በሂደት","In progress"], done: ["🟢","ተጠናቋል","Done"] };
   function wCfg(){ return state.workCfg || {}; }
+  // መታወቅያ ፎቶ፦ ከ250ኪባ ገደብ ይልቅ ራሱ ቀንሶ (resize) ጥራቱን እንደጠበቀ በትንሽ መጠን ያስቀምጣል፣ ትልቅ ፎቶም ተቀባይነት እንዲኖረው
+  function readImageResized(file, maxDim, quality, cb){
+    var reader = new FileReader();
+    reader.onload = function(){
+      var img = new Image();
+      img.onload = function(){
+        var w = img.width, h = img.height, scale = Math.min(1, maxDim / Math.max(w, h));
+        var cw = Math.max(1, Math.round(w * scale)), ch = Math.max(1, Math.round(h * scale));
+        var canvas = document.createElement("canvas");
+        canvas.width = cw; canvas.height = ch;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, cw, ch);
+        try { cb(canvas.toDataURL("image/jpeg", quality)); }
+        catch(e){ cb(reader.result); } // ካልተሳካ (e.g. tainted canvas) ያልተቀነሰውን ራው ፋይል ይጠቀማል
+      };
+      img.onerror = function(){ cb(null); };
+      img.src = reader.result;
+    };
+    reader.onerror = function(){ cb(null); };
+    reader.readAsDataURL(file);
+  }
   function wFileInput(inputEl, cb){
     var f = inputEl && inputEl.files && inputEl.files[0];
     if (!f) return cb(null);
