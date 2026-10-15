@@ -3817,6 +3817,13 @@
   // ---------- ሥራ ክትትል (work tracking; server-enforced visibility) ----------
   var workMe = null, workData = null, workSetPin = false;
   var W_ST = { open: ["🔵","ክፍት","Open"], doing: ["🟡","በሂደት","In progress"], done: ["🟢","ተጠናቋል","Done"] };
+  function wLastCode(v){
+    try { if (v !== undefined) localStorage.setItem("bkbn_wcode", v); else return localStorage.getItem("bkbn_wcode") || ""; } catch(e){ return ""; }
+  }
+  function wHintErr(e){
+    if (e === "ኮዱ አልተገኘም") return S("ኮዱ አልተገኘም — ይህ ኮድ ወደ ሥራ ክትትል ዝርዝር ገና አልተጨመረም። ባለቤቱ በ«ማዋቀር» ካርድ ውስጥ ሰውየውን መርጦ «አስቀምጥ እና ዝርዝሩን ላክ» መጫን አለበት።","Code not found — this code hasn't been added to the Work Tracking list yet. The owner must pick the person in the setup card and press Save & publish list.");
+    return e || "";
+  }
   function wCfg(){ var c = state.workCfg || {}; return { url: String(c.url || "").trim(), admin: String(c.admin || "").trim() }; }
   // መታወቅያ ፎቶ፦ ከ250ኪባ ገደብ ይልቅ ራሱ ቀንሶ (resize) ጥራቱን እንደጠበቀ በትንሽ መጠን ያስቀምጣል፣ ትልቅ ፎቶም ተቀባይነት እንዲኖረው
   function readImageResized(file, maxDim, quality, cb){
@@ -4092,15 +4099,16 @@
       save();
       msg.textContent = S("✅ ተከናውኗል — «ማከማቻና ምትኬ» ትር ላይ ሁለቱም ክፍሎች አሁን ይህንኑ ይጠቀማሉ። ለ«ራስ-ሰር ምትኬ» የምትኬ ይለፍ ቃል ብቻ ገብተው ያብሩት።","✅ Done — on the Storage tab, both sections now use this same script. For Auto-backup, just enter a backup password and turn it on.");
     };
+    if ($("w-code")){ $("w-code").value = wLastCode(); $("w-code").oninput = function(){ wLastCode(this.value.trim().toUpperCase()); }; }
     if ($("w-login")) $("w-login").onclick = function(){
       var code = $("w-code").value.trim().toUpperCase(), pin = $("w-pin").value, er = $("w-er");
       if (!code || !/^[0-9]{4,12}$/.test(pin)){ er.textContent = S("ኮድና ቢያንስ 4 ቁጥር PIN ያስገቡ","Enter your code and a PIN of 4+ digits"); return; }
       er.textContent = "…";
       hashStudentPin(pin, "W:" + code).then(function(hash){
-        function enter(){ wGet(code, hash, function(j){ if (j.ok){ workMe = { code: code, hash: hash }; workData = j; workSetPin = false; dirInfo = null; fullInfo = null; renderWork(); dirRefreshStatus(); fullRefreshStatus(); } else er.textContent = j.error || ""; }); }
+        function enter(){ wGet(code, hash, function(j){ if (j.ok){ workMe = { code: code, hash: hash }; workData = j; workSetPin = false; dirInfo = null; fullInfo = null; renderWork(); dirRefreshStatus(); fullRefreshStatus(); } else er.textContent = wHintErr(j.error); }); }
         wGet(code, hash, function(j){
           if (j.ok){ workMe = { code: code, hash: hash }; workData = j; dirInfo = null; fullInfo = null; renderWork(); dirRefreshStatus(); fullRefreshStatus(); return; }
-          if (j.error !== "nopin"){ er.textContent = j.error || ""; return; }
+          if (j.error !== "nopin"){ er.textContent = wHintErr(j.error); return; }
           if (!workSetPin){ workSetPin = true; er.textContent = S("የመጀመሪያ መግቢያዎ ነው — የመረጡትን PIN አረጋግጠው «ግባ» ይጫኑ።","First login — confirm your chosen PIN and press Log in again."); return; }
           wPost({ type: "w_setpin", code: code, pin: hash }, function(r){ if (r.ok) enter(); else er.textContent = r.error || wNet(); });
         });
@@ -4188,6 +4196,7 @@
         '<div class="field"><input type="password" id="ch-pin" inputmode="numeric" maxlength="12" placeholder="PIN"></div>' +
         '<p class="error" id="ch-er" style="display:block"></p>' +
         '<button class="primary" id="ch-login">' + S("ግባ","Log in") + '</button></div>';
+      var chc = document.getElementById("ch-code"); chc.value = wLastCode(); chc.oninput = function(){ wLastCode(this.value.trim().toUpperCase()); };
       document.getElementById("ch-login").onclick = function(){
         var code = document.getElementById("ch-code").value.trim().toUpperCase(), pin = document.getElementById("ch-pin").value, er = document.getElementById("ch-er");
         if (!code || !/^[0-9]{4,12}$/.test(pin)){ er.textContent = S("ኮድና ቢያንስ 4 ቁጥር PIN ያስገቡ","Enter your code and a PIN of 4+ digits"); return; }
@@ -4195,7 +4204,7 @@
         hashStudentPin(pin, "W:" + code).then(function(hash){
           wGet(code, hash, function(j){
             if (j.ok){ workMe = { code: code, hash: hash }; workData = j; renderChat(); }
-            else er.textContent = j.error === "nopin" ? S("ይህ ኮድ ገና PIN የለውም — መጀመሪያ «ሥራ ክትትል» ትር ላይ ይግቡ","This code has no PIN yet — log in on the Work Tracking tab first") : (j.error || "");
+            else er.textContent = j.error === "nopin" ? S("ይህ ኮድ ገና PIN የለውም — መጀመሪያ «ሥራ ክትትል» ትር ላይ ይግቡ","This code has no PIN yet — log in on the Work Tracking tab first") : wHintErr(j.error);
           });
         });
       };
