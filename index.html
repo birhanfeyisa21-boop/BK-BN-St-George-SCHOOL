@@ -3817,7 +3817,7 @@
   // ---------- ሥራ ክትትል (work tracking; server-enforced visibility) ----------
   var workMe = null, workData = null, workSetPin = false;
   var W_ST = { open: ["🔵","ክፍት","Open"], doing: ["🟡","በሂደት","In progress"], done: ["🟢","ተጠናቋል","Done"] };
-  function wCfg(){ return state.workCfg || {}; }
+  function wCfg(){ var c = state.workCfg || {}; return { url: String(c.url || "").trim(), admin: String(c.admin || "").trim() }; }
   // መታወቅያ ፎቶ፦ ከ250ኪባ ገደብ ይልቅ ራሱ ቀንሶ (resize) ጥራቱን እንደጠበቀ በትንሽ መጠን ያስቀምጣል፣ ትልቅ ፎቶም ተቀባይነት እንዲኖረው
   function readImageResized(file, maxDim, quality, cb){
     var reader = new FileReader();
@@ -4007,13 +4007,18 @@
     el.innerHTML = h;
     var $ = function(i){ return document.getElementById(i); };
     if ($("w-save")) $("w-save").onclick = function(){
-      var url = $("w-url").value.trim(), adm = $("w-adm").value, er = $("w-aerr"), txt = $("w-roster").value.trim();
+      var url = $("w-url").value.trim(), adm = $("w-adm").value.trim(), er = $("w-aerr"), txt = $("w-roster").value.trim();
       if (!/^https:\/\/script\.google\.com\//.test(url)){ er.textContent = "URL"; er.style.display = "block"; return; }
       state.workCfg = { url: url, admin: adm }; save();
       if (!txt){ showToast(S("ተቀምጧል","Saved")); renderWork(); return; }
       var roster = txt.split("\n").map(function(l){ var p = l.split("|").map(function(x){ return x.trim(); }); return { code: p[0], name: p[1], role: p[2], dept: p[3] || "", boss: (p[4] || "").toUpperCase() }; })
         .filter(function(r){ return r.code && r.name && /^(office|head|sub)$/.test(r.role); });
-      wPost({ type: "a_roster", admin: adm, roster: roster }, function(r){ if (r.ok){ showToast(S("ዝርዝሩ ተላከ","List published") + " (" + roster.length + ")"); renderWork(); } else { er.textContent = r.error; er.style.display = "block"; } });
+      wPost({ type: "a_roster", admin: adm, roster: roster }, function(r){ if (r.ok){ showToast(S("ዝርዝሩ ተላከ","List published") + " (" + roster.length + ")"); renderWork(); } else {
+        er.textContent = (r.error === "ያልተፈቀደ")
+          ? S("ያልተፈቀደ — ከላይ የጻፉት «የአስተዳዳሪ ሚስጥር» በGoogle Apps Script ውስጥ ካለው ADMIN_KEY ጋር በትክክል አይመሳሰልም (ፊደል፣ ትልቅ/ትንሽ ፊደል፣ ባዶ ቦታ ይመልከቱ)። ADMIN_KEY ን ከቀየሩ ስክሪፕቱን «አዲስ ቨርዥን» አድርገው እንደገና ዲፕሎይ ማድረግ አለብዎት።","Not allowed — the admin secret above does not exactly match ADMIN_KEY in the Google Apps Script (check spelling, upper/lower case, spaces). If you changed ADMIN_KEY, redeploy the script as a New version.")
+          : r.error;
+        er.style.display = "block";
+      } });
     };
     if ($("w-padd")){
       var wLines = function(){ return $("w-roster").value.split("\n").map(function(l){ return l.trim(); }).filter(Boolean); };
