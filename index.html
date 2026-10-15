@@ -3923,6 +3923,9 @@
     return '<div class="card"><h2>' + S("ሥራ ክትትል — ማዋቀር (ባለቤት)","Work tracking — setup (owner)") + '</h2>' +
       '<div class="field"><label>Script URL (…/exec)</label><input type="text" id="w-url" value="' + esc(c.url || "") + '"></div>' +
       '<div class="field"><label>' + S("የአስተዳዳሪ ሚስጥር","Admin secret") + '</label><input type="password" id="w-adm" value="' + esc(c.admin || "") + '"></div>' +
+      '<label class="meta"><input type="checkbox" id="w-show"> ' + S("ሚስጥሩን አሳይ (ከስክሪፕቱ ADMIN_KEY ጋር ለማመሳከር)","Show the secret (to compare with ADMIN_KEY in the script)") + '</label>' +
+      '<div style="margin:8px 0;"><button class="ghost" id="w-test">' + S("🔍 ግንኙነትና ሚስጥር ፈትሽ","🔍 Test connection & secret") + '</button></div>' +
+      '<p class="meta" id="w-test-msg"></p>' +
       '<div class="note">' + S("ሰዎችን ከተመዘገቡት መርጠው ይጨምሩ — እያንዳንዱ ሰው በምዝገባ ኮዱ ይገባል (ኮድ መፍጠር ወይም መጻፍ አያስፈልግም)።","Pick people from the registered list — each person logs in with their registration code (no need to invent or type codes).") + '</div>' +
       '<div class="field"><label>' + S("የተመዘገበ ሰው","Registered person") + '</label><select id="w-pp"><option value="">— ' + S("ይምረጡ","choose") + ' —</option>' +
         wRegPeople().map(function(x){ return '<option value="' + esc(x.code) + '">' + esc(x.name) + ' · ' + esc(x.kind) + ' · ' + esc(x.code) + '</option>'; }).join("") + '</select></div>' +
@@ -4026,6 +4029,23 @@
           : r.error;
         er.style.display = "block";
       } });
+    };
+    if ($("w-show")) $("w-show").onchange = function(){ $("w-adm").type = this.checked ? "text" : "password"; };
+    if ($("w-test")) $("w-test").onclick = function(){
+      var url = $("w-url").value.trim(), adm = $("w-adm").value.trim(), msg = $("w-test-msg");
+      if (!/^https:\/\/script\.google\.com\//.test(url)){ msg.textContent = S("❌ Script URL በ https://script.google.com/ መጀመር አለበት።","❌ Script URL must start with https://script.google.com/"); return; }
+      msg.textContent = "…";
+      var info = S("የጻፉት ሚስጥር ርዝመት፦ ","Secret length you typed: ") + adm.length + (adm ? S(" ፊደል · መጀመሪያ «"," chars · starts with «") + adm.charAt(0) + S("» · መጨረሻ «","» · ends with «") + adm.charAt(adm.length - 1) + "»" : "");
+      fetch(url, { method:"POST", headers:{ "Content-Type":"text/plain" }, body: JSON.stringify({ type:"a_roster", admin: adm, roster: [] }) })
+        .then(function(r){ return r.text(); })
+        .then(function(t){
+          var j = null; try { j = JSON.parse(t); } catch(e){}
+          if (!j) msg.textContent = S("❌ ከስክሪፕቱ ትክክለኛ ምላሽ አልመጣም — URL የ«/exec» ዌብ አፕ ሊንክ መሆኑን እና «Who has access» = «Anyone» መሆኑን ያረጋግጡ። (የድሮ ዲፕሎይ ሊንክ ከሆነ አዲሱን ይጠቀሙ።)","❌ The script did not return a valid reply — check the URL is the /exec web-app link and access is set to Anyone.");
+          else if (j.ok) msg.textContent = S("✅ ግንኙነቱም ሚስጥሩም ትክክል ነው። አሁን «አስቀምጥ እና ዝርዝሩን ላክ» ይጫኑ።","✅ Connection and secret are correct. Now press Save & publish list.");
+          else if (j.error === "ያልተፈቀደ") msg.textContent = S("❌ ስክሪፕቱ ተደርሷል፣ ግን ሚስጥሩ ከ ADMIN_KEY ጋር አልተመሳሰለም። ","❌ The script was reached, but the secret does not match ADMIN_KEY. ") + info + S(" — በስክሪፕቱ ውስጥ ያለውን ADMIN_KEY ቃል በቃል ያመሳክሩ፤ ከቀየሩት «Deploy → Manage deployments → ✏️ → New version → Deploy» ያድርጉ (ሊንኩ አይቀየርም)።"," — compare with ADMIN_KEY in the script; if you changed it: Deploy → Manage deployments → ✏️ → New version → Deploy (the link stays the same).");
+          else msg.textContent = "❌ " + (j.error || "?");
+        })
+        .catch(function(){ msg.textContent = S("❌ ስክሪፕቱ አልተደረሰም — ኢንተርኔት ወይም URL ያረጋግጡ።","❌ Could not reach the script — check your internet and the URL."); });
     };
     if ($("w-padd")){
       var wLines = function(){ return $("w-roster").value.split("\n").map(function(l){ return l.trim(); }).filter(Boolean); };
