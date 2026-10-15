@@ -883,7 +883,10 @@
       documents: [], lessons: [], circulars: [], reports: [], auditLog: [],
       smsAdminPhone: "", installId: "", feedback: [], seq: {}, files: [],
       lastBackupAt: 0, savedAt: 0, access: {}, depts: {},
-      assignments: []
+      assignments: [],
+      // ከዚህ በታች ያሉት ከመጀመሪያው ይዘት በኋላ የተጨመሩ ናቸው — የቆየ ውሂብ ሲመለስ/ሲጫን እንዳይጎድሉ እዚህ መኖር አለባቸው
+      attendance: [], grades: [], roster: [], idcards: {}, letterSeq: 0,
+      msgScript: null, workCfg: null
     };
     if (!state || typeof state !== "object" || Array.isArray(state)) state = {};
     Object.keys(defaults).forEach(function(k){
@@ -2186,7 +2189,10 @@
         return storeFile(f).then(function(meta){
           var title = (f.name || "file").replace(/\.[^.]+$/, "") || f.name;
           if (kind === "lesson"){
-            state.lessons.push({ id: uid(), title: title, level: level, type: isVideoFile(f) ? "ቪዲዮ" : "ኦዲዮ", url: "", fileId: meta.id, desc: "", synced: false });
+            var rec2 = { id: uid(), title: title, level: level, type: isVideoFile(f) ? "ቪዲዮ" : "ኦዲዮ", url: "", fileId: meta.id, desc: "", synced: false };
+            state.lessons.push(rec2);
+            // ፋይሉን ወደ ደመናም ላክ፣ ሌሎች መሳሪያዎች እንዲያገኙት (ካልተሳካ በዚህ መሳሪያ ላይ ብቻ ይቀራል)
+            uploadMediaToCloud(f, function(cloudUrl){ if (cloudUrl){ rec2.cloudUrl = cloudUrl; save(); if (activeTab === "lessons") renderLessons(); } });
           } else {
             state.documents.push({ id: uid(), title: title, type: "ሌላ መረጃ/ሰነድ", issuer: "", body: "", fileId: meta.id, date: new Date().toLocaleDateString("en-GB"), synced: false });
           }
@@ -2706,6 +2712,7 @@
         (rows.length ? rows.slice().reverse().map(function(x){
           return '<div class="row" style="display:block;">' +
             '<strong>' + esc(x.title) + '</strong> <span class="badge role">' + esc(TLesType(x.type)) + '</span>' +
+            (x.fileId ? (x.cloudUrl ? ' <span class="badge synced" title="' + esc(S("በሌሎች መሳሪያዎችም ይገኛል","Also available on other devices")) + '">☁️ ' + esc(S("ደመና","Cloud")) + '</span>' : ' <span class="badge pending" title="' + esc(S("በዚህ መሳሪያ ላይ ብቻ ነው ያለው","Only on this device so far")) + '">📴 ' + esc(S("በዚህ መሳሪያ ብቻ","This device only")) + '</span>') : '') +
             (x.desc ? '<p style="margin:6px 0;font-size:13px;color:var(--muted);white-space:pre-wrap;">' + esc(x.desc) + '</p>' : '') +
             playerHtml(x) +
             rowActions("lesson", x.id) +
@@ -2785,15 +2792,23 @@
             fileId: newId,
             desc: document.getElementById("ln-desc").value.trim()
           };
+          var savedRec;
           if (rec){
             Object.keys(fields).forEach(function(k){ rec[k] = fields[k]; });
             commit(true, "", recLabel(rec));
+            savedRec = rec;
           } else {
             fields.id = uid(); fields.synced = false;
             state.lessons.push(fields);
             commit(false, "act_lesson", title);
+            savedRec = fields;
           }
           if (oldId && oldId !== newId && fileRefs(oldId).length === 0) removeFile(oldId).then(save);
+          // ፋይል ከተመረጠ፣ ሌሎች መሳሪያዎችም እንዲያገኙት ወደ ደመና (Drive) ላክ (ይህ ካልተሳካ በዚህ መሳሪያ ላይ መስራቱን ይቀጥላል)
+          if (picked) uploadMediaToCloud(picked, function(cloudUrl, uerr){
+            if (cloudUrl){ savedRec.cloudUrl = cloudUrl; save(); if (activeTab === "lessons") renderLessons(); }
+            else if (uerr === "too-large") showToast(S("ፋይሉ ለደመና ማስቀመጫ ትልቅ ነው — በዚህ መሳሪያ ብቻ ይቀመጣል","File too large for cloud sync — stays on this device only"));
+          });
         }, function(){
           fail(TFl("storeFail"));
           saveBtn.disabled = false; saveBtn.textContent = label;
@@ -5140,8 +5155,8 @@
       roster: state.students.filter(function(s){ return s.code; }).map(function(s){
         return { id: s.id, code: s.code, name: s.name, level: s.level, pinHash: s.pinHash || null, score: s.score || "", graduated: s.graduated || "" };
       }),
-      lessons: state.lessons.filter(function(x){ return x.url; }).map(function(x){
-        return { id: x.id, title: x.title, desc: x.desc || "", level: x.level, type: x.type, url: x.url };
+      lessons: state.lessons.filter(function(x){ return x.url || x.cloudUrl; }).map(function(x){
+        return { id: x.id, title: x.title, desc: x.desc || "", level: x.level, type: x.type, url: x.cloudUrl || x.url };
       }),
       documents: state.documents.filter(function(x){ return x.body || x.url; }).map(function(x){
         return { id: x.id, title: x.title, type: x.type, body: x.body || "", url: x.url || "", date: x.date || "" };
@@ -5166,6 +5181,31 @@
       cloudPublic = (j && j.ok && j.content) ? JSON.parse(j.content) : null;
       cb(cloudPublic);
     }).catch(function(){ cb(null); });
+  }
+  // ---- የትምህርት ኦዲዮ/ቪዲዮ ፋይል ወደ ደመና (Drive) መላክ፣ በመሳሪያዎች መካከል እንዲመሳሰል ----
+  var MEDIA_UPLOAD_MAX = 8 * 1024 * 1024; // ~8ሜባ — ከዚህ በላይ በዚህ መሳሪያ ብቻ ይቀመጣል
+  function fileToBase64(file){
+    return new Promise(function(res, rej){
+      var fr = new FileReader();
+      fr.onload = function(){ res(String(fr.result).split(",")[1] || ""); };
+      fr.onerror = function(){ rej(fr.error); };
+      fr.readAsDataURL(file);
+    });
+  }
+  function uploadMediaToCloud(file, cb){
+    var cfg = msgCfg();
+    if (!cfg.url || !cfg.key){ cb(null, "no-config"); return; }
+    if (file.size > MEDIA_UPLOAD_MAX){ cb(null, "too-large"); return; }
+    fileToBase64(file).then(function(b64){
+      return fetch(cfg.url, { method: "POST", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({
+        type: "media_upload", key: cfg.key, filename: file.name, mime: file.type || "application/octet-stream", data: b64
+      })}).then(function(r){ return r.json(); });
+    }).then(function(j){
+      if (j && j.ok && j.id){
+        var url = cfg.url + (cfg.url.indexOf("?") === -1 ? "?" : "&") + "type=media&id=" + encodeURIComponent(j.id) + "&key=" + encodeURIComponent(cfg.key);
+        cb(url, null);
+      } else cb(null, (j && j.error) || "fail");
+    }).catch(function(){ cb(null, "network"); });
   }
   // ---- የክፍል/ደረጃ የጋራ ውይይት (ተማሪዎች/ወላጆች/ማህበራት፣ በራሳቸው ኮድ+PIN) ----
   var schatCache = [];
