@@ -400,6 +400,43 @@
       border-radius:18px;padding:16px 12px;box-shadow:0 8px 22px rgba(30,79,160,.08)}
     .app > nav.tabs button{width:100%;display:flex;align-items:center;justify-content:flex-start;text-align:start;margin:1px 0}
   }
+  /* ===== ዳሽቦርድ — የተሻሻለ ዲዛይን (ይዘት አልተቀየረም፤ ገጽታ ብቻ) ===== */
+  #tab-dashboard .db-hero{padding:22px 22px 30px;border-radius:26px;
+    background:radial-gradient(420px 240px at 92% -10%,rgba(246,208,108,.34),rgba(246,208,108,0) 62%),radial-gradient(300px 220px at -5% 110%,rgba(90,150,235,.35),rgba(90,150,235,0) 65%),linear-gradient(150deg,#0B2253 0%,#173F8C 55%,#2A63BF 100%) !important;
+    box-shadow:0 18px 38px rgba(11,34,83,.34),inset 0 0 0 1px rgba(246,208,108,.6),inset 0 0 0 7px rgba(11,34,83,.5),inset 0 0 0 8px rgba(246,208,108,.32)}
+  #tab-dashboard .db-hero::after{content:"";position:absolute;left:22px;right:22px;bottom:14px;height:5px;border-radius:5px;
+    background:linear-gradient(90deg,#2E9B4F 0 33.3%,#F2C230 33.3% 66.6%,#D8352A 66.6% 100%);opacity:.95}
+  #tab-dashboard .db-chip{background:rgba(255,255,255,.12);border:1px solid rgba(246,208,108,.5);backdrop-filter:blur(4px);font-weight:600;letter-spacing:.2px}
+  #tab-dashboard .db-day{font-size:74px;font-weight:700;background:linear-gradient(180deg,#FFF1BE 10%,#EDC04B 90%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;text-shadow:none;filter:drop-shadow(0 3px 8px rgba(0,0,0,.35))}
+  #tab-dashboard .db-monthyear{font-size:26px;color:#fff}
+  #tab-dashboard .db-today{font-weight:600;letter-spacing:.3px}
+  #tab-dashboard .db-greg{color:#D6E4FA}
+  #tab-dashboard .db-kpis{gap:12px}
+  #tab-dashboard .db-kpi{--ac:#1E4FA0;--ac2:#E8F0FD;position:relative;overflow:hidden;border-radius:20px;padding:16px 8px 14px;border:1px solid var(--ac2);
+    background:linear-gradient(180deg,#fff 55%,var(--ac2));box-shadow:0 8px 20px rgba(20,54,112,.1)}
+  #tab-dashboard .db-kpi::before{content:"";position:absolute;inset:0 0 auto 0;height:5px;background:var(--ac)}
+  #tab-dashboard .db-kpi:nth-child(5n+1){--ac:#1E4FA0;--ac2:#E6EEFB}
+  #tab-dashboard .db-kpi:nth-child(5n+2){--ac:#2F8A4D;--ac2:#E3F3E8}
+  #tab-dashboard .db-kpi:nth-child(5n+3){--ac:#B7860B;--ac2:#FBF0D2}
+  #tab-dashboard .db-kpi:nth-child(5n+4){--ac:#C0392B;--ac2:#FBE6E3}
+  #tab-dashboard .db-kpi:nth-child(5n+5){--ac:#0E8A94;--ac2:#DDF3F4}
+  #tab-dashboard .db-kpi svg{width:34px;height:34px;padding:7px;border-radius:12px;background:var(--ac2);stroke:var(--ac);box-sizing:border-box}
+  #tab-dashboard .db-kpi .n{font-size:34px;font-weight:700;color:var(--ac);margin-top:8px}
+  #tab-dashboard .db-kpi .l{font-weight:600;color:#43506A}
+  #tab-dashboard .db-card{border-radius:22px;padding:18px 18px 16px;border:1px solid #DCE6F6;background:linear-gradient(180deg,#fff,#FAFCFF);box-shadow:0 10px 26px rgba(20,54,112,.09)}
+  #tab-dashboard .db-card h2{font-size:17px;font-weight:700;padding-bottom:10px;margin-bottom:14px;border-bottom:1px dashed #D5E1F4}
+  #tab-dashboard .db-card h2::before{width:6px;height:20px;background:linear-gradient(180deg,#F6D06C,#D49A12)}
+  #tab-dashboard .db-q{border:0;background:linear-gradient(135deg,#EAF1FD,#DCE8FB);color:#16408C;font-weight:700;padding:9px 15px;box-shadow:inset 0 0 0 1px #C5D6F2;transition:transform .15s,box-shadow .15s}
+  #tab-dashboard .db-q:hover{transform:translateY(-2px);box-shadow:inset 0 0 0 1px #1E4FA0,0 6px 14px rgba(30,79,160,.2)}
+  #tab-dashboard .db-q:active{background:#1E4FA0;color:#fff}
+  #tab-dashboard .db-bar{height:10px;border-radius:8px;background:#EAF0FA}
+  #tab-dashboard .db-bar>i{background:linear-gradient(90deg,#E8B72E,#C98F0A);border-radius:8px}
+  #tab-dashboard .db-lv-foot{background:#F2F7FF;border:0;border-radius:12px;padding:10px 12px}
+  #tab-dashboard .db-legend li{border-bottom:1px solid #EEF3FB}
+  #tab-dashboard .db-legend li:last-child{border-bottom:0}
+  #tab-dashboard .db-kpi:focus-visible,#tab-dashboard .db-q:focus-visible{outline:3px solid #F2C230;outline-offset:2px}
+  @media (max-width:420px){#tab-dashboard .db-day{font-size:62px}#tab-dashboard .db-kpi .n{font-size:29px}}
+  @media (prefers-reduced-motion:reduce){#tab-dashboard .db-kpi,#tab-dashboard .db-q{transition:none}}
 </style>
 </head>
 <body>
@@ -486,6 +523,7 @@
       <button data-tab="work"><span class="nav-ic">🗂️</span><span class="nav-label">ሥራ ክትትል</span></button>
       <button data-tab="exchange"><span class="nav-ic">🔁</span><span class="nav-label">መረጃ ልውውጥ</span></button>
       <button data-tab="agenda"><span class="nav-ic">🗣️</span><span class="nav-label">የጋራ ውይይት</span></button>
+      <button data-tab="conf"><span class="nav-ic">📞</span><span class="nav-label">ድምፅ/ቪዲዮ ስብሰባ</span></button>
     </div>
     <div class="nav-group"><div class="nav-group-label">መሳሪያዎች እና ሰነዶች</div>
       <button data-tab="tools"><span class="nav-ic">🧰</span><span class="nav-label">መሳሪያዎች</span></button>
@@ -525,6 +563,7 @@
   <div id="tab-work" class="tab hidden"></div>
   <div id="tab-exchange" class="tab hidden"></div>
   <div id="tab-restore" class="tab hidden"></div>
+  <div id="tab-conf" class="tab hidden"></div>
   <div id="tab-exam" class="tab hidden"></div>
   <div id="tab-agenda" class="tab hidden"></div>
   <div id="tab-access" class="tab hidden"></div>
@@ -1619,6 +1658,7 @@
     if (activeTab === "work") safeRender_("work", renderWork);
     if (activeTab === "exchange") safeRender_("exchange", renderExchange);
     if (activeTab === "restore") safeRender_("restore", renderRestore);
+    if (activeTab === "conf") safeRender_("conf", renderConf);
     if (activeTab === "exam") safeRender_("exam", renderExam);
     if (activeTab === "agenda") safeRender_("agenda", renderAgenda);
   }
@@ -1778,7 +1818,7 @@
     el.innerHTML = hero + kpis + '<div class="db-cols"><div class="db-col">' + quickCard + dataCard + activityCard + '</div><div class="db-col">' + levelCard + genderCard + '</div></div>';
     var shareBtn2 = document.getElementById("db-share-app");
     if (shareBtn2) shareBtn2.addEventListener("click", function(){
-      var url = location.href.split("#")[0];
+      var url = location.href.split("#")[0]; try { var _wu = wCfg().url; if (_wu) url += "#s=" + encodeURIComponent(_wu); } catch(e){}
       var shareData = { title: document.title, text: S("ይህን መተግበሪያ ይመልከቱ፦","Check out this app:"), url: url };
       if (navigator.share){
         navigator.share(shareData).catch(function(){});
@@ -3892,7 +3932,16 @@
     if (e === "ኮዱ አልተገኘም") return S("ኮዱ አልተገኘም — ይህ ኮድ ወደ ሥራ ክትትል ዝርዝር ገና አልተጨመረም። ባለቤቱ በ«ማዋቀር» ካርድ ውስጥ ሰውየውን መርጦ «አስቀምጥ እና ዝርዝሩን ላክ» መጫን አለበት።","Code not found — this code hasn't been added to the Work Tracking list yet. The owner must pick the person in the setup card and press Save & publish list.");
     return e || "";
   }
-  function wCfg(){ var c = state.workCfg || {}; return { url: String(c.url || "").trim(), admin: String(c.admin || "").trim() }; }
+  var DEFAULT_WORK_URL = "";   // የስክሪፕቱ /exec አድራሻ እዚህ ከተጻፈ ሁሉም አዲስ መሣሪያ በራሱ ይጠቀምበታል (ሚስጥር አይደለም)
+  function wCfg(){ var c = state.workCfg || {}; return { url: String(c.url || DEFAULT_WORK_URL || "").trim(), admin: String(c.admin || "").trim() }; }
+  function adoptUrlFromHash(){
+    try {
+      var m = /[#&]s=([^&]+)/.exec(location.hash || ""); if (!m) return;
+      var u = decodeURIComponent(m[1]);
+      if (/^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(u) && !wCfg().url){ state.workCfg = Object.assign({}, state.workCfg || {}, { url: u }); save(); }
+      history.replaceState(null, "", location.pathname + location.search);
+    } catch(e){}
+  }
   // መታወቅያ ፎቶ፦ ከ250ኪባ ገደብ ይልቅ ራሱ ቀንሶ (resize) ጥራቱን እንደጠበቀ በትንሽ መጠን ያስቀምጣል፣ ትልቅ ፎቶም ተቀባይነት እንዲኖረው
   function readImageResized(file, maxDim, quality, cb){
     var reader = new FileReader();
@@ -4094,7 +4143,7 @@
       if (!txt){ showToast(S("ተቀምጧል","Saved")); renderWork(); return; }
       var roster = txt.split("\n").map(function(l){ var p = l.split("|").map(function(x){ return x.trim(); }); return { code: p[0], name: p[1], role: p[2], dept: p[3] || "", boss: (p[4] || "").toUpperCase() }; })
         .filter(function(r){ return r.code && r.name && /^(office|head|sub)$/.test(r.role); });
-      wPost({ type: "a_roster", admin: adm, roster: roster }, function(r){ if (r.ok){ showToast(S("ዝርዝሩ ተላከ","List published") + " (" + roster.length + ")"); renderWork(); } else {
+      wPost({ type: "a_roster", admin: adm, school: schoolNameFull(), roster: roster }, function(r){ if (r.ok){ showToast(S("ዝርዝሩ ተላከ","List published") + " (" + roster.length + ")"); renderWork(); } else {
         er.textContent = (r.error === "ያልተፈቀደ")
           ? S("ያልተፈቀደ — ከላይ የጻፉት «የአስተዳዳሪ ሚስጥር» በGoogle Apps Script ውስጥ ካለው ADMIN_KEY ጋር በትክክል አይመሳሰልም (ፊደል፣ ትልቅ/ትንሽ ፊደል፣ ባዶ ቦታ ይመልከቱ)። ADMIN_KEY ን ከቀየሩ ስክሪፕቱን «አዲስ ቨርዥን» አድርገው እንደገና ዲፕሎይ ማድረግ አለብዎት።","Not allowed — the admin secret above does not exactly match ADMIN_KEY in the Google Apps Script (check spelling, upper/lower case, spaces). If you changed ADMIN_KEY, redeploy the script as a New version.")
           : r.error;
@@ -5424,6 +5473,7 @@
   STRINGS.tabs.attendance = mk("አቴንዳንስ (ቁጥጥር ክፍል)","Attendance (Control)");
   STRINGS.tabs.exchange = mk("መረጃ ልውውጥ","Information Exchange");
   STRINGS.tabs.exchange = mk("መረጃ ልውውጥ","Info Exchange");
+  STRINGS.tabs.conf = mk("ድምፅ/ቪዲዮ ስብሰባ","Audio/Video meeting");
   STRINGS.tabs.restore = mk("ቀድሞ የነበረ መረጃ መልስ","Restore previous data");
   STRINGS.tabs.work = mk("ሥራ ክትትል","Work tracking");
   STRINGS.tabs.exam = mk("ምዘና","Exams");
@@ -5432,7 +5482,7 @@
     STRINGS.act[k] = mk(["የተሳሳተ PIN ሙከራ","በPIN ገብቷል","የክፍል ፈቃድ ተቀየረ","PIN ተቀየረ","መተግበሪያው ተቆልፏል","የክፍል ሥራ ድርሻ ተመደበ"][i],["Wrong PIN attempt","Signed in with PIN","Section permission changed","PIN changed","App locked","Department assignment set"][i]);
   });
   var RANK = {owner:3, admin:2, collector:1, viewer:0};
-  var SECTIONS = ["dashboard","depts","parishes","members","students","teachers","documents","lessons","roster","attendance","grades","idcard","chat","tools","cert","io","storage","audit","comms","messages","work","exam","exchange","agenda","restore"];
+  var SECTIONS = ["dashboard","depts","parishes","members","students","teachers","documents","lessons","roster","attendance","grades","idcard","chat","tools","cert","io","storage","audit","comms","messages","work","exam","exchange","agenda","restore","conf"];
   var DEPTS = [
     {id:"office", n:"የሰ/ት/ቤቱ ጽሕፈት ቤት (ዋና አመራር)", roles:[["chair","ሰብሳቢ"],["vice","ምክትል ሰብሳቢ"],["secr","ጸሐፊ"]], subs:["የሰበካ ጉባኤ ተወካይ|ከሰበካ ጉባኤ ጋር ማገናኘት፣ የሰ/ት/ቤቱን ሪፖርት ማቅረብ፣ ድጋፍና ክትትል ማስተባበር"]},
     {id:"council", n:"መማክርት ጉባኤ", roles:[["chair","ሰብሳቢ"],["secr","ጸሐፊ"]], subs:["ተሰብሳቢዎች|የጉባኤ አባላትን መመዝገብና የስብሰባ ተሳትፎ መያዝ","ጽሑፎች (ቃለ ጉባኤ)|የስብሰባ ቃለ ጉባኤና ሰነዶችን መጻፍና መያዝ","አጀንዳ|የስብሰባ አጀንዳ ማዘጋጀትና ማሰራጨት","መራጮች|የመራጮችን ዝርዝር መያዝና ምርጫ ማስተባበር"]},
@@ -6040,14 +6090,17 @@
     var esc2 = esc;
     host.innerHTML = '<div class="lb"><img alt="" src="'+LOGO+'"><h3>'+S("🔄 ቀድሞ የነበረ መረጃ መልስ","🔄 Restore previous data")+'</h3>' +
       '<p class="meta" style="text-align:right;">'+S("ቀድሞ ሲጠቀሙበት የነበረውን የሥራ ኮድና PIN ያስገቡ። በሌላ ስልክ/ኮምፒውተር የተሞላው መረጃ እዚህ ይመለሳል። የስክሪፕት ሊንኩን ጽሕፈት ቤቱ ይሰጥዎታል (ሚስጥር ቁልፍ አይደለም)።","Enter the work code and PIN you used before. Data entered on another phone/computer will be restored here. The script link is given by the office (it is not a secret key).")+'</p>' +
-      '<div class="field"><label>'+S("የስክሪፕት ሊንክ","Script link")+'</label><input id="rs-url" type="url" placeholder="https://script.google.com/macros/s/…/exec" style="width:100%;"></div>' +
+      '<div class="field"><label>'+S("የሰ/ት/ቤቱ ስም","Sunday school name")+'</label><input id="rs-school" style="width:100%;"></div>' +
       '<div class="field"><label>'+S("ቀድሞ የነበረ ኮድ","Previous code")+'</label><input id="rs-code" style="width:100%;text-transform:uppercase;"></div>' +
       '<div class="field"><label>PIN</label><input id="rs-pin" type="password" inputmode="numeric" maxlength="12" style="width:100%;"></div>' +
+      '<details id="rs-adv" style="margin:6px 0;text-align:right;"><summary class="meta" style="cursor:pointer;">'+S("⚙️ ተጨማሪ — የስክሪፕት ሊንክ (በራሱ ከተሞላ አይንኩት)","⚙️ Advanced — script link (leave it if already filled)")+'</summary>' +
+      '<input id="rs-url" type="url" placeholder="https://script.google.com/macros/s/…/exec" style="width:100%;margin-top:6px;"></details>' +
       '<div class="er" id="rs-er"></div><div id="rs-info"></div>' +
       '<button class="primary" id="rs-go" style="width:100%;margin-top:8px;">'+S("🔍 አረጋግጥ","🔍 Check")+'</button>' +
       (onBack ? '<button class="ghost" id="rs-back" style="width:100%;margin-top:8px;">'+S("ተመለስ","Back")+'</button>' : '') + '</div>';
     var $$ = function(i){ return host.querySelector("#"+i); };
-    $$("rs-url").value = wCfg().url; $$("rs-code").value = wLastCode();
+    $$("rs-url").value = wCfg().url; $$("rs-code").value = wLastCode(); $$("rs-school").value = schoolNameFull();
+    if (!wCfg().url) $$("rs-adv").open = true;
     if ($$("rs-back")) $$("rs-back").onclick = onBack;
     var prevCfg = state.workCfg, found = null;
     function fail(m){ state.workCfg = prevCfg; $$("rs-er").textContent = m; $$("rs-go").disabled = false; }
@@ -6073,13 +6126,16 @@
     $$("rs-go").onclick = function(){
       if (found) return doRestore();
       var url = $$("rs-url").value.trim(), code = $$("rs-code").value.trim().toUpperCase(), pin = $$("rs-pin").value;
-      if (!/^https:\/\/script\.google\.com\//.test(url)){ $$("rs-er").textContent = S("የስክሪፕት ሊንክ ያስገቡ (https://script.google.com/…)","Enter the script link (https://script.google.com/…)"); return; }
+      if (!/^https:\/\/script\.google\.com\//.test(url)){ $$("rs-adv").open = true; $$("rs-er").textContent = S("ይህ መተግበሪያ ከሰ/ት/ቤቱ ጋር ገና አልተገናኘም — ጽሕፈት ቤቱ የላከልዎትን የመተግበሪያ ሊንክ ይክፈቱ፣ ወይም ከታች ያለውን ሊንክ ይሙሉ።","This app isn't connected to the school yet — open the app link the office sent you, or fill in the script link below."); return; }
       if (!code || !/^[0-9]{4,12}$/.test(pin)){ $$("rs-er").textContent = S("ኮድና ቢያንስ 4 ቁጥር PIN ያስገቡ","Enter your code and a PIN of 4+ digits"); return; }
       $$("rs-er").textContent = "…"; $$("rs-go").disabled = true;
       state.workCfg = Object.assign({}, prevCfg || {}, { url: url });
       hashStudentPin(pin, "W:" + code).then(function(hash){
         wGet(code, hash, function(j){
           if (!j.ok) return fail(j.error === "nopin" ? S("ይህ ኮድ ገና PIN አልፈጠረም — በ«ሥራ ክትትል» ይግቡ","This code has no PIN yet — sign in under Work tracking first") : wHintErr(j.error));
+          function nz(x){ return String(x||"").toLowerCase().replace(/[\s\.\-_\/,፡።]/g,""); }
+          var wantS = nz($$("rs-school").value);
+          if (j.school && wantS && nz(j.school).indexOf(wantS) < 0 && wantS.indexOf(nz(j.school)) < 0) return fail(S("የሰ/ት/ቤቱ ስም ከተመዘገበው ጋር አይመሳሰልም።","The school name does not match the registered one."));
           var role = j.me.role, base = url + (url.indexOf("?") === -1 ? "?" : "&");
           var q = role === "office" ? "flist" : "dlist";
           fetch(base + "type=" + q + "&code=" + encodeURIComponent(code) + "&pin=" + encodeURIComponent(hash) + "&_=" + Date.now())
@@ -6107,6 +6163,62 @@
     host.firstChild.style.cssText = "box-shadow:none;border:0;padding:0;max-width:none;";
     var img = host.querySelector("img"); if (img) img.style.display = "none";
     var h3 = host.querySelector("h3"); if (h3) h3.style.display = "none";
+  }
+  // ---------- የድምፅ/ቪዲዮ ስብሰባ (Jitsi Meet — ነጻ፣ መለያ አያስፈልግም፤ እያንዳንዱ ስብሰባ የራሱ የማይገመት ክፍል ስም አለው) ----------
+  var CONF_HOST = "https://meet.jit.si/", CONF_KEY = "bkbn_conf_recent_v1";
+  function confRecent(){ try { return JSON.parse(localStorage.getItem(CONF_KEY) || "[]"); } catch(e){ return []; } }
+  function confRemember(o){ try { var l = confRecent().filter(function(x){ return x.room !== o.room; }); l.unshift(o); localStorage.setItem(CONF_KEY, JSON.stringify(l.slice(0, 6))); } catch(e){} }
+  function confRoom(){
+    var a = new Uint8Array(9), out = "";
+    (window.crypto || window.msCrypto).getRandomValues(a);
+    for (var i = 0; i < a.length; i++) out += "abcdefghjkmnpqrstuvwxyz23456789".charAt(a[i] % 31);
+    return "BKBN-" + out;
+  }
+  function confUrl(room, audioOnly){
+    return CONF_HOST + room + "#config.prejoinPageEnabled=true" + (audioOnly ? "&config.startWithVideoMuted=true&config.startAudioOnly=true" : "");
+  }
+  function renderConf(){
+    var el = document.getElementById("tab-conf"), rec = confRecent();
+    el.innerHTML = '<div class="card"><h2>📞 ' + S("የድምፅ / ቪዲዮ ስብሰባ","Audio / video meeting") + '</h2>' +
+      '<p class="meta">' + S("ስብሰባ ጀምረው ሊንኩን ለአባላት ይላኩ — በስልክም በኮምፒውተርም ከአሳሽ ይገባል፤ ምንም መተግበሪያ ወይም መለያ አያስፈልግም። ኢንተርኔት ደካማ ከሆነ «ድምፅ ብቻ» ይምረጡ (ዳታ ይቆጥባል)።","Start a meeting and send the link to members — it opens in the phone or computer browser, no app or account needed. On a weak connection choose “Audio only” (saves data).") + '</p>' +
+      '<div class="field"><label>' + S("የስብሰባ ርዕስ (ለአስታዋሽ)","Meeting title (for your list)") + '</label><input id="cf-title" placeholder="' + S("ለምሳሌ፦ የሳምንት መምህራን ስብሰባ","e.g. Weekly teachers meeting") + '"></div>' +
+      '<div class="field"><label>' + S("ዓይነት","Type") + '</label><select id="cf-mode"><option value="av">' + S("🎥 ቪዲዮ እና ድምፅ","🎥 Video and audio") + '</option><option value="a">' + S("🎧 ድምፅ ብቻ (ስልክ ኮንፈረንስ)","🎧 Audio only (phone conference)") + '</option></select></div>' +
+      '<button class="primary" id="cf-go">' + S("▶ ስብሰባ ጀምር","▶ Start meeting") + '</button> ' +
+      '<button class="ghost" id="cf-meet">' + S("Google Meet ክፈት","Open Google Meet") + '</button>' +
+      '<div id="cf-out"></div></div>' +
+      '<div class="card"><h2>' + S("በሊንክ ወይም በኮድ ግባ","Join with a link or code") + '</h2>' +
+      '<div class="field"><input id="cf-join" placeholder="' + S("ሊንኩን ወይም BKBN-… ኮዱን ይለጥፉ","Paste the link or the BKBN-… code") + '"></div>' +
+      '<button class="primary" id="cf-joingo">' + S("ግባ","Join") + '</button></div>' +
+      (rec.length ? '<div class="card"><h2>' + S("የቅርብ ስብሰባዎች","Recent meetings") + '</h2>' + rec.map(function(r){
+        return '<div style="display:flex;gap:8px;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid #eee;"><span>' + esc(r.title || r.room) + '<br><span class="meta">' + esc(new Date(r.ts).toLocaleString()) + (r.a ? ' · 🎧' : ' · 🎥') + '</span></span><button class="ghost" data-cf-open="' + esc(r.room) + '" data-a="' + (r.a ? 1 : 0) + '">' + S("ግባ","Join") + '</button></div>'; }).join("") + '</div>' : '') +
+      '<p class="meta">' + S("ማስታወሻ፦ ነጻው የJitsi አገልግሎት አንዳንድ ጊዜ ስብሰባውን የሚጀምረውን ሰው በGoogle መለያ እንዲገባ ሊጠይቅ ይችላል። ያኔ «Google Meet ክፈት»ን ይጠቀሙ። ለግል መረጃ ወይም ምስጢራዊ ጉዳይ የክፍሉን ሊንክ ለተፈቀደላቸው ብቻ ይስጡ።","Note: the free Jitsi service may sometimes ask whoever starts the meeting to sign in with Google. If so, use “Open Google Meet”. Only give the room link to people who should be there.") + '</p>';
+    function show(room, title, audioOnly){
+      var url = confUrl(room, audioOnly), out = document.getElementById("cf-out");
+      var msg = (title ? title + " — " : "") + S("የስብሰባ ሊንክ፦ ","Meeting link: ") + url;
+      out.innerHTML = '<div class="card" style="margin-top:10px;text-align:right;"><b>✅ ' + S("ስብሰባው ተከፍቷል","Meeting is open") + '</b><br><span class="meta" style="word-break:break-all;">' + esc(url) + '</span><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">' +
+        '<button class="primary" id="cf-reopen">' + S("እንደገና ክፈት","Open again") + '</button>' +
+        '<button class="ghost" id="cf-copy">' + S("📋 ሊንክ ቅዳ","📋 Copy link") + '</button>' +
+        (navigator.share ? '<button class="ghost" id="cf-share">' + S("📤 ላክ","📤 Share") + '</button>' : '') + '</div></div>';
+      document.getElementById("cf-reopen").onclick = function(){ window.open(url, "_blank", "noopener"); };
+      document.getElementById("cf-copy").onclick = function(){
+        try { navigator.clipboard.writeText(msg).then(function(){ showToast(S("ተቀድቷል","Copied")); }, function(){ prompt(S("ሊንኩን ይቅዱ","Copy the link"), msg); }); } catch(e){ prompt(S("ሊንኩን ይቅዱ","Copy the link"), msg); }
+      };
+      if (document.getElementById("cf-share")) document.getElementById("cf-share").onclick = function(){ navigator.share({ title: title || "BK/B/N", text: msg }).catch(function(){}); };
+    }
+    document.getElementById("cf-go").onclick = function(){
+      var title = document.getElementById("cf-title").value.trim(), a = document.getElementById("cf-mode").value === "a", room = confRoom();
+      confRemember({ room: room, title: title, a: a, ts: Date.now() });
+      show(room, title, a);
+      window.open(confUrl(room, a), "_blank", "noopener");
+    };
+    document.getElementById("cf-meet").onclick = function(){ window.open("https://meet.google.com/new", "_blank", "noopener"); };
+    document.getElementById("cf-joingo").onclick = function(){
+      var v = document.getElementById("cf-join").value.trim(), m = /(BKBN-[a-z0-9]{6,20})/i.exec(v);
+      if (m){ window.open(confUrl(m[1], false), "_blank", "noopener"); return; }
+      if (/^https:\/\/(meet\.jit\.si|meet\.google\.com)\//.test(v)){ window.open(v, "_blank", "noopener"); return; }
+      showToast(S("ልክ ያልሆነ ሊንክ ወይም ኮድ","Invalid link or code"));
+    };
+    el.querySelectorAll("[data-cf-open]").forEach(function(b){ b.onclick = function(){ window.open(confUrl(b.getAttribute("data-cf-open"), b.getAttribute("data-a") === "1"), "_blank", "noopener"); }; });
   }
   function deviceEntryChoice(){
     return new Promise(function(res){
@@ -6204,7 +6316,7 @@
   }
 
   // ---------- init ----------
-  load().then(function(){ return refreshFileKeys(); }).then(function(){ return startSecurity(); }).then(function(){
+  load().then(function(){ try { adoptUrlFromHash(); } catch(e){} return refreshFileKeys(); }).then(function(){ return startSecurity(); }).then(function(){
     document.getElementById("owner-name").value = state.ownerName || "";
     try { var savedLang = localStorage.getItem("bkbn_lang"); if (savedLang) { setLanguage(savedLang, false); document.getElementById("lang-select").value = savedLang; } else document.getElementById("lang-select").value = lang; } catch(e){ document.getElementById("lang-select").value = lang; }
     trCollect(STRINGS, 0);
