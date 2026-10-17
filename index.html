@@ -437,6 +437,23 @@
   #tab-dashboard .db-kpi:focus-visible,#tab-dashboard .db-q:focus-visible{outline:3px solid #F2C230;outline-offset:2px}
   @media (max-width:420px){#tab-dashboard .db-day{font-size:62px}#tab-dashboard .db-kpi .n{font-size:29px}}
   @media (prefers-reduced-motion:reduce){#tab-dashboard .db-kpi,#tab-dashboard .db-q{transition:none}}
+  /* ኮምፒውተር፦ የጎን ዝርዝር እንዳይጎረድ — ጠባብ ቁመት፣ የሚታይ ስክሮል፣ ተጨማሪ ፍርግ ፍንጭ */
+  @media (min-width:900px){
+    .app > nav.tabs{justify-content:flex-start !important;scrollbar-width:thin !important;scrollbar-color:#8FAAD6 #E6EEFA;padding:10px 8px 18px;overscroll-behavior:contain}
+    .app > nav.tabs::-webkit-scrollbar{display:block !important;width:9px}
+    .app > nav.tabs::-webkit-scrollbar-track{background:#E6EEFA;border-radius:8px}
+    .app > nav.tabs::-webkit-scrollbar-thumb{background:#8FAAD6;border-radius:8px}
+    .app > nav.tabs button{padding:5px 10px;font-size:13px;margin:0;min-height:30px;border-radius:10px}
+    .app > nav.tabs .nav-ic{font-size:14px;margin-inline-end:7px}
+    .app > nav.tabs .nav-group{margin:0 0 4px}
+    .app > nav.tabs .nav-group-label{margin:6px 4px 3px;font-size:11px}
+  }
+  /* ኮምፒውተር፦ በዳሽቦርዱ ላይ ባዶ ክፍተት እንዳይፈጠር (ዝርዝሩ ሁሉንም ረድፍ ይሸፍናል) */
+  @media (min-width:900px){
+    .app{row-gap:0 !important;grid-auto-rows:min-content}
+    .app > nav.tabs{grid-row:1 / span 60 !important}
+    .app > *:not(nav.tabs){margin-bottom:14px}
+  }
 </style>
 </head>
 <body>
