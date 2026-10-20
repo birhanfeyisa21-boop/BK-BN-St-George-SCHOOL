@@ -1,6 +1,6 @@
 // BK/B/N Sunday school app - service worker
 // ስሪት ሲቀይሩ ቁጥሩን ይጨምሩ (v1 -> v2) ተጠቃሚዎች አዲሱን ፋይል እንዲያገኙ።
-const CACHE = 'bkbn-v1';
+const CACHE = 'bkbn-v2';
 const CORE = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (e) => {
