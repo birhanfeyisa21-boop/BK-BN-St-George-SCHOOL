@@ -1,6 +1,6 @@
 Copyright © 2026 BK/B/N — ሁሉም መብቶች የተጠበቁ (All Rights Reserved)
 
-ይህ ሪፖዚተሪ እና በውስጡ ያለው ኮድ፣ ንድፍ፣ ይዘት እና ፎቶዎች የለገበሪ ቅዱስ ጊዮርጊስ እና በዓታ ለማርያም ሆህተ ብርሃን
+ይህ ሪፖዚተሪ እና በውስጡ ያለው ኮድ፣ ንድፍ፣ ይዘት እና ፎቶዎች የለገዳዲ መንበረ ኢየሱስና አንቀፀ ምህረት ቅድስት ኪዳነ ምህረት ፍሬ ሃይማኖት
 ሰንበት ትምህርት ቤት ትምህርት ክፍል ንብረት ናቸው።
 
 ከዚህ ሪፖ ባለቤት የጽሑፍ ፈቃድ ውጪ፦
@@ -18,7 +18,7 @@ Copyright © 2026 BK/B/N — ሁሉም መብቶች የተጠበቁ (All Rights 
 Copyright © 2026 BK/B/N — All Rights Reserved
 
 This repository and everything in it — code, design, content and photos — is the property of
-the Education Department of Legeberi St. George & Beata LeMariam "Hohite Birhan" Sunday School.
+the Education Department of Legedadi Menbere Iyesus & Anketse Mihret Kidist Kidane Mihret Fire Haimanot Sunday School.
 
 Without written permission from the owner of this repository:
   • You may NOT copy, redistribute, sell, or reuse this code, design or content for another
