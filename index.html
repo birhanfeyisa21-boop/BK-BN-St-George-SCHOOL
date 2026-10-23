@@ -346,6 +346,25 @@
   .hist-tli:last-child::before{display:none}
   .hist-p{font-size:14px;line-height:1.9;color:#2A3547;margin:0 0 14px;text-align:justify}
   .hist-p:last-child{margin-bottom:0}
+  .hs-banner{position:relative;overflow:hidden;text-align:center;color:#fff;border:none;background:linear-gradient(135deg,#6B1D2A 0%,#1E4FA0 55%,#A6791F 120%);padding:22px 16px}
+  .hs-banner:before{content:"✝";position:absolute;right:10px;top:-14px;font-size:110px;opacity:.10}
+  .hs-banner h2{color:#fff;border:none;padding:0;margin:0;font-size:19px;line-height:1.5}
+  .hs-banner .hs-sub{margin:6px 0 0;font-size:12.5px;color:rgba(255,255,255,.88)}
+  .hs-sec{--c:#1E4FA0;--bg:#EAF1FC;border-inline-start:5px solid var(--c)}
+  .hs-sec.old{--c:#1E4FA0;--bg:#EAF1FC}.hs-sec.new{--c:#2E7D4F;--bg:#E7F5EC}.hs-sec.mod{--c:#8A2432;--bg:#FBEBED}.hs-sec.sum{--c:#6B3FA0;--bg:#F1EAFA}
+  .hs-sec>h3{margin:0 0 12px;font-size:16px;color:var(--c);display:flex;align-items:center;gap:8px}
+  .hs-sec>h3 .hs-ic{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--c);color:#fff;font-size:15px}
+  .hs-p{font-size:14px;line-height:1.9;color:#2A3547;margin:0 0 12px;text-align:justify}
+  .hs-q{background:var(--bg);border-radius:10px;padding:10px 14px;margin:0 0 12px;font-size:14px;line-height:1.85;color:#1F2937;position:relative}
+  .hs-q:before{content:"“";position:absolute;top:-6px;inset-inline-start:6px;font-size:38px;color:var(--c);opacity:.45;line-height:1}
+  .hs-q .ref{display:block;margin-top:4px;font-size:12px;font-weight:700;color:var(--c)}
+  .hs-tl{position:relative;margin:0;padding:0 0 0 18px;border-inline-start:3px solid #E3C77E}
+  .hs-it{position:relative;margin:0 0 14px;padding:0 0 0 10px}
+  .hs-it:before{content:"";position:absolute;left:-27px;top:6px;width:13px;height:13px;border-radius:50%;background:#A6791F;border:3px solid #fff;box-shadow:0 0 0 2px #A6791F}
+  .hs-b{display:inline-block;margin:0 0 5px;padding:2px 11px;border-radius:12px;background:var(--c);color:#fff;font-size:12px;font-weight:700}
+  .hs-ul{margin:0;padding:0;list-style:none}.hs-ul li{background:var(--bg);border-radius:10px;padding:10px 12px 10px 38px;margin:0 0 9px;font-size:14px;line-height:1.8;color:#2A3547;position:relative}
+  .hs-ul li:before{content:"✦";position:absolute;left:12px;top:9px;color:var(--c);font-size:16px}
+  .hs-src{font-size:12px;color:#6B7280;font-style:italic;margin:6px 0 0;text-align:center}
   .hgal{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}
   .hgal-i{display:block;border-radius:12px;overflow:hidden;box-shadow:0 3px 10px rgba(20,54,112,.14);aspect-ratio:3/4}
   .hgal-i img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .2s}
@@ -4914,6 +4933,39 @@
     ];
     var h = '<div class="card hist-hero"><div class="hist-ico">⛪</div>' +
       '<h2 style="border:none;padding:0">' + S("ታሪካችን","Our history") + '</h2></div>';
+    function hsSec(cls, ic, title, body){ return '<div class="card hs-sec ' + cls + '"><h3><span class="hs-ic">' + ic + '</span>' + esc(title) + '</h3>' + body + '</div>'; }
+    function hsP(t){ return '<p class="hs-p">' + esc(t) + '</p>'; }
+    function hsQ(t, ref){ return '<div class="hs-q">' + esc(t) + (ref ? '<span class="ref">— ' + esc(ref) + '</span>' : '') + '</div>'; }
+    var HS = '<div class="card hs-banner"><h2>ሰንበት ትምህርት ቤት አመጣጥ እና አመሰራረት ታሪክ</h2><p class="hs-sub">ከዘመነ ብሉይ እስከ ዛሬ</p></div>';
+    HS += hsSec("old", "📜", "ሰ/ት/ቤት በዘመነ ብሉይ",
+      hsP("የሰንበት ት/ቤት ከዘመነ ብሉይ ጀምሮ የነበረ ነው፡፡ ለምሳሌ ዘዳ 1÷6-9 የሚል እናገኛለን፡፡") +
+      hsQ("እነዚህ ቃሎች በልባችሁና በነፍሳችሁ አኑሩ እነርሱንም ለምልክት በእጃችሁ ላይ እሰሩአቸው በአይኖቻችሁም መካከል እንደክታብ ይሁን ልጆቻችሁንም አስተምሩአቸው በቤትህም ስትቀመጥ በመንገድህም ስትሄድ ስትነሳም አጫውታቸው", "ዘዳ 1÷6-9") +
+      hsP("ከላይ እንደተጠቀሰው እስራኤላውያን ልጆቻቸውን ሕገ እግዚአብሔር እንዲያስተምሩአቸው ታዘዋል፡፡ በትእዛዙም መሰረት ሕፃናቶቻቸውን በቤተ እግዚአብሔርና በቤታቸው ሕገ ኦሪትን እያስተማሩ ያሳድጓቸው እንደነበር ለማወቅ እንችላለን፡፡"));
+    HS += hsSec("new", "✝️", "ሰ/ት/ቤት በዘመነ ሐዲስ",
+      hsQ("እውነት እላችኋለሁ ካልተመለሳችሁ እንደ ሕፃናትም ካልሆናችሁ ወደ መንግስተ ሰማያት ከቶ አትገቡም", "ማቴ 17÷2-4") +
+      hsP("ብሎ ሕፃናትን ለቤቱ ስራ ምሳሌ አድርጎ እንዳቀረባቸው እንረዳለን፡፡") +
+      hsQ("ሕጻናትን ተዋቸው ወደ እኔ ይመጡ ዘንድ አትከልክሏቸው መንግሥተ ሰማያት እንደ እነርሱ ላሉት ናትና", "ማቴ 19፥14") +
+      hsP("በመሆኑም ሰ/ት/ቤት በዘመነ ሐዲስ በ 200 ዓ.ም በፈረንሳይ ሀገር በፓሪስ ከተማ ተጀምሯል፡፡ ከዚያም በኋላ አውሮፓ እንደተስፋፋ እና በሌሎች አህጉራትም እንደተቋቋመ ተረጋግጧል፡፡") +
+      hsP("ቤተ ክርስቲያናችን ሕገ ወንጌልን ለማስፋፋት ከሚያስፈልጓት ዋና ዋና ነገሮች አንዱ የሰ/ት/ቤትን ማቋቋምና ማደራጀት መሆኑን ተገንዝባ ሰ/ት/ቤትን በየአጥቢያ ቤተክርስቲያን በስፋትና በጥልቀት እንዲቋቋም አድርጋለች፡፡") +
+      hsP("ይኽውም በኢትዮጵያ ሊቃውንት ወይም መምህራን በየቤተክርስቲያኑ በየደጀ ሰላሙና በየዛፉ ስር በየመንደሩም ጭምር ሕጻናትን በማሰባሰብ ያስተምሩ የነበረው የሰንበት ትምህርት ቤት መሰረትና መነሻ መሆኑ ግልጽ ነው፡፡"));
+    var TL_ = [
+      ["1936 ዓ.ም.", "በ1936 ዓ.ም. በመ/ጸ/ቅ/ሥላሴ ካቴድራል የመጀመሪያው መምህር /አስተዳዳሪ/ ሆነው በተሾሙት በሊቀ ሥልጣናት በአባ መልዕክቱ / በኋላም ብፁዕ ወቅዱስ አቡነ ቴዎፍሎስ የኢትዮጵያ ፓትርያሪክ አገልግሎቱ ቀጣይነት እንዲኖረው ተቋቁሟል፡፡"],
+      ["1939 ዓ.ም.", "ከሦስት ዓመት በኋላ በ1939 ዓ.ም. በምስካየ ኅዙናን መድኃኔዓለም ገዳም አሁን ተምሮ ማስተማር እየተባለ በሚጠራው ማህበር ተጠናክሮ ተቋቋመ፡፡ ቀስ በቀስም የሰ/ት/ቤት አገልግሎት በመላ አገሪቱ አድማሱን እያሰፋ በመምጣቱ በቤተክርስቲያን አገልግሎትም አዲስ ምዕራፍ መክፈቱ ከዕለት ወደ ዕለት ይፋ እየሆነ መጣ፡፡"],
+      ["ማህበረ ሥላሴ", "ከ1936 ዓ.ም ማህበረ እስጢፋኖስ የመነኮሳትና የዲያቆናት እንዲሁም የወጣቶች ማህበር በሚል ስያሜ የተቋቋመ ማህበር ነበር፡፡ በገጠመው የውስጥ ችግር ምክንያት ብዙ ፈተና አሳልፎ በመጨረሻም በወቅቱ በነበሩት የካቴድራሉ አስተዳዳሪና በሚመለከታቸው ሰዎች ብርቱ ጥረት በድጋሚ የወንድ ወጣቶቹን እንቅስቃሴ በማጠናከርና እንዲንሰራራ በማድረግ እንዲሁም የደንብ ልብስ /ዩኒፎርም/ በማሰፋት ማህበረ ሥላሴ በሚል መጠሪያ በድጋሚ እንዲደራጅ ተደርጓል፡፡"],
+      ["ማህበረ ክርስቶስ · 1956 ዓ.ም.", "በመቀጠልም ማህበረ ክርስቶስ የሴት ልጅ እድገት በሃይማኖት የደናግል ሴቶች ማህበር በሚል ስም የሴቶች እንቅስቃሴ እንደተጀመረ፡፡ የሴቶች ከቤተክርስቲያን አገልግሎት መራቅ ምክንያት በማድረግ ማኅበረ ክርስቶስ ሰኔ 01/1956 ዓ.ም. ከ 20 በማይበልጡ በዳግማዊ ሚኒሊክ ትምህርት ቤት ወጣት ሴት ተማሪዎች በተለይም በእህት አፀደ ክርስቶስ ተፈራ አሰባሳቢነት በቅድስት ሥላሴ ካቴድራል ስር ለመሰባሰብ ቻሉ፡፡"],
+      ["ፈተና እና ጽናት", "በዚያን ጊዜ እንደዚህ አይነቱ ማኀበር በአገራችን ውስጥ የመጀመሪያ ስለነበር በሕዝቡ ዘንድ ብዙ ትችትና መገረምን አስከትሎ ነበር፡፡ ቢሆንም ሰው ካሰበው እግዚአብሔር የፈቀደው ይበልጣልና በአምላክ ቸርነት በአንዳንድ ሰዎች አበረታችነትና ደጋፊነት እንዲሁም በልጆቹ መንፈሰ ጠንካራነት ማኀበሩ ሥራውን ቀጠለ፡፡"],
+      ["እስከ 1968 ዓ.ም.", "አቅሙን እያጠናከረና እያሰፋ ከመምጣቱም ባሻገር በሌሎች አድባራት እየሄዱ ልምድ በማካፈል ለሌሎች ወጣቶች መንፈሳዊ ቅናትን በማሳደር ቀስ በቀስ በሁሉ ቦታ እንዲስፋፋ በማድረግ ከፍተኛ ለውጥ አመጡ፡፡ ማህበሩም እስከ 1968 ዓ.ም. ድረስ በዚሁ መጠሪያ ስም ይጠራ ነበር፡፡ በተለይ ንጉሠ ነገሥቱ በሥልጣን እስከነበሩበት ጊዜ ድረስ በየዓመቱ የ4 እና የ6 ወር እንዲሁም የዓመት ትምህርት ያገኙ ተማሪዎች ከንጉሠ ነገሥቱ የሠርተፊኬትና የተለያዩ ሽልማትን በማግኘት በውጭ ሃገር ጭምር በመሄድ ተሳትፎአቸውን ሲያደርጉ መቆየታቸውን ታሪክ ይነግረናል፡፡"],
+      ["1969 ዓ.ም.", "በወቅቱ የካቴድራሉ አስተዳዳሪ በነበሩት ሊቀ ሥልጣናት ዶ/ር አባ ሀ/ሥላሴ ተስፋ / በኋላም አቡነ ጢሞቴዎስ/ ለአመራርና ለቁጥጥር እንዲያመች ሁለቱ ማኅበራት በአንድነት ተዋህደው መመራት አለባቸው ስላሉ አባላቱም ጉዳዩ ስላስደሰታቸው በ1969 ዓ.ም. በአንድነት ተዋህደው የማኅበሩ መጠሪያ ስም ማኅበረ ክርስቶስ ዘመንበረ ጸባዖት ቅድስት ሥላሴ ካቴድራል ተብሎ ተሰየመ፡፡"],
+      ["የጥንቃቄ ጊዜ", "በስንዴ መካከል እንክርዳድ አይጠፋምና መናፍቃን በታላቁና ለሰ/ት/ቤቶች መሰረት በሆነው የወጣት ማኀበር በመግባት ውስጥ ውስጡን ከፍተኛ ጉዳት በማድረስ ነገሮችን ሙሉ ለሙሉ ተቆጣጥረው አላማቸውን ከግብ ከማድረሳቸው በፊት በፈቃደ እግዚአብሔርና በወቅቱ የካቴድራሉ አስተዳዳሪ በነበሩ በሊቀ ሥልጣናት አባ ተክለ ሚካኤል አባይ /በኋላም አቡነ ሚካኤል/ እንዲሁም በካቴድራሉ ሰራተኞችና አስተዳደር ስለተደረሰባቸው ቤቱን ጥለው እንዲወጡ ተደርጓል፡፡"],
+      ["አዲስ ስያሜ", "በመሆኑም ማኅበረ ክርስቶስ የወጣቶች ማኅበር በድጋሚ በአዲስ መንፈስ እንቅስቃሴውን ይቀጥል ዘንድ በወቅቱ በነበሩት አባት ትኩረት ስለተሰጠው ስሙ ተቀይሮ የመ/ጸ/ቅ/ሥላሴ ካቴድራል ሰንበት ት/ቤት በመባል እንዲጠራ ሆኗል፡፡ ከነበረው ከብዙ በጥቂቱ የሰንበት ት/ቤቶች ታሪካዊ አመጣጥ ይህን ይመስላል፡፡"]
+    ];
+    HS += hsSec("mod", "🏛️", "ሰ/ት/ቤት በአገራችን በዘመናዊ መልክ መቋቋም",
+      '<div class="hs-tl">' + TL_.map(function(x){ return '<div class="hs-it"><span class="hs-b">' + esc(x[0]) + '</span>' + hsP(x[1]).replace('class="hs-p"', 'class="hs-p" style="margin:0"') + '</div>'; }).join("") + '</div>' +
+      '<p class="hs-src">ምንጭ፦ በተተኪ መምህራን ተምሮ ማስተማር ስልጠና ላይ ከጅማ ከመጡ ከሰልጣኞች እጅ የተገኘ ማስታወሻ የተወሰደ።</p>');
+    HS += hsSec("sum", "🌱", "በአጭሩ ሰንበት ት/ቤት ማለት",
+      '<ul class="hs-ul"><li>የአጥቢያ ቤተ ክርስቲያን አካል በመሆኑ የቤተ ክርስቲያን ት/ቤት ነው፡፡</li>' +
+      '<li>የነገዋ ቤተ ክርስቲያን ተረካቢ የሆኑ ታዳጊ ህፃናትና ወጣቶች የሚፈሩባትና የሚዘጋጁባት በመሆኗ ‹‹ የቤተ ክርስቲያን ችግኞች (ህፃናትና ወጣቶች) መንከባከቢያ መጠበቂያ ማዕከል ቅድስት ቤተክርስቲያን ጥላ ስር እንዲሸሸጉ በመንፈሳዊ እውቀት ማጽናቱ አስፈላጊ ነው።››</li></ul>');
+    h += HS;
     h += '<div class="card">' +
       P.map(function(t){ return '<p class="hist-p">' + esc(t) + '</p>'; }).join("") +
       '</div>';
