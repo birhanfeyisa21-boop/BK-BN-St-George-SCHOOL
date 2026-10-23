@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data: blob: https://script.google.com https://script.googleusercontent.com; media-src 'self' blob: data: https://script.google.com https://script.googleusercontent.com https://drive.google.com https://drive.usercontent.google.com https://*.googleusercontent.com; connect-src 'self' blob: data: https://script.google.com https://script.googleusercontent.com https://translate.googleapis.com; frame-src blob: data: https://www.youtube-nocookie.com https://drive.google.com; object-src blob:; base-uri 'none'; form-action 'none'; manifest-src 'self'; worker-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'unsafe-inline'; img-src 'self' data: blob: https://script.google.com https://script.googleusercontent.com; media-src 'self' blob: data: https://script.google.com https://script.googleusercontent.com https://drive.google.com https://drive.usercontent.google.com https://*.googleusercontent.com; connect-src 'self' blob: data: https://cdnjs.cloudflare.com https://script.google.com https://script.googleusercontent.com https://translate.googleapis.com; frame-src blob: data: https://www.youtube-nocookie.com https://drive.google.com; object-src blob:; base-uri 'none'; form-action 'none'; manifest-src 'self'; worker-src 'self'">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#1E4FA0">
 <link rel="icon" type="image/png" href="data:image/png;base64,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">
@@ -375,6 +375,11 @@
   .hs-th{border-radius:12px;padding:11px 14px;margin:0 0 10px;font-size:14px;line-height:1.85;color:#2A3547}
   .hs-th.a{background:#FFF3E0;border:1px solid #F6D8A8}.hs-th.b{background:#F1EAFA;border:1px solid #D7C5EE}
   .hs-ded{margin-top:6px;border-radius:12px;padding:14px 16px;text-align:center;font-weight:700;line-height:1.9;font-size:14px;color:#fff;background:linear-gradient(135deg,#6B1D2A,#1E4FA0)}
+  .nc,.nc *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+  .nc img{pointer-events:none;-webkit-user-drag:none}
+  body.nc-blur #tab-history>*:not(.nc-wm){filter:blur(18px)}
+  body.nc-blur #xf-sc{filter:blur(18px)}
+  @media print{#tab-history,#xf-ov{display:none!important}}
   .hs-src{font-size:12px;color:#6B7280;font-style:italic;margin:6px 0 0;text-align:center}
   .hgal{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}
   .hgal-i{display:block;border-radius:12px;overflow:hidden;box-shadow:0 3px 10px rgba(20,54,112,.14);aspect-ratio:3/4}
@@ -4865,7 +4870,7 @@
       .then(function(r){ return r.json(); }).then(function(j){ ixItems = (j.ok && j.items) ? j.items : []; renderExchange(); }).catch(function(){});
   }
   // ---------- ምዘና (online exams: አዛምድ / እውነት-ሐሰት / ምርጫ / አብራራ) ----------
-  var examData = null, examDraft = [], examTake = null, examOut = null, examView = "mine";
+  var examFile = null, examData = null, examDraft = [], examTake = null, examOut = null, examView = "mine";
   var examLeft = 0;
   function xFmt(n){ n = Math.max(0, n); return Math.floor(n / 60) + ":" + ("0" + (n % 60)).slice(-2); }
   var X_T = { mcq: ["ምርጫ","Choice"], tf: ["እውነት/ሐሰት","True/False"], match: ["አዛምድ","Match"], explain: ["አብራራ","Explain"] };
@@ -4971,7 +4976,7 @@
     ];
     HS += hsSec("mod", "🏛️", "ሰ/ት/ቤት በአገራችን በዘመናዊ መልክ መቋቋም",
       '<div class="hs-tl">' + TL_.map(function(x){ return '<div class="hs-it"><span class="hs-b">' + esc(x[0]) + '</span>' + hsP(x[1]).replace('class="hs-p"', 'class="hs-p" style="margin:0"') + '</div>'; }).join("") + '</div>' +
-      '<p class="hs-src">ምንጭ፦ በተተኪ መምህራን ተምሮ ማስተማር ስልጠና ላይ ከጅማ ከመጡ ከሰልጣኞች እጅ የተገኘ ማስታወሻ የተወሰደ።</p>');
+      '<p class="hs-src">ምንጭ፦ በተተኪ መምህራን ተምሮ ማስተማር ስልጠና ላይ የተወሰደ ማስታወሻ ለትውስታ።</p>');
     HS += hsSec("sum", "🌱", "በአጭሩ ሰንበት ት/ቤት ማለት",
       '<ul class="hs-ul"><li>የአጥቢያ ቤተ ክርስቲያን አካል በመሆኑ የቤተ ክርስቲያን ት/ቤት ነው፡፡</li>' +
       '<li>የነገዋ ቤተ ክርስቲያን ተረካቢ የሆኑ ታዳጊ ህፃናትና ወጣቶች የሚፈሩባትና የሚዘጋጁባት በመሆኗ ‹‹ የቤተ ክርስቲያን ችግኞች (ህፃናትና ወጣቶች) መንከባከቢያ መጠበቂያ ማዕከል ቅድስት ቤተክርስቲያን ጥላ ስር እንዲሸሸጉ በመንፈሳዊ እውቀት ማጽናቱ አስፈላጊ ነው።››</li></ul>');
@@ -4993,10 +4998,11 @@
     h += '<div class="card">' +
       '<div class="hgal">' + GAL.map(function(g){
         var u = (typeof g === "string") ? g : g.u, cap = (typeof g === "object" && g.c) ? g.c : "";
-        return '<a class="hgal-i" href="' + u + '" target="_blank" rel="noopener"><img src="' + u + '" alt="" loading="lazy">' + (cap ? '<span class="hgal-cap">' + esc(cap) + '</span>' : '') + '</a>';
+        return '<div class="hgal-i"><img src="' + u + '" alt="" loading="lazy" draggable="false">' + (cap ? '<span class="hgal-cap">' + esc(cap) + '</span>' : '') + '</div>';
       }).join("") + '</div>' +
       '</div>';
     el.innerHTML = h;
+    xSafe(function(){ ncProtectTab(el); });
   }
 
   function renderExam(){
@@ -5035,8 +5041,9 @@
       }
       var view = canMake ? examView : "mine";
       if (view === "mine") h += '<div class="card"><h2>' + S("ለእርስዎ የተመደቡ ምዘናዎች","Your exams") + '</h2>' + (mine.length ? mine.map(function(e){
-        return '<div class="row"><div><b>' + esc(e.title) + '</b><div class="meta">' + esc(e.byName) + ' · ' + e.qs.length + ' ' + S("ጥያቄ","Q") + ' · ⏱ ' + xFmt(e.limit) + '</div></div>' +
-          (e.done ? '<span class="badge role">' + e.done.score + '/' + e.done.max + '</span>' : '<button class="primary" data-xstart="' + esc(e.id) + '">' + S("ጀምር","Start") + '</button>') + '</div>';
+        var fileBtn = e.file ? '<button class="ghost" data-xfile="' + esc(e.id) + '">👁 ' + S("ክፈት (ለማየት ብቻ)","Open (view only)") + ' — ' + esc(e.file.name) + '</button>' : '';
+        var act = !e.qs.length ? '<span class="badge role">📄 ' + S("ፋይል","File") + '</span>' : (e.done ? '<span class="badge role">' + e.done.score + '/' + e.done.max + '</span>' : '<button class="primary" data-xstart="' + esc(e.id) + '">' + S("ጀምር","Start") + '</button>');
+        return '<div class="row"><div><b>' + esc(e.title) + '</b><div class="meta">' + esc(e.byName) + (e.qs.length ? ' · ' + e.qs.length + ' ' + S("ጥያቄ","Q") + ' · ⏱ ' + xFmt(e.limit) : '') + '</div>' + (fileBtn ? '<div style="margin-top:6px">' + fileBtn + '</div>' : '') + '</div>' + act + '</div>';
       }).join("") : '<div class="empty">' + S("ምንም ምዘና የለም","No exams") + '</div>') + '<button class="ghost" id="x-refresh" style="margin-top:8px">' + S("🔄 አድስ","🔄 Refresh") + '</button></div>';
       if (view === "make" && canMake){
         var others = workData.people.filter(function(p){ return p.code !== me.code; });
@@ -5048,13 +5055,14 @@
           '<div id="x-f-tf" style="display:none"><div class="field"><select id="x-ta"><option value="1">' + S("መልሱ እውነት","Answer: True") + '</option><option value="0">' + S("መልሱ ሐሰት","Answer: False") + '</option></select></div></div>' +
           '<div id="x-f-match" style="display:none"><div class="field"><textarea id="x-pp" placeholder="' + S("ግራ|ቀኝ — በየመስመሩ አንድ ጥንድ (ከ2 እስከ 8)","left|right — one pair per line (2–8)") + '"></textarea></div></div>' +
           '<div id="x-f-explain" style="display:none"><div class="field"><input type="text" id="x-ek" placeholder="' + S("ቁልፍ ቃላት በነጠላ ሰረዝ (፣ ወይም ,) ይለዩ","Key words, comma-separated") + '"></div><p class="meta">' + S("ሲስተሙ መልሱ ውስጥ ቁልፍ ቃላቱ የተካተቱትን ያስላል።","The system scores by how many key words appear in the answer.") + '</p></div>' +
+          '<div class="field"><label>📎 ' + S("ወይም ፋይል ያያይዙ (PDF / Word .docx)","Or attach a file (PDF / Word .docx)") + '</label>' + (examFile ? '<div class="row"><span>📄 ' + esc(examFile.name) + '</span><button type="button" class="ghost danger" id="x-rmfile">✕</button></div>' : '<input type="file" id="x-file" accept=".pdf,.doc,.docx">') + '</div>' +
           '<p class="error" id="x-er"></p><button class="ghost" id="x-addq">' + S("＋ ጥያቄ ጨምር","＋ Add question") + '</button>' +
           '<div id="x-dl"></div>' +
           '<div class="field" style="margin-top:10px"><label>' + S("የሚወስዱ","Who takes it") + '</label>' + others.map(function(p){ return '<label style="display:flex;gap:8px;align-items:center;font-size:13px"><input type="checkbox" class="x-as" value="' + esc(p.code) + '"> ' + esc(p.name) + '</label>'; }).join("") + '</div>' +
           '<button class="primary" id="x-pub">' + S("ምዘናውን አትም","Publish exam") + '</button></div>';
         h += '<div class="card"><h2>' + S("የፈጠርኳቸው / ውጤቶች","Created / results") + '</h2>' + (made.length ? made.map(function(e){
           return '<div class="row" style="display:block"><div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">' +
-            '<div><b>' + esc(e.title) + '</b> <span class="meta">' + e.results.length + '/' + e.n + '</span></div>' +
+            '<div><b>' + esc(e.title) + '</b> <span class="meta">' + e.results.length + '/' + e.n + '</span>' + (e.file ? '<div class="meta">📎 ' + esc(e.file.name) + '</div>' : '') + '</div>' +
             '<div style="display:flex;gap:6px;flex:none"><button class="ghost" data-xpdf="' + esc(e.id) + '" title="' + S("PDF","PDF") + '">📄</button><button class="ghost" data-xshare="' + esc(e.id) + '" title="' + S("አጋራ","Share") + '">📤</button></div></div>' +
             e.results.map(function(r){ return '<div class="meta">• ' + esc(r.name) + ': <b>' + r.score + '/' + r.max + '</b></div>'; }).join("") + '</div>';
         }).join("") : '<div class="empty">—</div>') + '</div>';
@@ -5080,11 +5088,13 @@
         if (!item.kw.length) return bad(S("ቢያንስ አንድ ቁልፍ ቃል ያስገቡ","Add at least one key word")); }
       examDraft.push(item); er.textContent = ""; ["x-q","x-mo","x-ma","x-pp","x-ek"].forEach(function(id){ $(id).value = ""; }); drawDraft();
     };
+    if ($("x-file")) $("x-file").onchange = function(){ var f = this.files && this.files[0]; if (!f) return; xfRead(f, function(res, err){ if (err){ showToast(err); return; } examFile = res; renderExam(); }); };
+    if ($("x-rmfile")) $("x-rmfile").onclick = function(){ examFile = null; renderExam(); };
     if ($("x-pub")) $("x-pub").onclick = function(){
       var er = $("x-er"), ts = Array.prototype.map.call(el.querySelectorAll(".x-as:checked"), function(x){ return x.value; });
-      if (!examDraft.length || !ts.length){ er.textContent = S("ጥያቄ ጨምረው ተመዛኞችን ይምረጡ","Add questions and choose takers"); er.style.display = "block"; return; }
-      wPost({ code: workMe.code, pin: workMe.hash, type: "x_create", title: $("x-title").value.trim() || "ምዘና", qs: examDraft, targets: ts }, function(r){
-        if (r.ok){ examDraft = []; examData = null; showToast(S("ተለጥፏል","Published")); renderExam(); } else { er.textContent = r.error || wNet(); er.style.display = "block"; }
+      if ((!examDraft.length && !examFile) || !ts.length){ er.textContent = S("ጥያቄ ጨምረው ተመዛኞችን ይምረጡ","Add questions and choose takers"); er.style.display = "block"; return; }
+      wPost({ code: workMe.code, pin: workMe.hash, type: "x_create", title: $("x-title").value.trim() || "ምዘና", qs: examDraft, targets: ts, file: examFile || undefined }, function(r){
+        if (r.ok){ examDraft = []; examFile = null; examData = null; showToast(S("ተለጥፏል","Published")); renderExam(); } else { er.textContent = r.error || wNet(); er.style.display = "block"; }
       });
     };
     var xSend = function(auto){
@@ -5111,6 +5121,7 @@
     el.onclick = function(e){
       var b = e.target.closest ? e.target.closest("button") : null; if (!b) return;
       if (b.getAttribute("data-xview")){ examView = b.getAttribute("data-xview"); renderExam(); return; }
+      if (b.getAttribute("data-xfile")){ xfOpen(b.getAttribute("data-xfile"), b); return; }
       if (b.getAttribute("data-xpdf")){ xExamPrint(b.getAttribute("data-xpdf")); return; }
       if (b.getAttribute("data-xshare")){ xExamShare(b.getAttribute("data-xshare")); return; }
       if (b.getAttribute("data-xstart")){ var id = b.getAttribute("data-xstart"); var ex = examData.mine.filter(function(x){ return x.id === id; })[0];
@@ -6878,7 +6889,195 @@
   STRINGS.audit.act_timetable = mk("የጊዜ ሰሌዳ ታክሏል","Timetable entry added");
 
   // ===================== ምዘና ላክ — በክፍል ምርጫ ለሁሉም ተማሪዎች እንደየክፍላቸው ድልድል ማሰራጨት =====================
-  var xdSt = { lv: {}, title: "", draft: [], err: "", ok: "" };
+  var XF_MAX_B64 = 1400000; // ≈1MB ፋይል
+  function xfRead(f, cb){
+    var ext = (String(f.name).split(".").pop() || "").toLowerCase();
+    var MT = { pdf: "application/pdf", docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" };
+    if (!MT[ext]){ cb(null, S("PDF ወይም Word (.docx) ፋይል ብቻ — የድሮ .doc ን በ Word ውስጥ «Save as .docx» ያድርጉ","Only PDF or Word (.docx) files — save an old .doc as .docx first")); return; }
+    var fr = new FileReader();
+    fr.onload = function(){
+      var du = String(fr.result || "").replace(/^data:[^;,]*/, "data:" + MT[ext]);
+      if (du.length > XF_MAX_B64){ cb(null, S("ፋይሉ ከ1MB በላይ ነው — ያሳንሱት (ለምሳሌ ምስሎችን ይቀንሱ)","File is over 1MB — please make it smaller")); return; }
+      cb({ name: f.name, type: MT[ext], dataUrl: du });
+    };
+    fr.onerror = function(){ cb(null, S("ፋይሉን ማንበብ አልተቻለም","Could not read the file")); };
+    fr.readAsDataURL(f);
+  }
+
+  function ncProtectTab(el){
+    ncKeys();
+    el.classList.add("nc-on", "nc");
+    if (!el._ncGuard){ el._ncGuard = true; ncGuard(el); }
+    var old = el.querySelector(":scope > .nc-wm"); if (old) old.remove();
+    var wm = document.createElement("div"); wm.className = "nc-wm";
+    wm.style.cssText = "position:absolute;inset:0;pointer-events:none;z-index:5;background-image:" + ncMark("ፍሬ ሃይማኖት ሰ/ት/ቤት · " + roleName(role)) + ";background-repeat:repeat";
+    el.style.position = "relative"; el.appendChild(wm);
+  }
+  // ---------- ለማየት ብቻ የሚከፈት ሰነድ (ማውረድ የለም፤ በስም/ኮድ የውሃ ምልክት፤ ማተም/መቅዳት ተከልክሏል) ----------
+  var NC_TXT = "";
+  function ncMark(txt){
+    var t = String(txt || "").replace(/[<>&"']/g, "");
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="200"><text x="160" y="105" fill="#14336E" fill-opacity="0.16" font-size="19" font-family="sans-serif" font-weight="700" text-anchor="middle" transform="rotate(-24 160 100)">' + t + '</text></svg>';
+    return "url('data:image/svg+xml;utf8," + encodeURIComponent(svg).replace(/'/g, "%27") + "')";
+  }
+  function ncGuard(el){
+    ["contextmenu","copy","cut","dragstart","selectstart"].forEach(function(ev){ el.addEventListener(ev, function(e){ e.preventDefault(); }); });
+  }
+  function ncActive(){ return !!document.getElementById("xf-ov") || activeTab === "history"; }
+  var ncKeyBound = false;
+  function ncKeys(){
+    if (ncKeyBound) return; ncKeyBound = true;
+    document.addEventListener("keydown", function(e){
+      if (!ncActive()) return;
+      var k = (e.key || "").toLowerCase();
+      if (k === "printscreen"){ try { navigator.clipboard.writeText(" "); } catch(_){} document.body.classList.add("nc-blur"); setTimeout(function(){ document.body.classList.remove("nc-blur"); }, 1500); e.preventDefault(); return; }
+      if ((e.ctrlKey || e.metaKey) && /^[pscau]$/.test(k)) e.preventDefault();
+    }, true);
+    function hide(){ if (ncActive()) document.body.classList.add("nc-blur"); }
+    function show(){ document.body.classList.remove("nc-blur"); }
+    document.addEventListener("visibilitychange", function(){ if (document.hidden) hide(); else show(); });
+    window.addEventListener("blur", hide); window.addEventListener("focus", show);
+  }
+  function ncWho(){
+    var nm = (workData && workData.me && workData.me.name) || (myStudent && myStudent.name) || "";
+    var cd = (workMe && workMe.code) || (myStudent && myStudent.code) || "";
+    return (nm + " · " + cd).replace(/^ · | · $/g, "") || "ሰ/ት/ቤት";
+  }
+  function xfUnzip(buf, want){
+    var dv = new DataView(buf), u8 = new Uint8Array(buf), eocd = -1;
+    for (var i = u8.length - 22; i >= 0; i--){ if (dv.getUint32(i, true) === 0x06054b50){ eocd = i; break; } }
+    if (eocd < 0) return Promise.reject(new Error("zip"));
+    var cnt = dv.getUint16(eocd + 10, true), off = dv.getUint32(eocd + 16, true), found = null;
+    for (var n = 0; n < cnt; n++){
+      var nl = dv.getUint16(off + 28, true), el2 = dv.getUint16(off + 30, true), cl = dv.getUint16(off + 32, true);
+      var name = new TextDecoder().decode(u8.subarray(off + 46, off + 46 + nl));
+      if (name === want){ found = { method: dv.getUint16(off + 10, true), csize: dv.getUint32(off + 20, true), lh: dv.getUint32(off + 42, true) }; break; }
+      off += 46 + nl + el2 + cl;
+    }
+    if (!found) return Promise.reject(new Error("nodoc"));
+    var lnl = dv.getUint16(found.lh + 26, true), lel = dv.getUint16(found.lh + 28, true), start = found.lh + 30 + lnl + lel;
+    var data = u8.subarray(start, start + found.csize);
+    return found.method === 0 ? Promise.resolve(new Blob([data]).arrayBuffer()) :
+      new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer();
+  }
+  function xfDocxToHtml(buf){
+    return xfUnzip(buf, "word/document.xml").then(function(ab){
+      var xml = new DOMParser().parseFromString(new TextDecoder().decode(ab), "application/xml");
+      var body = xml.getElementsByTagName("w:body")[0]; if (!body) return "";
+      function on(el, tag){ var x = el.getElementsByTagName(tag)[0]; if (!x) return false; var v = x.getAttribute("w:val"); return !(v === "0" || v === "false"); }
+      function para(pEl){
+        var html = "", runs = pEl.getElementsByTagName("w:r");
+        Array.prototype.forEach.call(runs, function(r){
+          var t = "";
+          Array.prototype.forEach.call(r.childNodes, function(c){
+            if (c.nodeName === "w:t") t += esc(c.textContent);
+            else if (c.nodeName === "w:tab") t += "&emsp;";
+            else if (c.nodeName === "w:br") t += "<br>";
+          });
+          if (!t) return;
+          var rp = r.getElementsByTagName("w:rPr")[0];
+          if (rp){ if (on(rp, "w:b")) t = "<b>" + t + "</b>"; if (on(rp, "w:i")) t = "<i>" + t + "</i>"; if (on(rp, "w:u")) t = "<u>" + t + "</u>"; }
+          html += t;
+        });
+        var ps = pEl.getElementsByTagName("w:pStyle")[0], st = ps ? String(ps.getAttribute("w:val") || "") : "";
+        var jc = pEl.getElementsByTagName("w:jc")[0], al = jc ? jc.getAttribute("w:val") : "";
+        var style = "margin:0 0 8px;" + (al === "center" ? "text-align:center;" : al === "right" || al === "end" ? "text-align:right;" : "");
+        if (/^(Heading|Title)/i.test(st)) style += "font-weight:800;font-size:1.15em;color:#14336E;";
+        if (pEl.getElementsByTagName("w:numPr")[0] && html) html = "• " + html;
+        return html ? '<p style="' + style + '">' + html + '</p>' : '<p style="margin:0 0 8px">&nbsp;</p>';
+      }
+      var out = "";
+      Array.prototype.forEach.call(body.childNodes, function(n){
+        if (n.nodeName === "w:p") out += para(n);
+        else if (n.nodeName === "w:tbl"){
+          out += '<table style="border-collapse:collapse;width:100%;margin:6px 0 12px">';
+          Array.prototype.forEach.call(n.getElementsByTagName("w:tr"), function(tr){
+            out += "<tr>";
+            Array.prototype.forEach.call(tr.childNodes, function(tc){
+              if (tc.nodeName !== "w:tc") return;
+              var cell = ""; Array.prototype.forEach.call(tc.childNodes, function(q){ if (q.nodeName === "w:p") cell += para(q); });
+              out += '<td style="border:1px solid #B8C6DD;padding:6px 8px;vertical-align:top">' + cell + "</td>";
+            });
+            out += "</tr>";
+          });
+          out += "</table>";
+        }
+      });
+      return out;
+    });
+  }
+  var PDFJS_VER = "3.11.174", PDFJS_BASE = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/" + PDFJS_VER + "/";
+  function xfLoadPdfJs(){
+    if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+    return new Promise(function(res, rej){
+      var sc = document.createElement("script"); sc.src = PDFJS_BASE + "pdf.min.js"; sc.crossOrigin = "anonymous";
+      sc.onload = function(){ if (window.pdfjsLib){ window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_BASE + "pdf.worker.min.js"; res(window.pdfjsLib); } else rej(new Error("nolib")); };
+      sc.onerror = function(){ rej(new Error("offline")); };
+      document.head.appendChild(sc);
+    });
+  }
+  function xfPdfRender(file, box, closed){
+    var b64 = String(file.dataUrl).split(",")[1] || "", bin = atob(b64), u8 = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+    box.innerHTML = '<p class="meta" style="text-align:center">…</p>';
+    return xfLoadPdfJs().then(function(lib){
+      return lib.getDocument({ data: u8 }).promise;
+    }).then(function(pdf){
+      box.innerHTML = "";
+      var w = Math.max(280, Math.min(box.clientWidth || 360, 900)), dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var chain = Promise.resolve();
+      for (var n = 1; n <= pdf.numPages; n++) (function(num){
+        chain = chain.then(function(){
+          if (closed()) return;
+          return pdf.getPage(num).then(function(pg){
+            var v0 = pg.getViewport({ scale: 1 }), sc = w / v0.width, vp = pg.getViewport({ scale: sc * dpr });
+            var cv = document.createElement("canvas"); cv.width = Math.floor(vp.width); cv.height = Math.floor(vp.height);
+            cv.style.cssText = "width:" + w + "px;max-width:100%;height:auto;display:block;margin:0 auto 10px;box-shadow:0 1px 6px rgba(0,0,0,.2);background:#fff";
+            box.appendChild(cv);
+            return pg.render({ canvasContext: cv.getContext("2d"), viewport: vp }).promise;
+          });
+        });
+      })(n);
+      return chain;
+    });
+  }
+  function xfView(file, title){
+    ncKeys();
+    var ov = document.createElement("div"); ov.id = "xf-ov"; ov.className = "nc-on";
+    ov.style.cssText = "position:fixed;inset:0;z-index:9000;background:#F4F7FC;display:flex;flex-direction:column";
+    ov.innerHTML = '<div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#14336E;color:#fff"><b style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">📄 ' + esc(title || file.name) + '</b><button type="button" id="xf-x" style="background:#fff;color:#14336E;border:none;border-radius:8px;padding:6px 12px;font-weight:800;cursor:pointer">✕</button></div>' +
+      '<div class="nc-note" style="padding:6px 12px;font-size:12px;background:#FFF3E0;color:#7A4B00">🔒 ' + S("ለማየት ብቻ ነው — ማውረድ፣ መቅዳትና ማተም አይፈቀድም። በስክሪን ላይ የሚታየው ስምዎ ለክትትል ነው።","View only — download, copy and print are disabled. Your name on screen is for traceability.") + '</div>' +
+      '<div id="xf-sc" style="position:relative;flex:1;overflow:auto;-webkit-overflow-scrolling:touch"><div id="xf-box" class="nc" style="padding:12px;max-width:920px;margin:0 auto"></div>' +
+      '<div style="position:absolute;inset:0;pointer-events:none;background-image:' + ncMark(ncWho()) + ';background-repeat:repeat;z-index:5"></div></div>';
+    document.body.appendChild(ov);
+    ncGuard(ov);
+    var done = false, box = ov.querySelector("#xf-box");
+    function close(){ done = true; document.body.classList.remove("nc-blur"); if (ov.parentNode) ov.parentNode.removeChild(ov); }
+    ov.querySelector("#xf-x").onclick = close;
+    var isPdf = /pdf/i.test(file.type), fail = function(m){ box.innerHTML = '<div class="note">' + esc(m) + '</div>'; };
+    if (isPdf){
+      xfPdfRender(file, box, function(){ return done; }).catch(function(e){
+        fail(S("PDF ን ማሳየት አልተቻለም — ኢንተርኔት ያስፈልጋል (የPDF ማሳያው ከcdnjs ይጫናል)። እንደገና ይሞክሩ።","Could not show the PDF — an internet connection is needed (the PDF viewer loads from cdnjs). Please retry."));
+      });
+    } else {
+      var b64 = String(file.dataUrl).split(",")[1] || "", bin = atob(b64), u8 = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+      xfDocxToHtml(u8.buffer).then(function(html){
+        box.innerHTML = '<div style="background:#fff;padding:14px;border-radius:8px;box-shadow:0 1px 6px rgba(0,0,0,.15);line-height:1.8;font-size:14px;color:#1F2937">' + (html || "—") + '</div>' +
+          '<p class="meta" style="text-align:center;margin-top:8px">' + S("ጽሑፍና ሰንጠረዥ ብቻ ይታያል (ምስሎች አይታዩም)።","Text and tables only (images are not shown).") + '</p>';
+      }).catch(function(){ fail(S("ፋይሉን ማንበብ አልተቻለም።","Could not read the file.")); });
+    }
+  }
+  function xfOpen(eid, btn){
+    if (!workMe) return;
+    if (btn) btn.disabled = true;
+    wPost({ code: workMe.code, pin: workMe.hash, type: "x_file", id: eid }, function(r){
+      if (btn) btn.disabled = false;
+      if (!r.ok || !r.file){ showToast(r.error || wNet()); return; }
+      xfView(r.file, r.file.name);
+    });
+  }
+  var xdSt = { lv: {}, title: "", draft: [], err: "", ok: "", file: null };
   function xdTargets(){
     var sel = xdSt.lv, out = [];
     state.students.forEach(function(st){ if (st && st.code && sel[st.level]) out.push(st); });
@@ -6918,6 +7117,9 @@
       '<div data-xdt="tf" style="display:none"><div class="field"><select data-xdf="ta"><option value="1">' + S("መልሱ እውነት","Answer: True") + '</option><option value="0">' + S("መልሱ ሐሰት","Answer: False") + '</option></select></div></div>' +
       '<div data-xdt="match" style="display:none"><div class="field"><textarea data-xdf="pp" placeholder="' + S("ግራ|ቀኝ — በየመስመሩ አንድ ጥንድ (ከ2 እስከ 8)","left|right — one pair per line (2–8)") + '"></textarea></div></div>' +
       '<div data-xdt="explain" style="display:none"><div class="field"><input type="text" data-xdf="ek" placeholder="' + S("ቁልፍ ቃላት በነጠላ ሰረዝ (፣ ወይም ,) ይለዩ","Key words, comma-separated") + '"></div></div>' +
+      '<div class="field"><label>📎 ' + S("ወይም ፋይል ያያይዙ (PDF / Word .docx)","Or attach a file (PDF / Word .docx)") + '</label>' +
+        (xdSt.file ? '<div class="row"><span>📄 ' + esc(xdSt.file.name) + '</span><button type="button" class="ghost danger" data-xd="rmfile">✕</button></div>' : '<input type="file" data-xdf="file" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document">') +
+        '<p class="meta">' + S("ፋይሉ ለተመረጡት ክፍሎች ተማሪዎች በቀጥታ ይደርሳል (እስከ 1MB)። ፋይል ብቻ ከሆነ ጥያቄ መጨመር አያስፈልግም።","The file goes straight to the students of the selected classes (up to 1MB). If you attach a file you don't need to add questions.") + '</p></div>' +
       '<p class="error" data-xd="err" style="' + (xdSt.err ? 'display:block' : '') + '">' + esc(xdSt.err) + '</p>' +
       (xdSt.ok ? '<p class="meta" style="color:#2E7D4F;font-weight:700">' + esc(xdSt.ok) + '</p>' : '') +
       '<button type="button" class="ghost" data-xd="addq">＋ ' + S("ጥያቄ ጨምር","Add question") + '</button>' +
@@ -6927,6 +7129,12 @@
     var ty = q('[data-xdf="t"]');
     ty.onchange = function(){ ["mcq","tf","match","explain"].forEach(function(k){ q('[data-xdt="' + k + '"]').style.display = (k === ty.value) ? "" : "none"; }); };
     q('[data-xdf="title"]').oninput = function(){ xdSt.title = this.value; };
+    var fIn = q('[data-xdf="file"]');
+    if (fIn) fIn.onchange = function(){
+      var f = fIn.files && fIn.files[0]; if (!f) return;
+      xdSt.title = q('[data-xdf="title"]').value;
+      xfRead(f, function(res, err){ if (err){ xdSt.err = err; xdSt.ok = ""; } else { xdSt.file = res; xdSt.err = ""; xdSt.ok = ""; } xdDraw(host); });
+    };
     host.querySelectorAll("[data-xdl]").forEach(function(c){ c.onchange = function(){ xdSt.lv[c.getAttribute("data-xdl")] = c.checked; xdSt.err = ""; xdSt.ok = ""; var keep = xdSt.title; xdDraw(host); }; });
     host.onclick = function(e){
       var b = e.target.closest ? e.target.closest("button") : null; if (!b) return;
@@ -6935,6 +7143,7 @@
       if (a === "go"){ var nb = document.querySelector('nav.tabs button[data-tab="work"]'); if (nb) nb.click(); return; }
       if (a === "all"){ LEVELS.forEach(function(l){ xdSt.lv[l] = state.students.some(function(x){ return x.level === l; }); }); xdDraw(host); return; }
       if (a === "none"){ xdSt.lv = {}; xdDraw(host); return; }
+      if (a === "rmfile"){ xdSt.title = (q('[data-xdf="title"]') || {}).value || xdSt.title; xdSt.file = null; xdDraw(host); return; }
       var v = function(k){ var f = q('[data-xdf="' + k + '"]'); return f ? f.value : ""; };
       function bad(m){ xdSt.err = m; xdSt.ok = ""; var er = q('[data-xd="err"]'); er.textContent = m; er.style.display = "block"; }
       if (a === "addq"){
@@ -6954,15 +7163,15 @@
         var tg2 = xdTargets(), kn = {}; (workData.people || []).forEach(function(x){ kn[String(x.code).toUpperCase()] = 1; });
         var codes = tg2.map(function(x){ return x.code; }).filter(function(c){ return kn[String(c).toUpperCase()]; });
         if (!tg2.length) return bad(S("ቢያንስ አንድ ተማሪ ያለበት ክፍል ይምረጡ","Choose at least one class that has students"));
-        if (!xdSt.draft.length) return bad(S("ቢያንስ አንድ ጥያቄ ይጨምሩ","Add at least one question"));
+        if (!xdSt.draft.length && !xdSt.file) return bad(S("ቢያንስ አንድ ጥያቄ ይጨምሩ ወይም ፋይል ያያይዙ","Add at least one question or attach a file"));
         if (!codes.length) return bad(S("የተመረጡት ተማሪዎች በስክሪፕቱ ዝርዝር ውስጥ የሉም — በ«ሥራ ክትትል» ትር «ሁሉም ተመዝጋቢ በምዝገባ ኮዳቸው ይግቡ» ይጫኑ።","The selected students are not on the script list yet — use “everyone can sign in with their registration code” in the Work tracking tab."));
         if (!confirm(fillTpl(S("ምዘናው ለ%N% ተማሪዎች ይላካል። ይቀጥሉ?","The assessment will be sent to %N% students. Continue?"), { N: codes.length }, false))) return;
         b.disabled = true;
-        wPost({ code: workMe.code, pin: workMe.hash, type: "x_create", title: xdSt.title.trim() || "ምዘና", qs: xdSt.draft, targets: codes }, function(r){
+        wPost({ code: workMe.code, pin: workMe.hash, type: "x_create", title: xdSt.title.trim() || "ምዘና", qs: xdSt.draft, targets: codes, file: xdSt.file || undefined }, function(r){
           if (r.ok){
             var skipped = tg2.length - codes.length, lv = LEVELS.filter(function(l){ return xdSt.lv[l]; }).map(TL).join("፣ ");
             xdSt.ok = "✅ " + S("ተልኳል፦ ","Sent: ") + codes.length + S(" ተማሪዎች (","  students (") + lv + ")" + (skipped ? " · " + skipped + S(" ተማሪዎች በስክሪፕቱ ዝርዝር ስላልነበሩ አልተላከላቸውም።"," students were not on the script list and were skipped.") : "");
-            xdSt.draft = []; xdSt.title = ""; xdSt.err = ""; examData = null; logAction("act_exam_send", lv + " × " + codes.length); save();
+            xdSt.draft = []; xdSt.file = null; xdSt.title = ""; xdSt.err = ""; examData = null; logAction("act_exam_send", lv + " × " + codes.length); save();
             showToast(S("ምዘናው ተሰራጭቷል","Assessment distributed"));
           } else { xdSt.err = r.error || wNet(); xdSt.ok = ""; }
           xdDraw(host);
