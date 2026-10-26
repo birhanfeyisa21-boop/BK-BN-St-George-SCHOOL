@@ -398,6 +398,10 @@
   .qxs-res{text-align:center}.qxs-res h2{margin:6px 0;color:#14336E}.qxs-msg{margin:0;font-size:16px;color:#51607A}.qxs-big{font-size:54px}.qxs-ring{width:150px;height:150px;transform:rotate(-90deg)}.qxs-ring circle{fill:none;stroke-width:10}.qxs-ring .bg{stroke:#E6ECF7}.qxs-ring .fg{stroke:#2E7D4F;stroke-linecap:round;transition:stroke-dashoffset 1s}.qxs-ring text{transform:rotate(90deg);transform-origin:60px 60px;fill:#14336E}.qxs-ring .n{font-size:26px;font-weight:800}.qxs-ring .s{font-size:12px;fill:#51607A}
   .qxs-rv{padding:9px 0;border-bottom:1px solid #EEF2FA;font-size:14px;text-align:left}.qxs-rv.ok b{color:#1E6B3F}.qxs-rv.bad b{color:#9C2B2B}.qxs-code textarea{width:100%;box-sizing:border-box;font-size:12px;word-break:break-all;border:1.5px solid #D5E2F7;border-radius:12px;padding:8px;margin:6px 0 10px}.qxs-row{display:grid;gap:8px}.qxs-note{background:#DDF3E5;color:#1E6B3F;padding:10px 12px;border-radius:12px;font-weight:700;margin-bottom:10px}.qxs-card h3{margin:0 0 6px;color:#14336E}
   @media print{#qx-ov{display:none!important}}
+  .m-ph{width:64px;height:64px;border-radius:50%;background:#EAF1FC;display:flex;align-items:center;justify-content:center;font-size:28px;overflow:hidden;flex:none;border:2px solid #C9D6EE}.m-ph img,.m-av img{width:100%;height:100%;object-fit:cover}
+  .m-av{width:44px;height:44px;border-radius:50%;background:#EAF1FC;display:inline-flex;align-items:center;justify-content:center;font-size:20px;overflow:hidden;flex:none;margin-right:10px;border:2px solid #D5E2F7}.row.m-gone{opacity:.62;background:repeating-linear-gradient(135deg,#fff,#fff 8px,#F6F8FC 8px,#F6F8FC 16px)}
+.ctl-box{background:#F1F6FF;border:1px solid #D5E2F7;border-radius:14px;padding:12px 14px;margin-bottom:10px}.ctl-n{font-size:17px;font-weight:800;color:#14336E}
+  input[type=tel],input[type=email]{width:100%;box-sizing:border-box;padding:9px 11px;border:1.5px solid #D3E0F3;border-radius:11px;font-size:13px;font-family:inherit;background:#F7FAFE}
   .hs-thp{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:16px}.hs-thp-i{width:92px;text-align:center}.hs-thp-i img{width:84px;height:84px;border-radius:50%;object-fit:cover;border:3px solid #0F766E;box-shadow:0 3px 10px rgba(15,118,110,.25);display:block;margin:0 auto 6px}.hs-thp-i span{font-size:12px;font-weight:700;color:#0F766E;line-height:1.25;display:block}
   .hs-fin>h3{margin:0 0 12px;font-size:16px;color:var(--c);display:flex;align-items:center;gap:8px}
   .hs-fin>h3 .hs-ic{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--c);color:#fff;font-size:15px}
@@ -1039,7 +1043,7 @@
       // ከዚህ በታች ያሉት ከመጀመሪያው ይዘት በኋላ የተጨመሩ ናቸው — የቆየ ውሂብ ሲመለስ/ሲጫን እንዳይጎድሉ እዚህ መኖር አለባቸው
       attendance: [], grades: [], roster: [], idcards: {}, letterSeq: 0,
       msgScript: null, workCfg: null, councilMeetings: [], mediaCloudOff: false, contribs: [], contribFee: {},
-      timetable: [], teacherReg: [], qexams: [], qres: []
+      timetable: [], teacherReg: [], qexams: [], qres: [], controller: {}
     };
     if (!state || typeof state !== "object" || Array.isArray(state)) state = {};
     Object.keys(defaults).forEach(function(k){
@@ -1131,7 +1135,7 @@
     var actorName = (ownerInput && ownerInput.value.trim()) || "";
     state.auditLog.push({
       id: uid(),
-      ts: new Date().toLocaleString("en-GB"),
+      ts: ecFmtT(new Date()),
       role: role,
       actor: actorName,
       actionKey: actionKey,
@@ -1687,7 +1691,7 @@
       err.style.display = "none";
       state.feedback.push({
         id: uid(),
-        ts: new Date().toLocaleString("en-GB"),
+        ts: ecFmtT(new Date()),
         tester: document.getElementById("fb-name").value.trim(),
         type: document.getElementById("fb-type").value,
         tab: activeTab,
@@ -1785,6 +1789,17 @@
     } catch(e){ greg = now.toLocaleDateString("en-GB"); }
     return { day: ec.day, month: ecMonthName(ec.month - 1), year: ec.year, greg: greg };
   }
+  // የኢትዮጵያ አቆጣጠር (ዓ.ም.) — ለሁሉም የተመዘገቡ ቀኖች
+  function ecFmt(d){ d = d || new Date(); try { var e = gcToEc(d.getFullYear(), d.getMonth() + 1, d.getDate()); return e.day + "/" + e.month + "/" + e.year; } catch(x){ return d.toLocaleDateString("en-GB"); } }
+  function ecFmtT(d){ d = d || new Date(); var t = ""; try { t = " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2); } catch(x){} return ecFmt(d) + t; }
+  // በታተሙ/በወረዱ ሰነዶች ላይ ትክክለኛ ቁጥርና የኢትዮጵያ ቀን
+  function docStamp(){
+    var r = nextLetterRef(); try { save(); } catch(x){}
+    var c = state.controller && state.controller.name ? ' · ' + S('ተቆጣጣሪ፦','Controller:') + ' ' + esc(state.controller.name) : '';
+    return '<p style="font-size:12px;color:#444;margin:2px 0 10px">' + S('ቁጥር፦','Ref:') + ' <b>' + esc(r.refNo) + '</b> · ' + S('ቀን፦','Date:') + ' <b>' + esc(r.eth.day + ' ' + r.eth.month + ' ' + r.eth.year) + ' ' + S('ዓ.ም.','E.C.') + '</b>' + c + '</p>';
+  }
+  function ecShow(v){ var x = ecFromIso(v); return x || String(v == null ? "" : v); }
+  function ecFromIso(iso){ var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso || "")); return m ? ecFmt(new Date(+m[1], +m[2] - 1, +m[3])) : ""; }
   function pct(part, whole){ return whole > 0 ? Math.round(part / whole * 100) : 0; }
   function backupIsDue(){
     return hasData() && (!state.lastBackupAt || Date.now() - state.lastBackupAt > 7 * DAY_MS);
@@ -1888,7 +1903,7 @@
     // ---- data status ----
     var ringColor = sentPct === 100 ? "#3B6D2E" : "#B7791F";
     var backupLine = state.lastBackupAt ?
-      fillTpl(TSt("lastBackup"), { DATE: new Date(state.lastBackupAt).toLocaleDateString("en-GB") }, true) :
+      fillTpl(TSt("lastBackup"), { DATE: ecFmt(new Date(state.lastBackupAt)) }, true) :
       esc(TSt("noBackup"));
     var dataCard =
       '<section class="db-card"><h2>' + esc(TDx("dataTitle")) + '</h2>' +
@@ -2030,7 +2045,7 @@
         var open = attExpanded === r.id;
         var nP = (r.presentIds || []).length, nE = (r.excused || []).length, nA = Math.max(0, (r.totalCount || 0) - nP - nE);
         return '<div class="row" style="display:block"><div style="display:flex;justify-content:space-between;align-items:center">' +
-          '<div><b>' + esc(r.date) + '</b> · ' + esc(pName) + '<div class="meta">' + S("መጥተዋል","Present") + ' ' + nP + ' · ' + S("ፈቃድ","Excused") + ' ' + nE + ' · ' + S("ቀርተዋል","Absent") + ' ' + nA + ' / ' + (r.totalCount || 0) + '</div></div>' +
+          '<div><b>' + esc(ecShow(r.date)) + '</b> · ' + esc(pName) + '<div class="meta">' + S("መጥተዋል","Present") + ' ' + nP + ' · ' + S("ፈቃድ","Excused") + ' ' + nE + ' · ' + S("ቀርተዋል","Absent") + ' ' + nA + ' / ' + (r.totalCount || 0) + '</div></div>' +
           '<div><button class="ghost" data-atview="' + esc(r.id) + '">' + (open ? S("ዝጋ","Hide") : S("እይ","View")) + '</button> <button class="ghost danger" data-atdel="' + esc(r.id) + '">' + S("አስወግድ","Remove") + '</button></div></div>' +
           (open ? '<div class="meta" style="margin-top:6px"><b>' + S("መጥተዋል","Present") + ':</b> ' + esc((r.presentNames || []).join("، ") || "—") +
             '<br><b>' + S("ፈቃድ","Excused") + ':</b> ' + esc((r.excused || []).map(function(x){ return x.name + (x.reason ? " (" + x.reason + ")" : ""); }).join("، ") || "—") +
@@ -2162,6 +2177,8 @@
           '<div class="field" id="m-llv-wrap" style="display:none"><label>'+S("የክፍል ደረጃ","Class level")+'</label><select id="m-llevel"></select></div>' +
         '</div>' +
         '<p class="meta" id="m-lhint" style="display:none;margin:-4px 0 8px"></p>' +
+        '<div class="field"><label>📷 '+S("ፎቶ (አማራጭ)","Photo (optional)")+'</label><div style="display:flex;gap:10px;align-items:center"><div id="m-photo-prev" class="m-ph">'+(rec && rec.photo ? '<img src="'+rec.photo+'" alt="">' : '👤')+'</div><div style="flex:1"><input type="file" id="m-photo" accept="image/*"><div class="meta">'+S("ፎቶው ራሱ ይቀንሳል — መተግበሪያውን አያከብድም።","The photo is shrunk automatically.")+'</div></div></div></div>' +
+        '<div class="field"><label>'+S("የዝውውር / መውጣት ምክንያት ወይም መድረሻ (ካለ)","Transfer / exit reason or destination (if any)")+'</label><input type="text" id="m-exit" maxlength="120"></div>' +
         '<p class="error" id="m-error">'+TM("errNameGender")+'</p>' +
         saveButtons("m-save", "member", T("save")) + '</div>') :
       lockNote(TM("lockMsg"));
@@ -2179,7 +2196,12 @@
         var genderDisplay = m.gender === "ወንድ" ? T("male") : (m.gender === "ሴት" ? T("female") : "—");
         var gradeDisplay = m.education ? esc(m.education) : S("እየተመዘገበ","Registering");
         var deptDisplay = m.deptId ? esc(deptName(m.deptId)) : '<span style="color:#B3261E">'+S("ክፍል አልተመደበም","No department")+'</span>';
-        return '<div class="row"><span><span class="badge role">'+esc(m.code||'—')+'</span> '+esc(m.name)+'<br><span class="meta">'+genderDisplay+' &middot; '+gradeDisplay+' &middot; '+esc(parishName(m.parishId))+'</span><br><span class="meta">📂 '+deptDisplay+'</span>'+(m.learnerType ? '<br><span class="badge role" style="margin-top:3px">🎓 '+esc(ltypeName(m.learnerType))+(m.learnerLevel ? ' · '+esc(m.learnerLevel) : '')+'</span>' : (GRADES.indexOf(m.education) >= 0 ? '<br><span class="badge role" style="margin-top:3px">🎓 '+S("የሰ/ት/ቤቱ መደበኛ ተማሪ","Regular student")+' · '+esc(m.education)+'</span>' : ''))+rowActions("member", m.id)+'</span>' +
+        var av = '<span class="m-av">' + (m.photo ? '<img src="'+m.photo+'" alt="">' : '👤') + '</span>';
+        var gone = m.status && m.status !== "ንቁ";
+        var dm = (m.moves || []).filter(function(x){ return x.k === "dept"; }), lastDm = dm[dm.length - 1];
+        var mvHtml = '<br><span class="meta">' + (dm.length ? '<span class="badge pending">↔ '+S("ተዘዋውሯል","Transferred")+' ('+dm.length+')</span> '+esc(lastDm.from)+' → '+esc(lastDm.to)+' · '+esc(lastDm.d) : '<span class="badge role">● '+S("ባለበት ክፍል","Not moved")+'</span>') +
+          (gone ? ' <span class="badge" style="background:#F7DADA;color:#9C2B2B">🚪 '+esc(m.status)+(m.exitDate ? ' · '+esc(m.exitDate) : '')+(m.exitNote ? ' · '+esc(m.exitNote) : '')+'</span>' : '') + '</span>';
+        return '<div class="row'+(gone ? ' m-gone' : '')+'">'+av+'<span><span class="badge role">'+esc(m.code||'—')+'</span> '+esc(m.name)+'<br><span class="meta">'+genderDisplay+' &middot; '+gradeDisplay+' &middot; '+esc(parishName(m.parishId))+'</span><br><span class="meta">📂 '+deptDisplay+'</span>'+mvHtml+(m.learnerType ? '<br><span class="badge role" style="margin-top:3px">🎓 '+esc(ltypeName(m.learnerType))+(m.learnerLevel ? ' · '+esc(m.learnerLevel) : '')+'</span>' : (GRADES.indexOf(m.education) >= 0 ? '<br><span class="badge role" style="margin-top:3px">🎓 '+S("የሰ/ት/ቤቱ መደበኛ ተማሪ","Regular student")+' · '+esc(m.education)+'</span>' : ''))+rowActions("member", m.id)+'</span>' +
           syncBadge(m)+'</div>';
       }).join('') : '<div class="empty">'+T("none")+'</div>') +
       '</div>';
@@ -2188,10 +2210,14 @@
       setVals({
         "m-parish": rec.parishId, "m-dept": rec.deptId, "m-name": rec.name, "m-gender": rec.gender, "m-residence": rec.residence,
         "m-education": rec.education, "m-parent-edu": rec.parentEducation, "m-title": rec.specialTitle,
-        "m-join": rec.joinDate, "m-status": rec.status, "m-ltype": rec.learnerType || ""
+        "m-join": rec.joinDate, "m-status": rec.status, "m-ltype": rec.learnerType || "", "m-exit": rec.exitNote || ""
       });
       document.getElementById("m-parish").disabled = true;
     }
+    (function(){
+      var pf = document.getElementById("m-photo");
+      if (pf) pf.addEventListener("change", function(){ var f = pf.files && pf.files[0]; if (!f) return; readImageResized(f, 360, 0.78, function(u){ var pv = document.getElementById("m-photo-prev"); if (u && pv) pv.innerHTML = '<img src="' + u + '" alt="">'; }); });
+    })();
     (function(){
       var lt = document.getElementById("m-ltype"), lv = document.getElementById("m-llevel");
       if (!lt || !lv) return;
@@ -2241,8 +2267,14 @@
         if (!fields.learnerType && GRADES.indexOf(fields.education) >= 0){ fields.learnerType = "regular"; fields.learnerLevel = fields.education; }
         if (fields.learnerType && !fields.learnerLevel){ showToast(S("የክፍል ደረጃ ይምረጡ","Choose a class level")); return; }
         if (!fields.learnerType) fields.learnerLevel = "";
+        fields.exitNote = document.getElementById("m-exit").value.trim();
+        var go = function(){
         if (rec){
+          var oldDept = rec.deptId || "", oldSt = rec.status || "ንቁ";
           Object.keys(fields).forEach(function(k){ rec[k] = fields[k]; });
+          if (!rec.moves) rec.moves = [];
+          if (oldDept !== (fields.deptId || "")) rec.moves.push({ k: "dept", from: oldDept ? deptName(oldDept) : "—", to: fields.deptId ? deptName(fields.deptId) : "—", d: ecFmt() });
+          if (oldSt !== fields.status){ rec.moves.push({ k: "status", from: oldSt, to: fields.status, d: ecFmt() }); rec.exitDate = fields.status !== "ንቁ" ? ecFmt() : ""; }
           rec.synced = false; // changed data has to be sent upward again
           commit(true, "", recLabel(rec));
         } else {
@@ -2250,10 +2282,13 @@
           var parishObj = state.parishes.find(function(x){ return x.id === parishId; });
           var prefix = (parishObj && parishObj.code ? parishObj.code : "D00-P00") + "-M";
           var code = prefix + pad(nextSeq(state.members, prefix), 4);
-          fields.id = uid(); fields.parishId = parishId; fields.code = code; fields.synced = false;
+          fields.id = uid(); fields.parishId = parishId; fields.code = code; fields.synced = false; fields.moves = []; fields.regDate = ecFmt();
           state.members.push(fields);
           commit(false, "act_member", code + " — " + name);
         }
+        };
+        var pfile = document.getElementById("m-photo");
+        if (pfile && pfile.files && pfile.files[0]) readImageResized(pfile.files[0], 360, 0.78, function(u){ if (u) fields.photo = u; go(); }); else go();
       });
     }
   }
@@ -2283,7 +2318,7 @@
           '<div class="field"><label>'+TS("scoreLabel")+'</label><input type="number" id="s-score" min="0" max="100" placeholder="0-100"></div>' +
         '</div>' +
         '<div class="grid2">' +
-          '<div class="field"><label>'+TS("statusLabel")+'</label><select id="s-status"><option value="በሂደት ላይ">'+TS("statusInProgress")+'</option><option value="አልፏል">'+TS("statusPassed")+'</option><option value="ወድቋል">'+TS("statusFailed")+'</option></select></div>' +
+          '<div class="field"><label>'+TS("statusLabel")+'</label><select id="s-status"><option value="በሂደት ላይ">'+TS("statusInProgress")+'</option><option value="አልፏል">'+TS("statusPassed")+'</option><option value="ወድቋል">'+TS("statusFailed")+'</option><option value="የወጣ">'+S("የወጣ / የተዛወረ","Left / transferred")+'</option></select></div>' +
           '<div class="field"><label>'+TS("gradLabel")+'</label><select id="s-grad"><option value="ያልተመረቀ">'+TS("notGraduated")+'</option><option value="ተመርቋል">'+TS("graduated")+'</option></select></div>' +
         '</div>' +
         '<div class="field"><label>'+TS("gradYearLabel")+'</label><input type="text" id="s-grad-year" placeholder="'+TS("yearPh")+'"></div>' +
@@ -2489,7 +2524,7 @@
             // ፋይሉን ወደ ደመናም ላክ፣ ሌሎች መሳሪያዎች እንዲያገኙት (ካልተሳካ በዚህ መሳሪያ ላይ ብቻ ይቀራል)
             if (!state.mediaCloudOff) uploadMediaToCloud(f, function(cloudUrl){ if (cloudUrl){ rec2.cloudUrl = cloudUrl; save(); if (activeTab === "lessons") renderLessons(); } });
           } else {
-            state.documents.push({ id: uid(), title: title, type: "ሌላ መረጃ/ሰነድ", issuer: "", body: "", fileId: meta.id, date: new Date().toLocaleDateString("en-GB"), synced: false });
+            state.documents.push({ id: uid(), title: title, type: "ሌላ መረጃ/ሰነድ", issuer: "", body: "", fileId: meta.id, date: ecFmt(new Date()), synced: false });
           }
           ok++;
         }, function(){ bad++; });
@@ -2592,7 +2627,7 @@
             Object.keys(fields).forEach(function(k){ rec[k] = fields[k]; });
             commit(true, "", recLabel(rec));
           } else {
-            fields.id = uid(); fields.date = new Date().toLocaleDateString("en-GB"); fields.synced = false;
+            fields.id = uid(); fields.date = ecFmt(new Date()); fields.synced = false;
             state.documents.push(fields);
             commit(false, "act_document", title);
           }
@@ -2889,7 +2924,7 @@
         state.roster.map(function(r){ return '<tr><td>' + esc(r.day||"") + '</td><td>' + esc(r.level||"") + '</td><td>' + esc(r.teacher||"") + '</td><td>' + esc(r.topic||"") + '</td><td>' + esc(r.note||"") + '</td></tr>'; }).join("") + '</table>';
     }
     function rosterDocHtml(){
-      return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + esc(S("ሮስተር","Roster")) + '</title></head><body><h2>' + esc(schoolNameFull()) + '</h2><h3>' + esc(S("ሮስተር — የማስተማሪያ ተራ","Roster — teaching schedule")) + '</h3>' + rosterTableHtml() + '</body></html>';
+      return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + esc(S("ሮስተር","Roster")) + '</title></head><body><h2>' + esc(schoolNameFull()) + '</h2>' + docStamp() + '<h3>' + esc(S("ሮስተር — የማስተማሪያ ተራ","Roster — teaching schedule")) + '</h3>' + rosterTableHtml() + '</body></html>';
     }
     $("ro-pdf").onclick = function(){
       if (!state.roster.length){ showToast(S("ሮስተሩ ባዶ ነው","Roster is empty")); return; }
@@ -3433,7 +3468,7 @@
       '</div>' +
       '<div class="card" id="cert-preview-card" style="display:none;">' +
         '<div id="cert-preview" style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:22px;line-height:1.9;"></div>' +
-        '<button class="primary" id="cert-print" style="margin-top:12px;">'+TCert("printBtn")+'</button>' +
+        '<button class="primary" id="cert-print" style="margin-top:12px;">'+TCert("printBtn")+'</button> <button class="ghost" id="cert-word" style="margin-top:12px;">⬇ Word (.doc)</button>' +
       '</div>';
 
     function graduatedStudents(){
@@ -3492,7 +3527,7 @@
       var personId = document.getElementById("cert-person") ? document.getElementById("cert-person").value : "";
       var html = "";
       var actorName = "", actorCode = "";
-      var todayStr = new Date().toLocaleDateString("en-GB");
+      var todayStr = ecFmt(new Date());
       var ref = nextLetterRef();
 
       if (type === "membership"){
@@ -3550,9 +3585,15 @@
       save();
     });
 
+    document.getElementById("cert-word").addEventListener("click", function(){
+      var content = document.getElementById("cert-preview").innerHTML;
+      var doc = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><title>' + esc(schoolNameFull()) + '</title><style>body{font-family:Nyala,sans-serif;line-height:1.8}</style></head><body>' + content + '</body></html>';
+      var a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["\ufeff" + doc], { type: "application/msword" })); a.download = "ደብዳቤ-" + ecFmt().replace(/\//g, "-") + ".doc";
+      document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 600);
+    });
     document.getElementById("cert-print").addEventListener("click", function(){
       var content = document.getElementById("cert-preview").innerHTML;
-      var watermark = '<p style="margin-top:30px;font-size:10px;color:#999;text-align:right;">'+esc(state.installId||'')+' &middot; '+esc(new Date().toLocaleString("en-GB"))+'</p>';
+      var watermark = '<p style="margin-top:30px;font-size:10px;color:#999;text-align:right;">'+esc(state.installId||'')+' &middot; '+esc(ecFmtT(new Date()))+'</p>';
       var w = window.open("", "_blank");
       if (!w) return;
       w.document.write(
@@ -3629,7 +3670,7 @@
     $("id-person").onchange = loadSavedFields;
 
     function buildCardHtml(type, p, rec){
-      var photo = rec && rec.photo && rec.photo.dataUrl ? rec.photo.dataUrl : "";
+      var photo = rec && rec.photo && rec.photo.dataUrl ? rec.photo.dataUrl : ((p && typeof p.photo === "string" && p.photo.indexOf("data:image/") === 0) ? p.photo : "");
       return '<div style="width:340px;max-width:100%;margin:0 auto;border:2px solid #1E4FA0;border-radius:14px;overflow:hidden;font-family:inherit;background:#fff;">' +
         '<div style="background:linear-gradient(135deg,#0F2A63,#1E4FA0);color:#fff;padding:10px 12px;display:flex;align-items:center;gap:8px;">' +
           schoolLogoImg(34) +
@@ -3993,7 +4034,7 @@
       html += '<h3>'+T("totalMembers")+' ('+state.members.length+')</h3><table border="1" cellpadding="6" style="border-collapse:collapse;width:100%;font-size:13px;"><tr><th>Code</th><th>Name</th><th>Gender</th><th>Parish</th><th>Status</th></tr>';
       state.members.forEach(function(m){ html += '<tr><td>'+esc(m.code||'')+'</td><td>'+esc(m.name)+'</td><td>'+esc(m.gender)+'</td><td>'+esc(parishName(m.parishId))+'</td><td>'+esc(m.status)+'</td></tr>'; });
       html += '</table>';
-      html += '<p style="margin-top:30px;font-size:10px;color:#999;text-align:right;">'+esc(state.installId||'')+' &middot; '+esc(new Date().toLocaleString("en-GB"))+'</p>';
+      html += '<p style="margin-top:30px;font-size:10px;color:#999;text-align:right;">'+esc(state.installId||'')+' &middot; '+esc(ecFmtT(new Date()))+'</p>';
 
       var w = window.open("", "_blank");
       if (!w) return;
@@ -5297,7 +5338,7 @@
         memberCount: membersOf(parishId).length,
         studentCount: studentsOf(parishId).length,
         teacherCount: teachersOf(parishId).length,
-        date: new Date().toLocaleDateString("en-GB")
+        date: ecFmt(new Date())
       });
       logAction("act_report", parish.code + " — " + parish.name);
       save(); renderAll();
@@ -5308,7 +5349,7 @@
       var title = document.getElementById("circ-title").value.trim();
       var body = document.getElementById("circ-body").value.trim();
       if (!title || !body) return;
-      state.circulars.push({ id: uid(), title: title, body: body, date: new Date().toLocaleDateString("en-GB") });
+      state.circulars.push({ id: uid(), title: title, body: body, date: ecFmt(new Date()) });
       logAction("act_circular", title);
       save(); renderAll();
     });
@@ -5401,7 +5442,7 @@
       '<label class="meta">' + esc(S("የተቀዳ ማዛወሪያ ኮድ እዚህ ለጥፉ","Paste a transfer code here")) + '</label>' +
       '<textarea id="st-auto-paste" rows="2" placeholder="BKBN1-…" style="width:100%;margin:4px 0 8px;font-family:monospace;font-size:12px;"></textarea>' +
       '<button class="ghost" id="st-auto-apply">' + esc(S("ተግብር","Apply")) + '</button>' +
-      '<p class="meta" id="st-auto-msg" style="margin-top:8px;">' + (c.lastAt ? esc(S("የመጨረሻ ራስ-ሰር ምትኬ፦ ","Last automatic backup: ") + new Date(c.lastAt).toLocaleDateString("en-GB")) : "") + '</p></div>';
+      '<p class="meta" id="st-auto-msg" style="margin-top:8px;">' + (c.lastAt ? esc(S("የመጨረሻ ራስ-ሰር ምትኬ፦ ","Last automatic backup: ") + ecFmt(new Date(c.lastAt))) : "") + '</p></div>';
   }
 
   // ---------- storage, backup & files ----------
@@ -5440,7 +5481,7 @@
         '<div class="card"><h2>' + esc(TSt("backupTitle")) + '</h2>' +
           '<p class="meta">' + esc(TSt("backupNote")) + '</p>' +
           '<p class="meta' + (backupIsDue() ? ' db-warn' : '') + '" style="margin:6px 0 10px;">' +
-            (state.lastBackupAt ? esc(fillTpl(TSt("lastBackup"), { DATE: new Date(state.lastBackupAt).toLocaleDateString("en-GB") }, false)) : esc(TSt("noBackup"))) +
+            (state.lastBackupAt ? esc(fillTpl(TSt("lastBackup"), { DATE: ecFmt(new Date(state.lastBackupAt)) }, false)) : esc(TSt("noBackup"))) +
           '</p>' +
           '<label class="meta">' + esc(S("የምትኬ የይለፍ ቃል (ፋይሉን ለመመስጠር፤ ቢያንስ 6 ፊደል/ቁጥር) — ያስታውሱት፣ ከጠፋ ምትኬው አይከፈትም","Backup password (encrypts the file; min 6 characters) — remember it, a lost password cannot be recovered")) + '</label>' +
           '<input type="password" id="st-backup-pass" autocomplete="new-password" style="margin:6px 0 10px;display:block;width:100%;">' +
@@ -5633,7 +5674,7 @@
       var box = document.getElementById("st-snaps");
       if (!box) return;
       box.innerHTML = rows.length ? rows.map(function(r){
-        return '<div class="row"><span>' + esc(new Date(r.ts).toLocaleString("en-GB")) +
+        return '<div class="row"><span>' + esc(ecFmtT(new Date(r.ts))) +
           '<br><span class="meta">' + esc(TSt(r.reason)) + '</span></span>' +
           '<button type="button" class="ghost" data-act="snap-restore" data-id="' + esc(r.id) + '">' + esc(TSt("snapRestore")) + '</button></div>';
       }).join('') : '<div class="empty">' + esc(TSt("snapNone")) + '</div>';
@@ -6260,6 +6301,7 @@
       function findLocal(){ return state.students.find(function(s){ return (s.code||"").toUpperCase() === code; }); }
       function findCloud(){ return (cloudPublic && cloudPublic.roster ? cloudPublic.roster : []).find(function(s){ return (s.code||"").toUpperCase() === code; }); }
       var st = findLocal();
+      if (st && st.status === "የወጣ"){ er.textContent = S("ይህ ተማሪ ከሰ/ት/ቤቱ ወጥቷል — መረጃውን ማየት አይችልም። ለጽ/ቤቱ ያሳውቁ።","This learner has left the school — access is closed. Contact the office."); return; }
       if (st){ if (st.pinHash) studentLoginStep2Verify(el, done, st); else studentLoginStep2Setup(el, done, st); return; }
       var cd = findCloud();
       if (cd){ if (cd.pinHash) studentLoginStep2Verify(el, done, cd); else studentLoginStep2Setup(el, done, cd); return; }
@@ -6527,7 +6569,7 @@
     var list = state.councilMeetings.slice().sort(function(a, b){ return String(b.date).localeCompare(String(a.date)); });
     h += '<div class="card"><h2>' + S("የስብሰባ መዝገብ","Meeting records") + ' (' + list.length + ')</h2>' +
       (list.length ? list.map(function(m){
-        return '<div style="border-bottom:1px solid #eee;padding:10px 0;"><b>' + esc(m.title || S("ያለ ርዕስ","Untitled")) + '</b> <span class="meta">· ' + esc(m.date) + ' · ' + S("ተሰብሳቢ","attendees") + ' ' + (m.att.length + (m.extra ? m.extra.split(",").filter(function(x){ return x.trim(); }).length : 0)) + '</span>' +
+        return '<div style="border-bottom:1px solid #eee;padding:10px 0;"><b>' + esc(m.title || S("ያለ ርዕስ","Untitled")) + '</b> <span class="meta">· ' + esc(ecFromIso(m.date) || m.date) + ' ' + S("ዓ.ም.","E.C.") + ' · ' + S("ተሰብሳቢ","attendees") + ' ' + (m.att.length + (m.extra ? m.extra.split(",").filter(function(x){ return x.trim(); }).length : 0)) + '</span>' +
           '<details style="margin-top:6px;"><summary class="meta" style="cursor:pointer;">' + S("ዝርዝር አሳይ","Show details") + '</summary>' +
           (m.agenda ? '<p><b>' + S("አጀንዳ","Agenda") + '</b><br>' + esc(m.agenda).replace(/\n/g, "<br>") + '</p>' : '') +
           '<p><b>' + S("ተሰብሳቢዎች","Attendees") + '</b><br>' + esc(m.att.concat(m.extra ? [m.extra] : []).join("፣ ") || "—") + '</p>' +
@@ -6554,7 +6596,7 @@
       var m = state.councilMeetings.filter(function(x){ return x.id === b.getAttribute("data-cm-print"); })[0]; if (!m) return;
       var nl = function(t){ return esc(t).replace(/\n/g, "<br>"); };
       var w = window.open("", "_blank"); if (!w) return;
-      w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + esc(m.title) + '</title><style>body{font-family:sans-serif;padding:34px;line-height:1.8;color:#14202E}h2,h3{margin:0 0 6px}h3{margin-top:18px}</style></head><body><h2>' + esc(schoolNameFull()) + '</h2><h3>' + esc(S("መማክርት ጉባኤ ቃለ ጉባኤ","Council meeting minutes")) + '</h3><p><b>' + esc(m.title) + '</b> · ' + esc(m.date) + '</p>' +
+      w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + esc(m.title) + '</title><style>body{font-family:sans-serif;padding:34px;line-height:1.8;color:#14202E}h2,h3{margin:0 0 6px}h3{margin-top:18px}</style></head><body><h2>' + esc(schoolNameFull()) + '</h2>' + docStamp() + '<h3>' + esc(S("መማክርት ጉባኤ ቃለ ጉባኤ","Council meeting minutes")) + '</h3><p><b>' + esc(m.title) + '</b> · ' + esc(ecShow(m.date)) + ' ' + S('ዓ.ም.','E.C.') + '</p>' +
         (m.agenda ? '<h3>' + esc(S("አጀንዳ","Agenda")) + '</h3><p>' + nl(m.agenda) + '</p>' : '') + '<h3>' + esc(S("ተሰብሳቢዎች","Attendees")) + '</h3><p>' + esc(m.att.concat(m.extra ? [m.extra] : []).join("፣ ") || "—") + '</p>' +
         (m.minutes ? '<h3>' + esc(S("ቃለ ጉባኤ","Minutes")) + '</h3><p>' + nl(m.minutes) + '</p>' : '') + (m.decisions ? '<h3>' + esc(S("ውሳኔዎች","Decisions")) + '</h3><p>' + nl(m.decisions) + '</p>' : '') +
         '<div style="margin-top:50px;display:flex;justify-content:space-between;"><span>' + esc(S("ፊርማ (ጸሐፊ)","Signature (secretary)")) + '</span><span>' + esc(S("ፊርማ (ሰብሳቢ)","Signature (chair)")) + '</span></div></body></html>');
@@ -6641,7 +6683,7 @@
     var yr = ctRecs().filter(function(r){ return +r.year === +y; }).sort(function(a, b){ return String(b.date).localeCompare(String(a.date)); });
     h += '<div class="card"><h2>' + S("የ","Records for ") + y + S(" ዓ.ም ክፍያዎች","") + ' (' + yr.length + ')</h2>' + (yr.length ? yr.slice(0, 80).map(function(r){
       var m = state.members.filter(function(x){ return x.id === r.memberId; })[0];
-      return '<div style="display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid #eee;"><span>' + esc(m ? m.name : S("(የተሰረዘ አባል)","(removed member)")) + ' <span class="meta">· ' + esc(r.date) + (r.note ? ' · ' + esc(r.note) : '') + '</span></span><span><b>' + (+r.amount) + '</b> ' + S("ብር","birr") + (canEdit ? ' <button class="ghost" data-ct-del="' + esc(r.id) + '">🗑</button>' : '') + '</span></div>'; }).join("") : '<p class="meta">' + S("ገና የተመዘገበ ክፍያ የለም።","No payments recorded yet.") + '</p>') + '</div>';
+      return '<div style="display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid #eee;"><span>' + esc(m ? m.name : S("(የተሰረዘ አባል)","(removed member)")) + ' <span class="meta">· ' + esc(ecShow(r.date)) + (r.note ? ' · ' + esc(r.note) : '') + '</span></span><span><b>' + (+r.amount) + '</b> ' + S("ብር","birr") + (canEdit ? ' <button class="ghost" data-ct-del="' + esc(r.id) + '">🗑</button>' : '') + '</span></div>'; }).join("") : '<p class="meta">' + S("ገና የተመዘገበ ክፍያ የለም።","No payments recorded yet.") + '</p>') + '</div>';
     el.innerHTML = h;
     function $c(i){ return document.getElementById(i); }
     $c("ct-year").onchange = function(){ CT.year = +this.value; renderContrib(); };
@@ -6664,7 +6706,7 @@
     }; });
     $c("ct-print").onclick = function(){
       var w = window.open("", "_blank"); if (!w) return;
-      w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + esc(S("መዋጮ ኦዲት","Contribution audit")) + '</title><style>body{font-family:sans-serif;padding:26px;color:#14202E}table{border-collapse:collapse;margin-bottom:10px}th,td{border:1px solid #999;padding:4px 8px;font-size:13px}h3{margin:16px 0 6px}</style></head><body><h2>' + esc(schoolNameFull()) + '</h2><h3>' + esc(S("የመዋጮ ኦዲት","Contribution audit")) + (CT.view === "year" ? ' — ' + y + ' ' + esc(S("ዓ.ም","E.C.")) : '') + '</h3>' + (CT.view === "year" ? ctAuditHtml() : ctMatrixHtml()) + '</body></html>');
+      w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + esc(S("መዋጮ ኦዲት","Contribution audit")) + '</title><style>body{font-family:sans-serif;padding:26px;color:#14202E}table{border-collapse:collapse;margin-bottom:10px}th,td{border:1px solid #999;padding:4px 8px;font-size:13px}h3{margin:16px 0 6px}</style></head><body><h2>' + esc(schoolNameFull()) + '</h2>' + docStamp() + '<h3>' + esc(S("የመዋጮ ኦዲት","Contribution audit")) + (CT.view === "year" ? ' — ' + y + ' ' + esc(S("ዓ.ም","E.C.")) : '') + '</h3>' + (CT.view === "year" ? ctAuditHtml() : ctMatrixHtml()) + '</body></html>');
       w.document.close(); w.focus(); setTimeout(function(){ w.print(); }, 300);
     };
     $c("ct-csv").onclick = function(){
@@ -6777,7 +6819,7 @@
     wrap.querySelector("[data-xprint]").onclick = function(){
       var r = rows(); if (!r.length){ showToast(S("ባዶ ነው","Empty")); return; }
       var w = window.open("", "_blank"); if (!w) return;
-      w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + esc(cfg.file) + '</title></head><body style="font-family:sans-serif"><h2>' + esc(schoolNameFull()) + '</h2><h3>' + cfg.title + '</h3>' +
+      w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + esc(cfg.file) + '</title></head><body style="font-family:sans-serif"><h2>' + esc(schoolNameFull()) + '</h2>' + docStamp() + '<h3>' + cfg.title + '</h3>' +
         '<table border="1" cellspacing="0" cellpadding="6" style="border-collapse:collapse;font-size:13px"><tr style="background:#DCE7F7">' + cfg.headers.map(function(h){ return '<th>' + esc(h) + '</th>'; }).join("") + '</tr>' +
         r.map(function(x){ return '<tr>' + x.c.map(function(v){ return '<td>' + esc(v === undefined || v === null ? "" : v) + '</td>'; }).join("") + '</tr>'; }).join("") + '</table></body></html>');
       w.document.close(); w.focus(); setTimeout(function(){ w.print(); }, 300);
@@ -7468,7 +7510,7 @@
       if (a === "csv"){ var ee = list.filter(function(x){ return x.id === id; })[0]; var rows = qxResOf(id).map(function(r){ var s = qxScore(ee, r.a); return [r.n, r.c || "", s.score, s.max, s.max ? Math.round(s.score / s.max * 100) : 0, r.u ? qxFmtT(r.u) : ""]; });
         var csv = "﻿" + [[S("ስም", "Name"), S("ክፍል", "Class"), S("ውጤት", "Score"), S("ከ", "Max"), "%", S("ጊዜ", "Time")]].concat(rows).map(function(r){ return r.map(function(c){ return '"' + String(c).replace(/"/g, '""') + '"'; }).join(","); }).join("\n");
         return qxFile("exam-" + ee.t.replace(/[^\p{L}\p{N}]+/gu, "_") + ".csv", csv, "text/csv"); }
-      if (a === "print"){ var w = window.open("", "_blank"); if (!w) return; w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + esc(S("ውጤት", "Results")) + '</title><style>body{font-family:sans-serif;padding:24px}table{border-collapse:collapse}td,th{border:1px solid #999;padding:5px 9px;font-size:13px}</style></head><body><h2>' + esc(schoolNameFull()) + '</h2>' + (host.querySelector(".xtbl") ? host.querySelector(".xtbl").outerHTML.replace(/<td><button.*?<\/button><\/td>/g, "<td></td>") : "") + '</body></html>'); w.document.close(); w.print(); return; }
+      if (a === "print"){ var w = window.open("", "_blank"); if (!w) return; w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + esc(S("ውጤት", "Results")) + '</title><style>body{font-family:sans-serif;padding:24px}table{border-collapse:collapse}td,th{border:1px solid #999;padding:5px 9px;font-size:13px}</style></head><body><h2>' + esc(schoolNameFull()) + '</h2>' + docStamp() + '' + (host.querySelector(".xtbl") ? host.querySelector(".xtbl").outerHTML.replace(/<td><button.*?<\/button><\/td>/g, "<td></td>") : "") + '</body></html>'); w.document.close(); w.print(); return; }
       if (a === "rdel"){ if (!confirm(S("ይህ ምላሽ ይጥፋ?", "Delete this submission?"))) return; var ts = parseInt(b.getAttribute("data-ts"), 10); state.qres = xArr("qres").filter(function(r){ return !(r.e === id && r.ts === ts && r.n === b.getAttribute("data-n")); }); save(); return redraw(); }
       // — editor —
       readEd();
@@ -7796,6 +7838,104 @@
     var l = GRADES.slice(); if (cur && l.indexOf(cur) < 0) l.push(cur);
     return '<option value="">— ' + S("ክፍል ይምረጡ","select grade") + ' —</option>' + l.map(function(g){ return '<option value="'+esc(g)+'"'+(g===cur?' selected':'')+'>'+esc(g)+'</option>'; }).join("");
   }
+
+
+  // =====================================================================
+  // 🛡 ደኅንነት ሁኔታ · 📦 የማከማቻ አቅም · 👤 ተቆጣጣሪ አካል
+  // =====================================================================
+  function secChecks(){
+    var ac = {}; try { ac = autoCfg(); } catch(e){}
+    var age = state.lastBackupAt ? (Date.now() - state.lastBackupAt) / 86400000 : null;
+    return [
+      { ok: !!(sec.h && sec.h.owner), t: S("የባለቤት PIN ተዘጋጅቷል","Owner PIN is set"), fix: S("«PIN» ካርድ ላይ የባለቤት PIN ያስቀምጡ።","Set the owner PIN below.") },
+      { ok: !!sec.appLock, t: S("ሲከፈት PIN ይጠየቃል","PIN required to open"), fix: S("«የመተግበሪያ መቆለፊያ» ን ያብሩ።","Turn on App lock.") },
+      { ok: (sec.idle || 5) <= 15, t: S("ያለ እንቅስቃሴ በራስ ይቆለፋል (≤15 ደቂቃ)","Auto-locks when idle (≤15 min)"), fix: S("የራስ-ሰር መቆለፊያ ጊዜን ይቀንሱ።","Shorten the idle lock time.") },
+      { ok: age !== null && age <= 7, t: S("ምትኬ ባለፉት 7 ቀናት ውስጥ ተወስዷል","Backup taken in the last 7 days"), fix: S("በ«ማከማቻ» ትር ምትኬ ያውርዱ።","Download a backup in the Storage tab.") },
+      { ok: !!(ac && ac.on && ac.url), t: S("ራስ-ሰር የተመሰጠረ ምትኬ (Drive) ተከፍቷል","Automatic encrypted backup (Drive) is on"), fix: S("«ራስ-ሰር ምትኬ» ካርድ ላይ ያዋቅሩ።","Set it up in the Automatic backup card.") },
+      { ok: persisted === true, t: S("ማከማቻው ቋሚ ሆኖ ተጠብቋል (አሳሹ አያጸዳውም)","Storage is persistent (browser will not clear it)"), fix: S("«ማከማቻ» ትር «ቋሚ አድርግ» ይጫኑ።","Press “Make persistent” in Storage.") },
+      { ok: !!window.isSecureContext && location.protocol !== "http:", t: S("በተመሰጠረ ግንኙነት (HTTPS) ተከፍቷል","Opened over HTTPS"), fix: S("ከ https ሊንክ ብቻ ይክፈቱ።","Open only from the https link.") }
+    ];
+  }
+  function secCardHtml(){
+    var ck = secChecks(), ok = ck.filter(function(c){ return c.ok; }).length, pc = Math.round(ok / ck.length * 100);
+    var lvl = pc >= 85 ? [S("ከፍተኛ","High"), "#2E7D4F"] : pc >= 60 ? [S("መካከለኛ","Medium"), "#A6791F"] : [S("ዝቅተኛ","Low"), "#B3261E"];
+    return '<div class="card"><h2>🛡 ' + S("የደኅንነት ሁኔታ","Security status") + '</h2>' +
+      '<div style="display:flex;align-items:center;gap:14px;margin:6px 0 10px"><div style="font-size:34px;font-weight:800;color:' + lvl[1] + '">' + pc + '%</div><div><b style="color:' + lvl[1] + '">' + esc(lvl[0]) + '</b><div class="meta">' + ok + '/' + ck.length + ' ' + S("ተሟልቷል","passed") + '</div></div></div>' +
+      '<div class="qx-bar2" style="height:10px"><i style="width:' + pc + '%;background:' + lvl[1] + '"></i></div>' +
+      ck.map(function(c){ return '<div class="row" style="display:block;padding:6px 0">' + (c.ok ? "✅" : "⚠️") + ' ' + esc(c.t) + (c.ok ? "" : '<div class="meta">→ ' + esc(c.fix) + '</div>') + '</div>'; }).join("") +
+      '<h3 class="qx-h3">' + S("አብሮ የተሠራ ጥበቃ","Built-in protection") + '</h3><ul class="meta" style="margin:0;padding-left:18px;line-height:1.8">' +
+      '<li>' + S("PIN በ150,000 ዙር PBKDF2 ተሸግሮ ነው የሚቀመጠው (ራሱ PIN አይቀመጥም)።","PINs are stored as 150,000-round PBKDF2 hashes.") + '</li>' +
+      '<li>' + S("ከ5 የተሳሳተ ሙከራ በኋላ መተግበሪያው ለጊዜው ይቆለፋል፤ ሙከራው በኦዲት ይመዘገባል።","Locks after 5 wrong attempts; logged in audit.") + '</li>' +
+      '<li>' + S("ምትኬ በይለፍ ቃል በAES-256-GCM ይመሰጠራል።","Backups are encrypted with AES-256-GCM.") + '</li>' +
+      '<li>' + S("የምዘና ሰነድ ለማየት ብቻ ነው፤ በስም የውሃ ምልክት፤ ማውረድ/ማተም ተከልክሏል።","Exam documents are view-only with a name watermark.") + '</li>' +
+      '<li>' + S("ሚና-ተኮር ፈቃድ፣ የኦዲት ትሬል (ማን ምን እንዳደረገ)።","Role-based permissions and an audit trail.") + '</li></ul>' +
+      '<p class="meta" style="margin-top:8px">⚠️ ' + S("ሐቀኛ ገደብ፦ መረጃው በመሣሪያው ላይ ያልተመሰጠረ ሆኖ ይቀመጣል፤ ስለዚህ ስልኩን በስክሪን ቁልፍ ይጠብቁ። ስክሪን ሻት በድር መተግበሪያ ሙሉ በሙሉ መከልከል አይቻልም።","Honest limit: data sits unencrypted on the device — protect the phone with a screen lock. Screenshots cannot be fully blocked in a web app.") + '</p></div>';
+  }
+  function ctrlCardHtml(){
+    var c = state.controller || {}, can_ = (role === "owner" || role === "admin");
+    var last = state.auditLog.slice(-6).reverse();
+    return '<div class="card"><h2>👤 ' + S("ሲስተሙን የሚቆጣጠር አካል","System controller") + '</h2>' +
+      (c.name ? '<div class="ctl-box"><div class="ctl-n">' + esc(c.name) + '</div><div class="meta">' + esc(c.title || "") + (c.phone ? ' · 📞 ' + esc(c.phone) : '') + (c.email ? ' · ✉️ ' + esc(c.email) : '') + '</div>' + (c.since ? '<div class="meta">' + S("የተሾመበት ቀን፦","Appointed:") + ' ' + esc(c.since) + ' ' + S("ዓ.ም.","E.C.") + '</div>' : '') + (c.scope ? '<div class="meta" style="margin-top:4px">' + esc(c.scope) + '</div>' : '') + '</div>'
+        : '<div class="note">' + S("⚠️ ሲስተሙን በኃላፊነት የሚቆጣጠር አካል ገና አልተለየም። ከታች ያስገቡ።","No responsible controller has been identified yet. Enter one below.") + '</div>') +
+      (can_ ? '<div class="grid2"><div class="field"><label>' + S("ሙሉ ስም","Full name") + '</label><input type="text" id="ct-c-name" maxlength="80" value="' + esc(c.name || "") + '"></div><div class="field"><label>' + S("ኃላፊነት / የሥራ ድርሻ","Position") + '</label><input type="text" id="ct-c-title" maxlength="80" value="' + esc(c.title || "") + '"></div></div>' +
+        '<div class="grid2"><div class="field"><label>' + S("ስልክ","Phone") + '</label><input type="tel" id="ct-c-phone" maxlength="20" value="' + esc(c.phone || "") + '"></div><div class="field"><label>' + S("ኢሜይል","Email") + '</label><input type="email" id="ct-c-email" maxlength="80" value="' + esc(c.email || "") + '"></div></div>' +
+        '<div class="field"><label>' + S("የተሾመበት ቀን (ዓ.ም.፣ ለምሳሌ 15/2/2019)","Appointed (E.C., e.g. 15/2/2019)") + '</label><input type="text" id="ct-c-since" maxlength="20" value="' + esc(c.since || "") + '"></div>' +
+        '<div class="field"><label>' + S("የሥልጣን ወሰን / ኃላፊነት","Authority / duties") + '</label><textarea id="ct-c-scope" rows="2" maxlength="300">' + esc(c.scope || "") + '</textarea></div>' +
+        '<button class="primary" id="ct-c-save">💾 ' + S("አስቀምጥ","Save") + '</button>' : '<p class="meta">' + S("ማስተካከል የሚችሉት ባለቤትና አስተዳዳሪ ብቻ ናቸው።","Only the owner/admin can edit.") + '</p>') +
+      '<h3 class="qx-h3">' + S("የመጨረሻ እንቅስቃሴዎች (ማን ምን አደረገ)","Latest activity (who did what)") + '</h3>' +
+      (last.length ? last.map(function(e){ return '<div class="meta" style="padding:3px 0">• <b>' + esc(TAudit(e.actionKey)) + '</b>' + (e.details ? ' — ' + esc(e.details) : '') + ' · ' + esc((e.actor ? e.actor + " · " : "") + roleName(e.role)) + ' · ' + esc(e.ts) + '</div>'; }).join("") : '<div class="empty">—</div>') + '</div>';
+  }
+  var _rAccess2 = renderAccess;
+  renderAccess = function(){
+    _rAccess2();
+    xSafe(function(){
+      var el = document.getElementById("tab-access"); if (!el) return;
+      var host = document.createElement("div"); host.id = "sec-host"; host.innerHTML = ctrlCardHtml() + secCardHtml();
+      el.insertBefore(host, el.firstChild);
+      var sv = host.querySelector("#ct-c-save");
+      if (sv) sv.onclick = function(){
+        var g = function(i){ return host.querySelector("#" + i).value.trim(); };
+        if (!g("ct-c-name")){ showToast(S("ስም ያስገቡ","Enter a name")); return; }
+        state.controller = { name: g("ct-c-name"), title: g("ct-c-title"), phone: g("ct-c-phone"), email: g("ct-c-email"), since: g("ct-c-since"), scope: g("ct-c-scope"), at: ecFmt() };
+        logAction("act_edit", S("ተቆጣጣሪ አካል፦ ","Controller: ") + state.controller.name); save(); showToast(S("ተቀምጧል","Saved")); renderAccess();
+      };
+    });
+  };
+  var _rStorage2 = renderStorage;
+  renderStorage = function(){
+    _rStorage2();
+    xSafe(function(){
+      var el = document.getElementById("tab-storage"); if (!el) return;
+      var host = document.createElement("div"); host.id = "cap-host"; host.className = "card";
+      host.innerHTML = '<h2>📦 ' + S("የማከማቻ አቅም","Storage capacity") + '</h2><div class="meta">…</div>';
+      el.insertBefore(host, el.firstChild);
+      var dataBytes = 0; try { dataBytes = new Blob([JSON.stringify(state)]).size; } catch(e){}
+      var photos = state.members.filter(function(m){ return m.photo; }).length;
+      function draw(used, quota){
+        var free = Math.max(0, quota - used), pc = quota ? Math.min(100, Math.max(1, Math.round(used / quota * 100))) : 1;
+        var perPhoto = 40 * 1024, perRec = 2 * 1024, perFile = 1.4 * 1024 * 1024;
+        host.innerHTML = '<h2>📦 ' + S("የማከማቻ አቅም","Storage capacity") + '</h2>' +
+          '<div class="stat-grid">' + stat(humanSize(dataBytes), S("የመተግበሪያው ውሂብ","App data")) + stat(quota ? humanSize(free) : "—", S("ቀሪ ቦታ","Free space")) + stat(photos, S("የፎቶ ብዛት","Photos")) + '</div>' +
+          '<div class="qx-bar2" style="height:10px;margin-top:8px"><i class="' + (pc > 80 ? "bad" : "ok") + '" style="width:' + pc + '%"></i></div>' +
+          '<div class="meta" style="margin:4px 0 8px">' + humanSize(used) + ' / ' + (quota ? humanSize(quota) : "—") + ' (' + pc + '%)</div>' +
+          (quota ? '<ul class="meta" style="margin:0;padding-left:18px;line-height:1.8"><li>' + S("ግምታዊ ተጨማሪ አቅም፦ ","Approx. room for: ") + '<b>~' + Math.floor(free / perRec).toLocaleString() + '</b> ' + S("መዝገቦች (ያለ ፎቶ)","records (no photo)") + ' · <b>~' + Math.floor(free / perPhoto).toLocaleString() + '</b> ' + S("የአባል ፎቶዎች","member photos") + ' · <b>~' + Math.floor(free / perFile).toLocaleString() + '</b> ' + S("የምዘና ሰነዶች (1.4MB)","exam files (1.4 MB)") + '</li></ul>' : '') +
+          '<p class="meta" style="margin-top:8px">ℹ️ ' + S("ጊዜ (ዓመታት) ማከማቻውን አይገድበውም፤ ገደቡ የመሣሪያው ነጻ ቦታ ነው። ፎቶዎች በራሳቸው ይቀንሳሉ። ለረጅም ጊዜ ቅጂ ምትኬን ወደ Drive ይላኩ፤ ትላልቅ ፋይሎች (PDF/Word) በሰ/ት/ቤቱ Google Drive ላይ ነው የሚቀመጡት፤ በመሣሪያው ላይ አይደለም።","Time does not limit storage — the limit is free space on the device. Photos are shrunk automatically. Send backups to Drive for long-term copies; large PDF/Word files live in the school’s Google Drive, not on the device.") + '</p>';
+      }
+      try { if (navigator.storage && navigator.storage.estimate) navigator.storage.estimate().then(function(e){ draw(e.usage || 0, e.quota || 0); }, function(){ draw(dataBytes, 0); }); else draw(dataBytes, 0); } catch(e){ draw(dataBytes, 0); }
+    });
+  };
+
+  // ---------- የቀን መምረጫ ሳጥን ሁሉ ከስሩ የኢትዮጵያ ቀን ያሳያል ----------
+  setInterval(function(){
+    try {
+      Array.prototype.forEach.call(document.querySelectorAll('input[type="date"]'), function(i){
+        var h = i._ecHint;
+        if (!h){ h = document.createElement("div"); h.className = "meta ec-hint"; h.style.cssText = "margin-top:3px;color:#A6791F;font-weight:700"; i.insertAdjacentElement("afterend", h); i._ecHint = h; i.addEventListener("input", function(){ i._ecHint.textContent = i.value ? "🗓 " + ecFromIso(i.value) + " " + S("ዓ.ም.","E.C.") : ""; }); }
+        var t = i.value ? "🗓 " + ecFromIso(i.value) + " " + S("ዓ.ም.","E.C.") : "";
+        if (h.textContent !== t) h.textContent = t;
+      });
+    } catch(e){}
+  }, 800);
 
   // ---------- init ----------
   load().then(function(){ try { adoptUrlFromHash(); } catch(e){} return refreshFileKeys(); }).then(function(){ return startSecurity(); }).then(function(){
