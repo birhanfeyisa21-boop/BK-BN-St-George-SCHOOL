@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="am">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>BK/BN ብቻ በGoogle እንዲታይ</title>
+<style>
+  body{font-family:system-ui,"Noto Sans Ethiopic",sans-serif;max-width:760px;margin:0 auto;padding:16px;line-height:1.7;background:#faf8f3;color:#222}
+  h1{font-size:1.4rem;color:#7a1f1f}
+  h2{font-size:1.1rem;margin-top:28px;color:#7a1f1f}
+  .box{background:#fff;border:1px solid #e3dccb;border-radius:10px;padding:12px 14px;margin:12px 0}
+  pre{background:#1e1e1e;color:#e8e8e8;padding:12px;border-radius:8px;overflow-x:auto;font-size:.85rem;margin:8px 0;white-space:pre}
+  button{background:#7a1f1f;color:#fff;border:0;border-radius:6px;padding:8px 14px;font-size:.9rem;cursor:pointer}
+  button.ok{background:#2e7d32}
+  .warn{background:#fff4e0;border-color:#f0c36d}
+  ol li{margin-bottom:6px}
+</style>
+</head>
+<body>
+<h1>BK/BN ዲጂታል ሰ/ት/ቤት ብቻ በGoogle እንዲታይ</h1>
+
+<div class="box">
+  <b>ደረጃዎች፦</b>
+  <ol>
+    <li>ከታች ያለውን <b>ስክሪፕት</b> ኮፒ ያድርጉ፣ ከሪፖው ፎልደር ውስጥ <code>noindex.py</code> ብለው ያስቀምጡ፣ ያሂዱት።</li>
+    <li><code>sitemap.xml</code> ን በሪፖው root ላይ ያስቀምጡ።</li>
+    <li>ለውጡን ወደ GitHub ይላኩ (commit + push)።</li>
+    <li>Search Console ላይ ከታች ያሉትን እርምጃዎች ይከተሉ።</li>
+  </ol>
+</div>
+
+<h2>1. ለአንድ ፋይል (በእጅ ማስገባት)</h2>
+<p><code>&lt;head&gt;</code> ውስጥ የሚገባ መስመር፦</p>
+<pre id="meta">&lt;meta name="robots" content="noindex, nofollow"&gt;</pre>
+<button onclick="cp('meta',this)">ኮፒ</button>
+
+<h2>2. ሁሉንም ሌሎች HTML በአንድ ጊዜ noindex የሚያደርግ ስክሪፕት</h2>
+<div class="box warn">የBK/BN ፋይልዎ ስም <code>index.html</code> ካልሆነ፣ <code>KEEP</code> ውስጥ ያስተካክሉ። ከማሄድዎ በፊት repo ን backup ያድርጉ።</div>
+<pre id="script">import os, re
+
+KEEP = {"index.html"}   # ← የBK/BN ፋይል ስም (ብዙ ከሆነ በኮማ ይለዩ)
+TAG = '&lt;meta name="robots" content="noindex, nofollow"&gt;'
+
+for root, dirs, files in os.walk("."):
+    dirs[:] = [d for d in dirs if d not in (".git", "node_modules")]
+    for f in files:
+        if not f.lower().endswith(".html"):
+            continue
+        path = os.path.join(root, f)
+        rel = os.path.relpath(path, ".").replace("\\", "/")
+        if rel in KEEP:
+            continue
+        with open(path, encoding="utf-8") as fh:
+            html = fh.read()
+        if re.search(r'name=["\']robots["\']', html, re.I):
+            print("ተዘሏል (አስቀድሞ አለው):", rel)
+            continue
+        new, n = re.subn(r"(&lt;head[^&gt;]*&gt;)", r"\1\n" + TAG, html, count=1, flags=re.I)
+        if n == 0:
+            print("&lt;head&gt; አልተገኘም:", rel)
+            continue
+        with open(path, "w", encoding="utf-8") as fh:
+            fh.write(new)
+        print("noindex ተጨምሯል:", rel)</pre>
+<button onclick="cp('script',this)">ስክሪፕቱን ኮፒ</button>
+<p>ማስኬጃ፦ <code>python noindex.py</code></p>
+
+<h2>3. sitemap.xml (የBK/BN ዩአርኤል ብቻ)</h2>
+<div class="box warn"><code>YOUR-USERNAME</code> እና <code>YOUR-REPO</code> ን በእርስዎ ይተኩ።</div>
+<pre id="sitemap">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://YOUR-USERNAME.github.io/YOUR-REPO/&lt;/loc&gt;
+  &lt;/url&gt;
+&lt;/urlset&gt;</pre>
+<button onclick="cp('sitemap',this)">ኮፒ</button>
+
+<h2>4. በGoogle Search Console</h2>
+<ol>
+  <li><b>Sitemaps</b> → <code>sitemap.xml</code> ያስገቡ።</li>
+  <li>የBK/BN ዩአርኤል → <b>URL Inspection</b> → <b>Request indexing</b>።</li>
+  <li>የቆዩ ያልተፈለጉ ዩአርኤሎች → <b>Removals → New request → Temporarily remove URL</b>።</li>
+  <li>noindex የተደረጉ ገጾች Google እንደገና ሲያነባቸው ቀስ በቀስ ይወጣሉ (ጥቂት ቀናት እስከ ሳምንታት)።</li>
+</ol>
+
+<div class="box warn">
+  <b>ማስጠንቀቂያ፦</b> <code>robots.txt</code> ውስጥ <code>Disallow</code> አይጨምሩ፤ Google noindex መለያውን እንዳያነብ ያደርገዋል። noindex ጥያቄ ነው እንጂ ጥበቃ አይደለም፤ ዩአርኤሉን ያወቀ ሰው ገጹን መክፈት ይችላል። ሙሉ ጥበቃ ከፈለጉ ያላለቁ ስራዎችን private repo ውስጥ ያስቀምጡ።
+</div>
+
+<script>
+function cp(id,btn){
+  var t=document.getElementById(id).innerText;
+  var done=function(){var o=btn.textContent;btn.textContent="ተቀድቷል ✓";btn.className="ok";setTimeout(function(){btn.textContent=o;btn.className=""},1800)};
+  if(navigator.clipboard){navigator.clipboard.writeText(t).then(done,fb)}else{fb()}
+  function fb(){var a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();document.execCommand("copy");a.remove();done()}
+}
+</script>
+</body>
+</html>
